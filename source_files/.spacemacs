@@ -18,8 +18,8 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     csv
-     yaml
+     helm
+     graphviz
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -29,19 +29,28 @@ values."
      ;; ----------------------------------------------------------------
      ;; Programming languages
      ;; ----------------------------------------------------------------
-     gtags
+     csv
      emacs-lisp
-     python
-     php
+     gtags
      javascript
-     ;; go
+     php
+     (python :variables python-sort-imports-on-save t)
      salt
-     csharp
+     shell-scripts
+     sql
+     yaml
+     ;; csharp
+     ;; typescript
+     ;; go
+     ;; ruby
      ;; ----------------------------------------------------------------
      ;; Programming helpers
      ;; ----------------------------------------------------------------
+     ;; (auto-completion :variables
+     ;;                  auto-completion-enable-snippets-in-popup t)
      (auto-completion :variables
-                      auto-completion-enable-snippets-in-popup t)
+                      auto-completion-enable-help-tooltip t
+                      auto-completion-enable-sort-by-usage t)
      git
      ;; ----------------------------------------------------------------
      ;; ----------------------------------------------------------------
@@ -50,12 +59,13 @@ values."
      ;; csv
      html
      markdown
+     ;; (org :variables org-enable-reveal-js-support t)
      org
      osx
      spell-checking
      syntax-checking
      (colors :variables colors-enable-nyan-cat-progress-bar t)
-     ;; pdf-tools
+     pdf-tools
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -231,7 +241,9 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers '(:enabled-for-modes
+                               prog-mode
+                               :relative t)
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -263,16 +275,39 @@ values."
 It is called immediately after `dotspacemacs/init'.  You are free to put almost
 any user code here.  The exception is org related code, which should be placed
 in `dotspacemacs/user-config'."
+  (setq json-indent-level 2)
+  (setq-default tab-width 2)
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
+  (global-company-mode)
   (setq powerline-default-separator 'bar)
   (defun timestamp ()
     (interactive)
     (insert (format-time-string "<%Y-%m-%d %H:%M:%S>")))
+  (setq org-directory "~/org"
+        org-log-into-drawer 1
+        ;; What is a note in org-speak?
+        org-default-notes-file (concat org-directory "/inbox.org")
+        org-agenda-files (list org-directory
+                               (concat org-directory "/notes")
+                               (concat org-directory "/work")
+                               (concat org-directory "/projects"))
+        org-refile-targets '((nil :maxlevel . 3)
+                             (org-agenda-files :maxlevel . 3))
+        org-log-done t
+        org-startup-with-inline-images t
+        ;; investigate what is the purpose of this? Maybe it forces images to load
+        ;; in the same size if set to `nil'?
+        org-image-actual-width nil
+        org-startup-indented t
+        org-html-htmlize-output-type 'css
+        org-html-doctype "html5"
+        org-html-metadata-timestamp-format "%Y %b %d (%a)"
+        )
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -291,7 +326,7 @@ layers configuration. You are free to put any user code."
  '(org-agenda-files (quote ("~/links.org")))
  '(package-selected-packages
    (quote
-    (shut-up winum fuzzy omnisharp csharp-mode salt-mode mmm-jinja2 csv-mode yaml-mode pcache go-guru rainbow-mode rainbow-identifiers color-identifiers-mode yapfify uuidgen py-isort pug-mode osx-dictionary org-projectile org org-download livid-mode skewer-mode simple-httpd live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff goto-chg undo-tree dumb-jump diminish column-enforce-mode ws-butler window-numbering web-mode web-beautify volatile-highlights vi-tilde-fringe toc-org tagedit spaceline powerline smooth-scrolling smeargle slim-mode scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-yapf popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el pbcopy paradox hydra spinner page-break-lines osx-trash orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme less-css-mode launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc jade-mode info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gtags helm-gitignore request helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md ggtags flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight emmet-mode elisp-slime-nav drupal-mode php-mode define-word cython-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-quickhelp pos-tip company-go go-mode company-anaconda company coffee-mode clean-aindent-mode buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme))))
+    (sql-indent tide typescript-mode org-mime graphviz-dot-mode org-category-capture ghub let-alist rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby pdf-tools tablist ox-reveal insert-shebang fish-mode company-shell shut-up winum fuzzy omnisharp csharp-mode salt-mode mmm-jinja2 csv-mode yaml-mode pcache go-guru rainbow-mode rainbow-identifiers color-identifiers-mode yapfify uuidgen py-isort pug-mode osx-dictionary org-projectile org org-download livid-mode skewer-mode simple-httpd live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff goto-chg undo-tree dumb-jump diminish column-enforce-mode ws-butler window-numbering web-mode web-beautify volatile-highlights vi-tilde-fringe toc-org tagedit spaceline powerline smooth-scrolling smeargle slim-mode scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-yapf popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el pbcopy paradox hydra spinner page-break-lines osx-trash orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme less-css-mode launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc jade-mode info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gtags helm-gitignore request helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md ggtags flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight emmet-mode elisp-slime-nav drupal-mode php-mode define-word cython-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-quickhelp pos-tip company-go go-mode company-anaconda company coffee-mode clean-aindent-mode buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
