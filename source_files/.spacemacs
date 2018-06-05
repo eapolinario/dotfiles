@@ -39,7 +39,7 @@ values."
      shell-scripts
      sql
      yaml
-     ;; csharp
+     csharp
      ;; typescript
      ;; go
      ;; ruby
