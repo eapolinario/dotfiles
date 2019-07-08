@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -eux  # defensive bash programming.
+
+ln -s ~/.tmux.conf .tmux.conf
