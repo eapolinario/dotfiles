@@ -34,7 +34,9 @@ values."
      gtags
      javascript
      php
-     (python :variables python-sort-imports-on-save t)
+     ;; lsp
+     ;; (python :variables python-sort-imports-on-save t py-shell-name "python3")
+     (python :variables python-backend 'lsp)
      salt
      shell-scripts
      sql
@@ -48,10 +50,12 @@ values."
      ;; ----------------------------------------------------------------
      ;; (auto-completion :variables
      ;;                  auto-completion-enable-snippets-in-popup t)
-     (auto-completion :variables
-                      auto-completion-enable-help-tooltip t
-                      auto-completion-enable-sort-by-usage t)
+     ;; (auto-completion :variables
+     ;;                  auto-completion-enable-help-tooltip t
+     ;;                  auto-completion-enable-sort-by-usage t)
+     version-control
      git
+     github
      ;; ----------------------------------------------------------------
      ;; ----------------------------------------------------------------
      ;; Productivity
@@ -75,7 +79,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(protobuf-mode)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -283,7 +287,7 @@ in `dotspacemacs/user-config'."
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
-  (global-company-mode)
+  ;; (lobal-company-mode)
   (setq powerline-default-separator 'bar)
   (defun timestamp ()
     (interactive)
@@ -295,9 +299,10 @@ layers configuration. You are free to put any user code."
         org-agenda-files (list org-directory
                                (concat org-directory "/notes")
                                (concat org-directory "/work")
+                               (concat org-directory "/personal")
                                (concat org-directory "/projects"))
-        org-refile-targets '((nil :maxlevel . 3)
-                             (org-agenda-files :maxlevel . 3))
+        org-refile-targets '((nil :maxlevel . 1)
+                             (org-agenda-files :maxlevel . 2))
         org-log-done t
         org-startup-with-inline-images t
         ;; investigate what is the purpose of this? Maybe it forces images to load
@@ -308,7 +313,12 @@ layers configuration. You are free to put any user code."
         org-html-doctype "html5"
         org-html-metadata-timestamp-format "%Y %b %d (%a)"
         )
-  )
+
+  ;; todo keywords
+  (setq org-todo-keywords
+        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)" "WON'T FIX"))))
+)
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -326,7 +336,7 @@ layers configuration. You are free to put any user code."
  '(org-agenda-files (quote ("~/links.org")))
  '(package-selected-packages
    (quote
-    (sql-indent tide typescript-mode org-mime graphviz-dot-mode org-category-capture ghub let-alist rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby pdf-tools tablist ox-reveal insert-shebang fish-mode company-shell shut-up winum fuzzy omnisharp csharp-mode salt-mode mmm-jinja2 csv-mode yaml-mode pcache go-guru rainbow-mode rainbow-identifiers color-identifiers-mode yapfify uuidgen py-isort pug-mode osx-dictionary org-projectile org org-download livid-mode skewer-mode simple-httpd live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff goto-chg undo-tree dumb-jump diminish column-enforce-mode ws-butler window-numbering web-mode web-beautify volatile-highlights vi-tilde-fringe toc-org tagedit spaceline powerline smooth-scrolling smeargle slim-mode scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-yapf popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el pbcopy paradox hydra spinner page-break-lines osx-trash orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme less-css-mode launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc jade-mode info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gtags helm-gitignore request helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md ggtags flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight emmet-mode elisp-slime-nav drupal-mode php-mode define-word cython-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-quickhelp pos-tip company-go go-mode company-anaconda company coffee-mode clean-aindent-mode buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme))))
+    (protobuf-mode magit-gh-pulls github-search github-clone treepy graphql github-browse-file gist gh marshal logito ht git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter diff-hl sql-indent tide typescript-mode org-mime graphviz-dot-mode org-category-capture ghub let-alist rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby pdf-tools tablist ox-reveal insert-shebang fish-mode company-shell shut-up winum fuzzy omnisharp csharp-mode salt-mode mmm-jinja2 csv-mode yaml-mode pcache go-guru rainbow-mode rainbow-identifiers color-identifiers-mode yapfify uuidgen py-isort pug-mode osx-dictionary org-projectile org org-download livid-mode skewer-mode simple-httpd live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff goto-chg undo-tree dumb-jump diminish column-enforce-mode ws-butler window-numbering web-mode web-beautify volatile-highlights vi-tilde-fringe toc-org tagedit spaceline powerline smooth-scrolling smeargle slim-mode scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-yapf popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el pbcopy paradox hydra spinner page-break-lines osx-trash orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme less-css-mode launchctl json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc jade-mode info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gtags helm-gitignore request helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio go-eldoc gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger gh-md ggtags flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight emmet-mode elisp-slime-nav drupal-mode php-mode define-word cython-mode company-web web-completion-data company-tern dash-functional tern company-statistics company-quickhelp pos-tip company-go go-mode company-anaconda company coffee-mode clean-aindent-mode buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-dictionary auto-compile packed anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
