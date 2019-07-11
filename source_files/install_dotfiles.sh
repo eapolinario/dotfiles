@@ -6,3 +6,4 @@ set -eux  # defensive bash programming.
 # -n is to guard against creating a symbolic link inside a directory.
 ln -sfn /Users/`whoami`/Dropbox/dotfiles/.tmux.conf ~/.tmux.conf
 ln -sfn /Users/`whoami`/Dropbox/dotfiles/.spacemacs ~/.spacemacs
+ln -sfn /Users/`whoami`/Dropbox/org ~/org
