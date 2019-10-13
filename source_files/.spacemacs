@@ -62,6 +62,7 @@ This function should only modify configuration layer settings."
      git
      (org :variables
           org-clock-out-switch-to-state "WAITING"  ;; Change the state of a task to "WAITING" after clocking out.
+          org-clock-in-switch-to-state "NEXT"  ;; Change the state of a task to "NEXT" after clocking in.
           org-directory "~/org"
           my-org-work-journal-file (concat org-directory "/work_journal.org")
           my-org-personal-journal-file (concat org-directory "/personal_journal.org")
