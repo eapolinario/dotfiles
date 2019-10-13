@@ -33,7 +33,10 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(go
+   '(
+     (go :variables
+         godoc-at-point-function 'godoc-gogetdoc
+         go-backend 'gols)
      csv
      html
      markdown
