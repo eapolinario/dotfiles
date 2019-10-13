@@ -531,6 +531,15 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (setq powerline-default-separator 'arrow)
+  (defun aj-toggle-fold ()
+    "Toggle fold all lines larger than indentation on current line. Copied from https://stackoverflow.com/a/4459159/205787"
+    (interactive)
+    (let ((col 1))
+      (save-excursion
+        (back-to-indentation)
+        (setq col (+ 1 (current-column)))
+        (set-selective-display
+         (if selective-display nil (or col 1))))))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
