@@ -35,6 +35,7 @@ This function should only modify configuration layer settings."
    dotspacemacs-configuration-layers
    '(
      (go :variables
+         go-format-before-save t
          godoc-at-point-function 'godoc-gogetdoc
          go-backend 'gols)
      csv
