@@ -97,12 +97,15 @@ This function should only modify configuration layer settings."
                                   ("k" "Personal Journal" entry
                                    (file+datetree my-org-personal-journal-file) "**** %U%?%a \n" :tree-type week)
                                   )
+          ;; org-refile configs
+          org-refile-allow-creating-parent-nodes (quote confirm)
           org-refile-targets '((nil :maxlevel . 1)
                                (org-agenda-files :maxlevel . 1))
           )
      osx
      themes-megapack
      protobuf
+     theming
      )
 
    ;; List of additional packages that will be installed without being
