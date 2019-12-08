@@ -86,12 +86,17 @@ This function should only modify configuration layer settings."
           org-agenda-files (list org-directory
                                  my-org-work-journal-file
                                  my-org-personal-journal-file)
-          org-capture-templates '(
-                                  ("t" "TODO" entry
-                                   (file+headline org-default-notes-file "Tasks") "** TODO %? \n SCHEDULED: %^T \n")
+          ;; In order to use files for the org-capture templates we have to the backquote list form and force
+          ;; the evaluation of the function that describes the template. The solution is described in
+          ;; https://stackoverflow.com/a/50875947/205787.
+          org-capture-templates `(
+                                  ("t"                                             ; hotkey
+                                   "TODO"                                          ; name
+                                   entry                                           ; type
+                                   (file+headline org-default-notes-file "Tasks")
+                                   (file ,(concat org-directory "/org-templates/todo.template"))) ; template
                                   ("n" "Notes" entry (file+headline my-org-notes-file "Notes")
                                    "** %^{Description} %^g \n%?")
-                                  ("l" "Log Time" entry (file+datetree my-org-timelog-file) "** %U - %^{Activity} :TIME:")
                                   ("j" "Work Journal" entry
                                    (file+datetree my-org-work-journal-file) "**** %U%?%a \n" :tree-type week)
                                   ("k" "Personal Journal" entry
