@@ -95,7 +95,7 @@ This function should only modify configuration layer settings."
                                    (file+headline org-default-notes-file "Tasks")
                                    (file ,(concat org-directory "/org-templates/todo.template"))) ; template
                                   ("n" "Notes" entry (file+headline my-org-notes-file "Notes")
-                                   "** %^{Description} %^g \n%?")
+                                   (file ,(concat org-directory "/org-templates/notes.template")))
                                   ("j" "Work Journal" entry
                                    (file+datetree my-org-work-journal-file) "**** %U%?%a \n" :tree-type week)
                                   ("k" "Personal Journal" entry
