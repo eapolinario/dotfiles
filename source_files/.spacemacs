@@ -67,7 +67,6 @@ This function should only modify configuration layer settings."
           org-directory "~/org"
           my-org-work-journal-file (concat org-directory "/work_journal.org")
           my-org-personal-journal-file (concat org-directory "/personal_journal.org")
-          my-org-timelog-file (concat org-directory "/timelog.org")
           my-org-notes-file (concat org-directory "/notes.org")
           org-default-notes-file (concat org-directory "/inbox.org")
           org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
