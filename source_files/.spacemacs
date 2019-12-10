@@ -89,17 +89,28 @@ This function should only modify configuration layer settings."
           ;; the evaluation of the function that describes the template. The solution is described in
           ;; https://stackoverflow.com/a/50875947/205787.
           org-capture-templates `(
-                                  ("t"                                             ; hotkey
-                                   "TODO"                                          ; name
-                                   entry                                           ; type
-                                   (file+headline org-default-notes-file "Tasks")
+                                  ("t"                                                            ; hotkey
+                                   "TODO"                                                         ; name
+                                   entry                                                          ; type
+                                   (file+headline org-default-notes-file "Tasks")                 ; target
                                    (file ,(concat org-directory "/org-templates/todo.template"))) ; template
-                                  ("n" "Notes" entry (file+headline my-org-notes-file "Notes")
-                                   (file ,(concat org-directory "/org-templates/notes.template")))
-                                  ("j" "Work Journal" entry
-                                   (file+datetree my-org-work-journal-file) "**** %U%?%a \n" :tree-type week)
-                                  ("k" "Personal Journal" entry
-                                   (file+datetree my-org-personal-journal-file) "**** %U%?%a \n" :tree-type week)
+                                  ("n"                                                             ; hotkey
+                                   "Notes"                                                         ; name
+                                   entry                                                           ; type
+                                   (file+headline my-org-notes-file "Notes")                       ; target
+                                   (file ,(concat org-directory "/org-templates/notes.template"))) ; template
+                                  ("j"                                                              ; hotkey
+                                   "Work Journal"                                                   ; name
+                                   entry                                                            ; type
+                                   (file+datetree my-org-work-journal-file)                         ; target
+                                   (file ,(concat org-directory "/org-templates/journal.template")) ; template
+                                   :tree-type week)                                                 ; properties
+                                  ("k"                                                              ; hotkey
+                                   "Personal Journal"                                               ; name
+                                   entry                                                            ; type
+                                   (file+datetree my-org-personal-journal-file)                     ; target
+                                   (file ,(concat org-directory "/org-templates/journal.template")) ; template
+                                   :tree-type week)                                                 ; properties
                                   )
           ;; org-refile configs
           org-refile-allow-creating-parent-nodes (quote confirm)
