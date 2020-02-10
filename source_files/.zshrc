@@ -86,7 +86,7 @@ SAVEHIST=$HISTSIZE
 setopt HIST_IGNORE_ALL_DUPS # Do not enter command lines into the history list if they are duplicates of the previous event
 setopt HIST_IGNORE_SPACE  # Remove command lines from the history list when the first character on the line is a space
 setopt HIST_SAVE_NO_DUPS  # Don't write duplicate entries in the history file.
-
+setopt AUTO_PUSHD # Make cd push the old directory onto the directory stack
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
