@@ -54,9 +54,6 @@ COMPLETION_WAITING_DOTS="true"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
 HIST_STAMPS="mm/dd/yyyy"
-# Trying out to get "infinite" history based on a similar bash concept (only that in bash it's a bit different: https://stackoverflow.com/questions/9457233/unlimited-bash-history)
-HISTSIZE=999999999
-SAVEHIST=$HISTSIZE
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -81,6 +78,15 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+
+# Trying out to get "infinite" history based on a similar bash concept (only that in bash it's a bit different: https://stackoverflow.com/questions/9457233/unlimited-bash-history)
+HISTSIZE=999999999
+SAVEHIST=$HISTSIZE
+
+setopt HIST_IGNORE_ALL_DUPS # Do not enter command lines into the history list if they are duplicates of the previous event
+setopt HIST_IGNORE_SPACE  # Remove command lines from the history list when the first character on the line is a space
+setopt HIST_SAVE_NO_DUPS  # Don't write duplicate entries in the history file.
+
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
