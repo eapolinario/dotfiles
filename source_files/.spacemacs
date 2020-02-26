@@ -38,7 +38,8 @@ This function should only modify configuration layer settings."
      (go :variables
          go-format-before-save t
          godoc-at-point-function 'godoc-gogetdoc
-         go-backend 'gols)
+         go-backend 'lsp
+         )
      csharp
      shell-scripts
      yaml
