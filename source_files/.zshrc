@@ -129,7 +129,7 @@ source '/Users/eapolinario/repos/awsaccess/oktaawsaccess.sh' # oktaawsaccess
 export PS1="\$(ps1_mfa_context)$PS1" # awsaccess
 PATH=$PATH:/Users/eapolinario/.lyftkube-bin
 export GOBIN=$GOPATH/bin
-export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.12/bin:$PATH"
+export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.13/bin:$PATH"
 # The following path may vary based on where you have checked out the repo
 export FAB_HOME=$HOME/repos/hacktools/fab
 alias fab="$FAB_HOME/fab -f $FAB_HOME/fabfile"
