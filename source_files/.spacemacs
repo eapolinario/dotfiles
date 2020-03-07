@@ -621,7 +621,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
    '(org-list-dt ((t (:inherit fixed-pitch :foreground "#819cd6" :weight bold))))
    '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
    '(org-property-value ((t (:inherit fixed-pitch))) t)
-   '(org-quote ((t (:background "#32353f" :family "ETBembo"))))
+   '(org-quote ((t (:height 1.2 :family "ETBembo"))))
    '(org-todo ((t (:inherit fixed-pitch :foreground "Pink" :weight bold))))
    '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
    '(org-verse ((t (:inherit fixed-pitch))))
