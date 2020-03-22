@@ -111,13 +111,14 @@ This function should only modify configuration layer settings."
                                    entry                                                           ; type
                                    (file+headline my-org-notes-file "Notes")                       ; target
                                    (file ,(concat org-directory "/org-templates/notes.template"))) ; template
-                                  ("j"                                                              ; hotkey
+                                  ("j" "Journals")
+                                  ("jw"                                                              ; hotkey
                                    "Work Journal"                                                   ; name
                                    entry                                                            ; type
                                    (file+datetree my-org-work-journal-file)                         ; target
                                    (file ,(concat org-directory "/org-templates/journal.template")) ; template
                                    :tree-type week)                                                 ; properties
-                                  ("k"                                                              ; hotkey
+                                  ("jp"                                                              ; hotkey
                                    "Personal Journal"                                               ; name
                                    entry                                                            ; type
                                    (file+datetree my-org-personal-journal-file)                     ; target
