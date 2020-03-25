@@ -49,7 +49,10 @@ This function should only modify configuration layer settings."
      yaml
      sql
      javascript
-     lsp
+     (lsp :variables
+          lsp-enable-snippet nil
+          lsp-log-io nil
+          lsp-diagnostic-package :none)
      salt
      emacs-lisp
      (auto-completion :variables
