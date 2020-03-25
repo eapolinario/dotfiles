@@ -133,6 +133,10 @@ This function should only modify configuration layer settings."
           org-refile-targets '((nil :maxlevel . 1)
                                (org-agenda-files :maxlevel . 1))
           org-agenda-todo-ignore-scheduled t
+
+          ;; org-pomodoro settings
+          ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
+          org-pomodoro-ticking-sound-p t
           )
      ;; for pdf files
      pdf
