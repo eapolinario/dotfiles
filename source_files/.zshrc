@@ -124,15 +124,19 @@ alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/
 
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source /Users/$(whoami)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source '/Users/eapolinario/repos/awsaccess/awsaccess2.sh' # awsaccess
-source '/Users/eapolinario/repos/awsaccess/oktaawsaccess.sh' # oktaawsaccess
-export PS1="\$(ps1_mfa_context)$PS1" # awsaccess
-PATH=$PATH:/Users/eapolinario/.lyftkube-bin
-export GOBIN=$GOPATH/bin
-export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.13/bin:$PATH"
-# The following path may vary based on where you have checked out the repo
-export FAB_HOME=$HOME/repos/hacktools/fab
-alias fab="$FAB_HOME/fab -f $FAB_HOME/fabfile"
+
+# Lyft specific configs. I know, this is lame, but I never use that as my alias in my personal machines anyway. :-)
+if [[ $(whoami) == "eapolinario" ]]; then
+    source '/Users/eapolinario/repos/awsaccess/awsaccess2.sh' # awsaccess
+    source '/Users/eapolinario/repos/awsaccess/oktaawsaccess.sh' # oktaawsaccess
+    export PS1="\$(ps1_mfa_context)$PS1" # awsaccess
+    PATH=$PATH:/Users/eapolinario/.lyftkube-bin
+    export GOBIN=$GOPATH/bin
+    export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.13/bin:$PATH"
+    # The following path may vary based on where you have checked out the repo
+    export FAB_HOME=$HOME/repos/hacktools/fab
+    alias fab="$FAB_HOME/fab -f $FAB_HOME/fabfile"
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
