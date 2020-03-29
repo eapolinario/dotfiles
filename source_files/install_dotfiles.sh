@@ -23,6 +23,18 @@ for DOTFILE in .tmux.conf .spacemacs .zshrc .zshenv .zsh_history .p10k.zsh; do
     ln -sfn $DIR/$DOTFILE ~/$DOTFILE
 done;
 
+################
+# tmux plugins #
+################
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# TODO do I have to clone plugins or can I rely on https://github.com/tmux-plugins/tpm#installing-plugins ?
+
+#######################
+# end of tmux plugins #
+#######################
+
 ############
 # zsh area #
 ############
