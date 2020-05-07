@@ -138,6 +138,13 @@ This function should only modify configuration layer settings."
           ;; org-pomodoro settings
           ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
           org-pomodoro-ticking-sound-p t
+
+          ;; org-protocol-templates '(
+          ;;                          ("p" "Protocol" entry (file+headline "~/org/notes_test.org" "Inbox")
+          ;;                           "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+          ;;                          ("L" "Protocol Link" entry (file+headline "~/org/notes_test.org" "Inbox")
+          ;;                           "* %? [[%:link][%:description]] \nCaptured On: %U")
+          ;;                          )
           )
      ;; for pdf files
      pdf
@@ -581,6 +588,7 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  (require 'org-protocol)
   ;; Text takes up 85% of the buffer
   (setq olivetti-body-width 0.85)
   ;; Starts text files (like .org .txt .md) in olivetti mode
