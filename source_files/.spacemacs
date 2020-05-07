@@ -54,6 +54,7 @@ This function should only modify configuration layer settings."
           lsp-log-io nil
           lsp-diagnostic-package :none)
      salt
+     (docker :variables docker-dockerfile-backend 'lsp)
      emacs-lisp
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
