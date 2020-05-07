@@ -121,18 +121,28 @@ alias gp="git pull"
 alias gc="git checkout"
 alias gmm="git merge origin master"
 alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/develop/org-plus-contrib* -name '*.elc' -delete"  # update spacemacs (copied from https://github.com/syl20bnr/spacemacs/issues/11801)
-
-# As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
-source /Users/eapolinario/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source '/Users/eapolinario/repos/awsaccess/awsaccess2.sh' # awsaccess
 source '/Users/eapolinario/repos/awsaccess/oktaawsaccess.sh' # oktaawsaccess
 export PS1="\$(ps1_mfa_context)$PS1" # awsaccess
 PATH=$PATH:/Users/eapolinario/.lyftkube-bin
 export GOBIN=$GOPATH/bin
-export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.13/bin:$PATH"
+export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.14/bin:$PATH"
 # The following path may vary based on where you have checked out the repo
 export FAB_HOME=$HOME/repos/hacktools/fab
 alias fab="$FAB_HOME/fab -f $FAB_HOME/fabfile"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+
+# To apply the command to CTRL-T as well
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always {} | head -n 100'"
+
+
+# As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
+source /Users/eapolinario/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
