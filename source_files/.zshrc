@@ -110,7 +110,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always {} | head -n 100'"
 
 # Experimenting with nix.
-source $HOME/.nix-profile/etc/profile.d/nix.sh
+[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ] && source $HOME/.nix-profile/etc/profile.d/nix.sh
 
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
