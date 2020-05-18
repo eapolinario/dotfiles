@@ -183,6 +183,7 @@ This function should only modify configuration layer settings."
      org-reverse-datetree
      ;; For annotating PDFs
      org-noter
+     zoom-window
      )
 
    ;; A list of packages that cannot be updated.
