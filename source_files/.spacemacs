@@ -735,6 +735,7 @@ This function is called at the very end of Spacemacs initialization."
  '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
  '(org-property-value ((t (:inherit fixed-pitch))) t)
  '(org-quote ((t (:height 1.2 :family "ETBembo"))))
+ '(org-table ((t (:family "Monospace"))))
  '(org-todo ((t (:inherit fixed-pitch :foreground "Pink" :weight bold))))
  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
  '(org-verse ((t (:inherit fixed-pitch))))
