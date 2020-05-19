@@ -184,6 +184,7 @@ This function should only modify configuration layer settings."
      ;; For annotating PDFs
      org-noter
      zoom-window
+     docker
      )
 
    ;; A list of packages that cannot be updated.
