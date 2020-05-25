@@ -54,4 +54,5 @@
 
 (use-package! magit
   :init
-  (map! "SPC g s" #'magit-status))
+  (map! :leader :prefix "g"
+        "s" #'magit-status))
