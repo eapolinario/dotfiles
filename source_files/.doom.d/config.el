@@ -54,4 +54,4 @@
 
 (use-package! magit
   :init
-  (map! "C-c g" #'magit-status))
+  (map! "SPC g s" #'magit-status))
