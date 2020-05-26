@@ -19,7 +19,7 @@ DIR=$(abs_script_dir_path $0)
 
 # -f flag removes the target destination before creating the symbolic link. We do this to protect against failures (e.g. existent links).
 # -n is to guard against creating a symbolic link inside a directory.
-for DOTFILE in .tmux.conf .spacemacs .zshrc .zshenv .zsh_history .p10k.zsh; do
+for DOTFILE in .tmux.conf .spacemacs .zshrc .zshenv .zsh_history .p10k.zsh .fzf.zsh; do
     ln -sfn $DIR/$DOTFILE ~/$DOTFILE
 done;
 
