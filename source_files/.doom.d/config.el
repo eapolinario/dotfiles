@@ -41,6 +41,7 @@
 ;; - `load!' for loading external *.el files relative to this one
 ;; - `use-package' for configuring packages
 ;; - `after!' for running code after a package has loaded
+
 ;; - `add-load-path!' for adding directories to the `load-path', relative to
 ;;   this file. Emacs searches the `load-path' when you load packages with
 ;;   `require' or `use-package'.
@@ -53,9 +54,81 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
+;; Maximize on startup
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+;;
 (use-package! magit
   :init
   (map! :leader :prefix "g"
         "s" #'magit-status))
 
 (setq-default evil-escape-key-sequence "fd")
+
+(setq org-clock-out-switch-to-state "WAITING"  ;; Change the state of a task to "WAITING" after clocking out.
+      org-clock-in-switch-to-state "NEXT"  ;; Change the state of a task to "NEXT" after clocking in.
+      org-directory "~/org"
+      my-org-work-journal-file (concat org-directory "/work_journal.org")
+      my-org-personal-journal-file (concat org-directory "/personal_journal.org")
+      my-org-notes-file (concat org-directory "/notes.org")
+      my-org-links-file (concat org-directory "/links.org")
+          org-default-notes-file (concat org-directory "/inbox.org")
+          org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                                    (sequence "WAITING(w@/!)" "|" "CANCELLED(c@/!)")))
+          org-todo-keyword-faces (quote (("TODO" :foreground "red" :weight bold)
+                                         ("NEXT" :foreground "blue" :weight bold)
+                                         ("DONE" :foreground "forest green" :weight bold)
+                                         ("WAITING" :foreground "orange" :weight bold)
+                                         ("CANCELLED" :foreground "forest green" :weight bold)))
+          org-todo-state-tags-triggers (quote (("CANCELLED" ("CANCELLED" . t))
+                                               ("WAITING" ("WAITING" . t))
+                                               (done ("WAITING"))
+                                               ("TODO" ("WAITING") ("CANCELLED"))
+                                               ("NEXT" ("WAITING") ("CANCELLED"))
+                                               ("DONE" ("WAITING") ("CANCELLED"))))
+          org-agenda-files (list org-directory
+                                 org-default-notes-file
+                                 my-org-work-journal-file
+                                 my-org-personal-journal-file)
+          ;; In order to use files for the org-capture templates we have to the backquote list form and force
+          ;; the evaluation of the function that describes the template. The solution is described in
+          ;; https://stackoverflow.com/a/50875947/205787.
+          org-capture-templates `(
+                                  ("u"
+                                   "URL"
+                                   entry
+                                   (file+function my-org-links-file org-reverse-datetree-goto-date-in-file)
+                                   (file ,(concat org-directory "/org-templates/links.template")))
+                                  ("t"                                                            ; hotkey
+                                   "TODO"                                                         ; name
+                                   entry                                                          ; type
+                                   (file+headline org-default-notes-file "Tasks")                 ; target
+                                   (file ,(concat org-directory "/org-templates/todo.template"))) ; template
+                                  ("n"                                                             ; hotkey
+                                   "Notes"                                                         ; name
+                                   entry                                                           ; type
+                                   (file+headline my-org-notes-file "Notes")                       ; target
+                                   (file ,(concat org-directory "/org-templates/notes.template"))) ; template
+                                  ("j" "Journals")
+                                  ("jw"                                                              ; hotkey
+                                   "Work Journal"                                                   ; name
+                                   entry                                                            ; type
+                                   (file+datetree my-org-work-journal-file)                         ; target
+                                   (file ,(concat org-directory "/org-templates/journal.template")) ; template
+                                   :tree-type week)                                                 ; properties
+                                  ("jp"                                                              ; hotkey
+                                   "Personal Journal"                                               ; name
+                                   entry                                                            ; type
+                                   (file+datetree my-org-personal-journal-file)                     ; target
+                                   (file ,(concat org-directory "/org-templates/journal.template")) ; template
+                                   :tree-type week)                                                 ; properties
+                                  )
+          ;; org-refile configs
+          org-refile-allow-creating-parent-nodes (quote confirm)
+          org-refile-targets '((nil :maxlevel . 1)
+                               (org-agenda-files :maxlevel . 1))
+          org-agenda-todo-ignore-scheduled t
+
+          ;; org-pomodoro settings
+          ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
+          org-pomodoro-ticking-sound-p t)
