@@ -83,9 +83,6 @@ alias gc="git checkout"
 alias gmm="git merge origin master"
 alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/develop/org-plus-contrib* -name '*.elc' -delete"  # update spacemacs (copied from https://github.com/syl20bnr/spacemacs/issues/11801)
 
-# As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
-source /Users/$(whoami)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # Lyft specific configs. I know, this is lame, but I never use that as my alias in my personal machines anyway. :-)
 if [[ $(whoami) == "eapolinario" ]]; then
     source '/Users/eapolinario/repos/awsaccess/awsaccess2.sh' # awsaccess
