@@ -132,3 +132,15 @@
           ;; org-pomodoro settings
           ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
           org-pomodoro-ticking-sound-p t)
+
+;; counsel should search for hidden files too.
+;; https://github.com/hlissner/doom-emacs/issues/3190#issuecomment-631932638
+(after! counsel
+  (setq counsel-find-file-ignore-regexp
+        (concat
+         ;; File names beginning with #
+         "\\(?:\\`[#]\\)"
+         ;; File names ending with # or ~
+         "\\|\\(?:\\`.+?[#~]\\'\\)"))
+  (setq counsel-rg-base-command
+        "rg -M 240 --hidden --with-filename --no-heading --line-number --color never %s"))
