@@ -26,7 +26,6 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-solarized-light)
 
-
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
@@ -132,3 +131,8 @@
           ;; org-pomodoro settings
           ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
           org-pomodoro-ticking-sound-p t)
+
+;; TODO: can I put this after! block closer to the declaration of the package?
+;; FIXME: fix this. I'm probably missing a use-package.
+(after! org-autolist
+  (add-hook! 'org-mode-hook (lambda () (org-autolist-mode))))
