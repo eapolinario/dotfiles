@@ -49,3 +49,5 @@
 (package! org-pomodoro)
 
 (package! org-autolist)
+;; [[file:config.el::file+function my-org-links-file org-reverse-datetree-goto-date-in-file][Org template used to store links needs this]]
+(package! org-reverse-datetree)

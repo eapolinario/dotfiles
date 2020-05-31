@@ -136,3 +136,14 @@
 ;; FIXME: fix this. I'm probably missing a use-package.
 (after! org-autolist
   (add-hook! 'org-mode-hook (lambda () (org-autolist-mode))))
+;; counsel should search for hidden files too.
+;; https://github.com/hlissner/doom-emacs/issues/3190#issuecomment-631932638
+(after! counsel
+  (setq counsel-find-file-ignore-regexp
+        (concat
+         ;; File names beginning with #
+         "\\(?:\\`[#]\\)"
+         ;; File names ending with # or ~
+         "\\|\\(?:\\`.+?[#~]\\'\\)"))
+  (setq counsel-rg-base-command
+        "rg -M 240 --hidden --with-filename --no-heading --line-number --color never %s"))
