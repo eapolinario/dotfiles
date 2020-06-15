@@ -24,7 +24,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-solarized-light)
+(setq doom-theme 'doom-molokai)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -135,7 +135,8 @@
 ;; TODO: can I put this after! block closer to the declaration of the package?
 ;; FIXME: fix this. I'm probably missing a use-package.
 (after! org-autolist
-  (add-hook! 'org-mode-hook (lambda () (org-autolist-mode))))
+  (add-hook! 'org-mode-hook 'org-autolist-mode))
+
 ;; counsel should search for hidden files too.
 ;; https://github.com/hlissner/doom-emacs/issues/3190#issuecomment-631932638
 (after! counsel
