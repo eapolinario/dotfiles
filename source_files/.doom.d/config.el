@@ -147,3 +147,12 @@
          "\\|\\(?:\\`.+?[#~]\\'\\)"))
   (setq counsel-rg-base-command
         "rg -M 240 --hidden --with-filename --no-heading --line-number --color never %s"))
+
+;; Golang
+(add-hook! go-mode
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook 'gofmt-before-save))
+
+;; FIXME: this is not the right way of using add-hook!
+(after! emojify
+  (add-hook! 'after-init-hook #'global-emojify-mode))
