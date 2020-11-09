@@ -55,3 +55,5 @@
 
 (package! emojify)
 (package! org-download)
+
+(package! elfeed)

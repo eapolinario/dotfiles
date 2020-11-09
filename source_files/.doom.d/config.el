@@ -158,3 +158,9 @@
 ;; FIXME: this is not the right way of using add-hook!
 (after! emojify
   (add-hook! 'after-init-hook #'global-emojify-mode))
+(use-package! elfeed
+  :config
+  (add-hook 'elfeed-show-mode-hook 'elfeed-setup-hook)
+  (setq elfeed-feeds
+        '(("https://planet.emacslife.com/atom.xml"))))
+
