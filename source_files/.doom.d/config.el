@@ -138,6 +138,18 @@
   )
 )
 
+;; FIXME: this should respect the variables defined above and not stay floating.
+(setq org-roam-directory "~/org/org-roam")
+
+(after! org-roam
+      (setq org-roam-capture-ref-templates
+            '(("r" "ref" plain (function org-roam-capture--get-point)
+               "%?"
+               :file-name "websites/${slug}"
+               :head "#+TITLE: ${title}
+    #+ROAM_KEY: ${ref}
+    - source :: ${ref}"
+               :unnarrowed t))))
 
 ;; better list management
 (after! org
