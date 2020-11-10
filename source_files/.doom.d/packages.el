@@ -56,4 +56,6 @@
 (package! emojify)
 (package! org-download)
 
+(package! org-superstar)
+
 (package! elfeed)

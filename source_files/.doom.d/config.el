@@ -163,6 +163,17 @@
 ;; FIXME: this is not the right way of using add-hook!
 (after! emojify
   (add-hook! 'after-init-hook #'global-emojify-mode))
+
+(use-package! org-superstar
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+  (setq org-superstar-remove-leading-stars t)
+  (setq org-superstar-headline-bullets-list '("◉" "⁖" "○" "✸" "✿"))
+
+  (setq org-superstar-prettify-item-bullets t
+        org-hide-leading-stars t)
+)
+
 (use-package! elfeed
   :config
   (add-hook 'elfeed-show-mode-hook 'elfeed-setup-hook)
