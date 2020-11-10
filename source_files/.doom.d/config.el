@@ -138,10 +138,10 @@
   )
 )
 
-;; TODO: can I put this after! block closer to the declaration of the package?
-;; FIXME: fix this. I'm probably missing a use-package.
-(after! org-autolist
-  (add-hook! 'org-mode-hook 'org-autolist-mode))
+
+;; better list management
+(after! org
+  (add-hook 'org-mode-hook 'org-autolist-mode))
 
 ;; counsel should search for hidden files too.
 ;; https://github.com/hlissner/doom-emacs/issues/3190#issuecomment-631932638
