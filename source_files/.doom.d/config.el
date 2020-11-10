@@ -192,3 +192,53 @@
   (setq elfeed-feeds
         '(("https://planet.emacslife.com/atom.xml"))))
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(custom-safe-themes
+   '("79278310dd6cacf2d2f491063c4ab8b129fee2a498e4c25912ddaa6c3c5b621e" "e074be1c799b509f52870ee596a5977b519f6d269455b84ed998666cf6fc802a" "3d3807f1070bb91a68d6638a708ee09e63c0825ad21809c87138e676a60bda5d" "71e5acf6053215f553036482f3340a5445aee364fb2e292c70d9175fb0cc8af7" "7a994c16aa550678846e82edc8c9d6a7d39cc6564baaaacc305a3fdc0bd8725f" "54cf3f8314ce89c4d7e20ae52f7ff0739efb458f4326a2ca075bf34bc0b4f499" "425cf02839fa7c5ebd6cb11f8074f6b8463ae6ed3eeb4cf5a2b18ffc33383b0b" "bc836bf29eab22d7e5b4c142d201bcce351806b7c1f94955ccafab8ce5b20208" "3c2f28c6ba2ad7373ea4c43f28fcf2eed14818ec9f0659b1c97d4e89c99e091e" "2cdc13ef8c76a22daa0f46370011f54e79bae00d5736340a5ddfe656a767fddf" default))
+ '(fci-rule-color "#555556")
+ '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#fd971f"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#b6e63e"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#525254"))
+ '(objed-cursor-color "#e74c3c")
+ '(pdf-view-midnight-colors (cons "#d6d6d4" "#1c1e1f"))
+ '(rustic-ansi-faces
+   ["#1c1e1f" "#e74c3c" "#b6e63e" "#e2c770" "#268bd2" "#fb2874" "#66d9ef" "#d6d6d4"])
+ '(safe-local-variable-values
+   '((cider-figwheel-main-default-options . ":dev")
+     (cider-clojure-cli-global-options . "-R:nrepl:deps:cljs")
+     (cider-preferred-build-tool . clojure-cli)
+     (cider-default-cljs-repl . figwheel-main)))
+ '(vc-annotate-background "#1c1e1f")
+ '(vc-annotate-color-map
+   (list
+    (cons 20 "#b6e63e")
+    (cons 40 "#c4db4e")
+    (cons 60 "#d3d15f")
+    (cons 80 "#e2c770")
+    (cons 100 "#ebb755")
+    (cons 120 "#f3a73a")
+    (cons 140 "#fd971f")
+    (cons 160 "#fc723b")
+    (cons 180 "#fb4d57")
+    (cons 200 "#fb2874")
+    (cons 220 "#f43461")
+    (cons 240 "#ed404e")
+    (cons 260 "#e74c3c")
+    (cons 280 "#c14d41")
+    (cons 300 "#9c4f48")
+    (cons 320 "#77504e")
+    (cons 340 "#555556")
+    (cons 360 "#555556")))
+ '(vc-annotate-very-old-color nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
