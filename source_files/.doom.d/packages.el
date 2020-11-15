@@ -53,7 +53,9 @@
 ;; [[file:config.el::file+function my-org-links-file org-reverse-datetree-goto-date-in-file][Org template used to store links needs this]]
 (package! org-reverse-datetree)
 
+(package! emojify)
 (package! org-download)
 
-(package! company-org-roam
-  :recipe (:host github :repo "jethrokuan/company-org-roam"))
+(package! org-superstar)
+
+(package! elfeed)
