@@ -67,6 +67,7 @@
 (setq org-clock-out-switch-to-state "WAITING"  ;; Change the state of a task to "WAITING" after clocking out.
       org-clock-in-switch-to-state "NEXT"  ;; Change the state of a task to "NEXT" after clocking in.
       org-directory "~/org"
+      org-roam-directory "~/org/org-roam"
       my-org-work-journal-file (concat org-directory "/work_journal.org")
       my-org-personal-journal-file (concat org-directory "/personal_journal.org")
       my-org-notes-file (concat org-directory "/notes.org")
@@ -148,3 +149,42 @@
          "\\|\\(?:\\`.+?[#~]\\'\\)"))
   (setq counsel-rg-base-command
         "rg -M 240 --hidden --with-filename --no-heading --line-number --color never %s"))
+
+;; (after! org-roam
+;;   (map! :leader
+;;         :prefix "n"
+;;         :desc "org-roam" "|" #'org-roam
+;;         :desc "org-roam-insert" "i" #'org-roam-insert
+;;         :desc "org-roam-switch-to-buffer" "b" #'org-roam-switch-to-buffer
+;;         :desc "org-roam-find-file" "f" #'org-roam-find-file
+;;         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
+;;         :desc "org-roam-capture" "c" #'org-roam-capture))
+
+(after! org-roam
+      (setq org-roam-capture-ref-templates
+            '(("r" "ref" plain (function org-roam-capture--get-point)
+               "%?"
+               :file-name "websites/${slug}"
+               :head "#+TITLE: ${title}
+    #+ROAM_KEY: ${ref}
+    - source :: ${ref}"
+               :unnarrowed t))))
+
+(require 'company-org-roam
+         (use-package company-org-roam
+           :when (featurep! :completion company)
+           :after org-roam
+           :config
+           (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev))))
+
+(require 'org-roam-protocol)
+
+(use-package deft
+      :after org
+      :bind
+      ("C-c n d" . deft)
+      :custom
+      (deft-recursive t)
+      (deft-use-filter-string-for-filename t)
+      (deft-default-extension "org")
+      (deft-directory "~/org/org-roam"))
