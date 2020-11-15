@@ -54,3 +54,6 @@
 (package! org-reverse-datetree)
 
 (package! org-download)
+
+(package! company-org-roam
+  :recipe (:host github :repo "jethrokuan/company-org-roam"))
