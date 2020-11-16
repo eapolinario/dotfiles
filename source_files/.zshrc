@@ -43,6 +43,7 @@ plugins=(
     zsh-autosuggestions
     zsh-completions
     zsh-syntax-highlighting
+    fzf-tab
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -94,7 +95,19 @@ export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 
 # To apply the command to CTRL-T as well
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# Context-aware completion using the '**' string
+export FZF_COMPLETION_TRIGGER='**'
+
 alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always {} | head -n 100'"
+
+# fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${LS_COLORS}
+# TODO: I couldn't make this work. The popup inside the fzf-tab would error out.
+# zstyle ':fzf-tab:complete:cd:*' fzf-command '--preview --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 # Experimenting with nix.
 [ -f $HOME/.nix-profile/etc/profile.d/nix.sh ] && source $HOME/.nix-profile/etc/profile.d/nix.sh
