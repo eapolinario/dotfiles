@@ -109,6 +109,13 @@ zstyle ':completion:*' list-colors ${LS_COLORS}
 # zstyle ':fzf-tab:complete:cd:*' fzf-command '--preview --color=always $realpath'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
+# like normal z when used with arguments but displays an fzf prompt when used without.
+unalias z 2> /dev/null
+z() {
+    [ $# -gt 0 ] && _z "$*" && return
+    cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
+
 # Experimenting with nix.
 [ -f $HOME/.nix-profile/etc/profile.d/nix.sh ] && source $HOME/.nix-profile/etc/profile.d/nix.sh
 
