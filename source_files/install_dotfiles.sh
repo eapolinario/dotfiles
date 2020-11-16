@@ -43,7 +43,7 @@ if [ ! -d ~/.oh-my-zsh ]; then
 fi
 
 # zsh plugins
-for PLUGIN in zsh-autosuggestions zsh-completions zsh-syntax-highlighting; do
+for PLUGIN in zsh-autosuggestions zsh-completions zsh-syntax-highlighting fzf-tab; do
     if [ ! -d ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/$PLUGIN ]; then
         git clone https://github.com/zsh-users/$PLUGIN ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/$PLUGIN
     fi
