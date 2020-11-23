@@ -91,6 +91,7 @@ alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/
 
 # Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--preview-window=up:10:wrap --height=60% --layout=reverse --border --preview="echo {}"'
 
 # To apply the command to CTRL-T as well
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -98,7 +99,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # Context-aware completion using the '**' string
 export FZF_COMPLETION_TRIGGER='**'
 
-alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always {} | head -n 100'"
+alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always --line-range :500 {}'"
 
 # fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
 zstyle ":completion:*:git-checkout:*" sort false
