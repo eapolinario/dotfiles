@@ -65,25 +65,34 @@
 (setq-default evil-escape-key-sequence "fd")
 
 (after! org
-  (setq org-log-done t)
+  (setq org-log-done 'note)
   (setq org-log-into-drawer t))
 
 ;; Disable linum mode in org-mode
 (after! org
   (add-hook 'org-mode-hook (lambda() (display-line-numbers-mode -1))))
 
+;; I have started using org-clock to track time I spend on tasks. Often I restart Emacs for different reasons in
+;; the middle of a session, so I want to persist all the running clocks and their history.
+(after! org-clock
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate))
+
 (after! org
   (setq org-clock-out-switch-to-state "WAITING"  ;; Change the state of a task to "WAITING" after clocking out.
         org-clock-in-switch-to-state "NEXT"  ;; Change the state of a task to "NEXT" after clocking in.
+
         org-directory "~/org"
         my-org-work-journal-file (concat org-directory "/work_journal.org")
         my-org-personal-journal-file (concat org-directory "/personal_journal.org")
         my-org-notes-file (concat org-directory "/notes.org")
         my-org-links-file (concat org-directory "/links.org")
         org-default-notes-file (concat org-directory "/inbox.org")
-        org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                                  (sequence "WAITING(w@/!)" "|" "CANCELLED(c@/!)")))
+        org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d@!)")
+                                  (sequence "INTR(i@!)" "|" "DONE(d)")
+                                  (sequence "WAITING(w@!/!)" "|" "CANCELLED(c@/!)")))
         org-todo-keyword-faces (quote (("TODO" :foreground "red" :weight bold)
+                                       ("INTR" :foreground "black" :weight bold)
                                        ("NEXT" :foreground "blue" :weight bold)
                                        ("DONE" :foreground "forest green" :weight bold)
                                        ("WAITING" :foreground "orange" :weight bold)
@@ -104,6 +113,11 @@
                                  entry
                                  (file+function my-org-links-file org-reverse-datetree-goto-date-in-file)
                                  (file ,(concat org-directory "/org-templates/links.template")))
+                                ("i"                                                                    ; hotkey
+                                 "INTR"                                                                 ; name
+                                 entry                                                                  ; type
+                                 (file+headline org-default-notes-file "Tasks")                         ; target
+                                 (file ,(concat org-directory "/org-templates/interruption.template"))) ; template
                                 ("t"                                                            ; hotkey
                                  "TODO"                                                         ; name
                                  entry                                                          ; type
