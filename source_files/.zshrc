@@ -91,7 +91,7 @@ alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/
 
 # Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-export FZF_DEFAULT_OPTS='--preview-window=up:10:wrap --height=60% --layout=reverse --border --preview="echo {}"'
+export FZF_DEFAULT_OPTS='--preview-window=down:10:wrap --height=60% --layout=reverse --border --preview="echo {}"'
 
 # To apply the command to CTRL-T as well
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
