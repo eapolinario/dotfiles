@@ -6,6 +6,10 @@ export ZSH="$HOME/.oh-my-zsh"
 
 export PATH="$(go env GOPATH)/bin:$PATH"
 
+# export ALTERNATE_EDITOR=""
+# export EDITOR="$ZSH/plugins/emacs/emacsclient.sh"
+# export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -116,6 +120,7 @@ z() {
     cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
 }
 
+
 # Register the previous command in pet (https://github.com/knqyf263/pet).
 # It requires pet to be installed.
 function prev() {
@@ -147,4 +152,17 @@ if [[ $(whoami) == "eapolinario" ]]; then
     export GOPROXY='https://athens.ingress.infra.us-east-1.k8s.lyft.net'
     export GONOSUMDB='github.com/lyft/*,github.lyft.net/*'
     export GO111MODULE='on'
+
+    # Utility functions to help in the use of kubectx and k9s
+    function kcfgsync {
+        export KUBECONFIG=
+        for kc in $HOME/.kube/configs/*; do
+            KUBECONFIG="${KUBECONFIG}:$kc"
+        done
+    }
+
+    function lyftkcfg {
+        lyftkube -e $1 --cluster $2 --email $USER@lyft.com kubeconfig > $HOME/.kube/configs/$2
+    }
 fi
+export PATH="/usr/local/sbin:$PATH"
