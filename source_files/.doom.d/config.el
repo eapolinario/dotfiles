@@ -65,6 +65,7 @@
 (setq-default evil-escape-key-sequence "fd")
 
 (after! org
+  (setq org-log-note-clock-out t)
   (setq org-log-done 'note)
   (setq org-log-into-drawer t))
 
@@ -92,7 +93,7 @@
                                   (sequence "INTR(i@!)" "|" "DONE(d)")
                                   (sequence "WAITING(w@!/!)" "|" "CANCELLED(c@/!)")))
         org-todo-keyword-faces (quote (("TODO" :foreground "red" :weight bold)
-                                       ("INTR" :foreground "black" :weight bold)
+                                       ("INTR" :foreground "brown" :weight bold)
                                        ("NEXT" :foreground "blue" :weight bold)
                                        ("DONE" :foreground "forest green" :weight bold)
                                        ("WAITING" :foreground "orange" :weight bold)
