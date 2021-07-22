@@ -6,6 +6,10 @@ export ZSH="$HOME/.oh-my-zsh"
 
 export PATH="$(go env GOPATH)/bin:$PATH"
 
+# export ALTERNATE_EDITOR=""
+# export EDITOR="$ZSH/plugins/emacs/emacsclient.sh"
+# export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -33,8 +37,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    # TODO: why on earth did I even put this here?
-    # emacs
+    emacs
     git
     osx
     pyenv
@@ -43,6 +46,7 @@ plugins=(
     zsh-autosuggestions
     zsh-completions
     zsh-syntax-highlighting
+    fzf-tab
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -83,6 +87,7 @@ alias gp="git pull"
 alias gc="git checkout"
 alias gmm="git merge origin master"
 alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/develop/org-plus-contrib* -name '*.elc' -delete"  # update spacemacs (copied from https://github.com/syl20bnr/spacemacs/issues/11801)
+alias w5="watch -n5"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -91,10 +96,38 @@ alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/
 
 # Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--preview-window=down:10:wrap --height=60% --layout=reverse --border --preview="echo {}"'
 
 # To apply the command to CTRL-T as well
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always {} | head -n 100'"
+
+# Context-aware completion using the '**' string
+export FZF_COMPLETION_TRIGGER='**'
+
+alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always --line-range :500 {}'"
+
+# fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
+zstyle ":completion:*:git-checkout:*" sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${LS_COLORS}
+# TODO: I couldn't make this work. The popup inside the fzf-tab would error out.
+# zstyle ':fzf-tab:complete:cd:*' fzf-command '--preview --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+
+# like normal z when used with arguments but displays an fzf prompt when used without.
+unalias z 2> /dev/null
+z() {
+    [ $# -gt 0 ] && _z "$*" && return
+    cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+}
+
+
+# Register the previous command in pet (https://github.com/knqyf263/pet).
+# It requires pet to be installed.
+function prev() {
+  PREV=$(fc -lrn | head -n 1)
+  sh -c "pet new `printf %q "$PREV"`"
+}
 
 # Experimenting with nix.
 [ -f $HOME/.nix-profile/etc/profile.d/nix.sh ] && source $HOME/.nix-profile/etc/profile.d/nix.sh
@@ -120,4 +153,17 @@ if [[ $(whoami) == "eapolinario" ]]; then
     export GOPROXY='https://athens.ingress.infra.us-east-1.k8s.lyft.net'
     export GONOSUMDB='github.com/lyft/*,github.lyft.net/*'
     export GO111MODULE='on'
+
+    # Utility functions to help in the use of kubectx and k9s
+    function kcfgsync {
+        export KUBECONFIG=
+        for kc in $HOME/.kube/configs/*; do
+            KUBECONFIG="${KUBECONFIG}:$kc"
+        done
+    }
+
+    function lyftkcfg {
+        lyftkube -e $1 --cluster $2 --email $USER@lyft.com kubeconfig > $HOME/.kube/configs/$2
+    }
 fi
+export PATH="/usr/local/sbin:$PATH"
