@@ -174,7 +174,3 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=grey,bold,underline"
 
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
-
