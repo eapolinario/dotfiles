@@ -1,24 +1,58 @@
-# For pkg-config to find zlib you may need to set:
-export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig"
+# If you come from bash you might have to change your $PATH.
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
-export PATH="$(go env GOPATH)/bin:$PATH"
-
-# export ALTERNATE_EDITOR=""
-# export EDITOR="$ZSH/plugins/emacs/emacsclient.sh"
-# export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+export ZSH="/home/eduardo/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
+
 # Uncomment the following line to change how often to auto-update (in days).
-export UPDATE_ZSH_DAYS=14
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
+# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -32,21 +66,20 @@ HIST_STAMPS="yyyy-mm-dd"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
 # Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     emacs
+    fzf-tab
     git
-    osx
-    pyenv
     z
     zsh-256color
     zsh-autosuggestions
     zsh-completions
     zsh-syntax-highlighting
-    fzf-tab
+    fzf-zsh-plugin
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -62,6 +95,14 @@ setopt HIST_IGNORE_SPACE  # Remove command lines from the history list when the 
 setopt HIST_SAVE_NO_DUPS  # Don't write duplicate entries in the history file.
 setopt AUTO_PUSHD # Make cd push the old directory onto the directory stack
 
+# Enable autocompletions
+autoload -U compinit && compinit
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
@@ -72,21 +113,17 @@ setopt AUTO_PUSHD # Make cd push the old directory onto the directory stack
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/rsa_id"
-
-# Enable autocompletions
-autoload -U compinit && compinit
-
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
 alias gp="git pull"
 alias gc="git checkout"
-alias gmm="git merge origin master"
-alias fixspacemacs="cd ~/.emacs.d && git pull --rebase; find ~/.emacs.d/elpa/2*/develop/org-plus-contrib* -name '*.elc' -delete"  # update spacemacs (copied from https://github.com/syl20bnr/spacemacs/issues/11801)
 alias w5="watch -n5"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -95,7 +132,7 @@ alias w5="watch -n5"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--preview-window=down:10:wrap --height=60% --layout=reverse --border --preview="echo {}"'
 
 # To apply the command to CTRL-T as well
@@ -104,15 +141,18 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # Context-aware completion using the '**' string
 export FZF_COMPLETION_TRIGGER='**'
 
-alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always --line-range :500 {}'"
+alias fzfp="fzf --ansi --multi --preview 'batcat --style=numbers --color=always --line-range :500 {}'"
 
-# fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
-zstyle ":completion:*:git-checkout:*" sort false
+# # fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
+zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors ${LS_COLORS}
-# TODO: I couldn't make this work. The popup inside the fzf-tab would error out.
-# zstyle ':fzf-tab:complete:cd:*' fzf-command '--preview --color=always $realpath'
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# zstyle ':completion:*' list-colors ${LS_COLORS}
+# # TODO: I couldn't make this work. The popup inside the fzf-tab would error out.
+# # zstyle ':fzf-tab:complete:cd:*' fzf-command '--preview --color=always $realpath'
+# zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath' # remember to use single quote here!!!
+# zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
+# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 # like normal z when used with arguments but displays an fzf prompt when used without.
 unalias z 2> /dev/null
@@ -129,41 +169,12 @@ function prev() {
   sh -c "pet new `printf %q "$PREV"`"
 }
 
-# Experimenting with nix.
-[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ] && source $HOME/.nix-profile/etc/profile.d/nix.sh
+# Change zsh auto-suggest highlight colors (as described in https://github.com/zsh-users/zsh-autosuggestions#configuration)
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=grey,bold,underline"
 
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Lyft specific configs. I know, this is lame, but I never use that as my alias in my personal machines anyway. :-)
-if [[ $(whoami) == "eapolinario" ]]; then
-    source '/Users/eapolinario/repos/awsaccess/awsaccess2.sh' # awsaccess
-    source '/Users/eapolinario/repos/awsaccess/oktaawsaccess.sh' # oktaawsaccess
-    export PS1="\$(ps1_mfa_context)$PS1" # awsaccess
-    PATH=$PATH:/Users/eapolinario/.lyftkube-bin
-    # export GOBIN=$GOPATH/bin
-    # export PATH="/usr/local/opt/llvm/bin:/usr/local/opt/go@1.14/bin:$PATH"
-   
-    # The following path may vary based on where you have checked out the repo
-    export FAB_HOME=$HOME/repos/hacktools/fab
-    alias fab="$FAB_HOME/fab -f $FAB_HOME/fabfile"
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
-    # Add support for Go modules and Lyft's Athens module proxy/store
-    # These variables were added by 'hacktools/set_go_env_vars.sh'
-    export GOPROXY='https://athens.ingress.infra.us-east-1.k8s.lyft.net'
-    export GONOSUMDB='github.com/lyft/*,github.lyft.net/*'
-    export GO111MODULE='on'
-
-    # Utility functions to help in the use of kubectx and k9s
-    function kcfgsync {
-        export KUBECONFIG=
-        for kc in $HOME/.kube/configs/*; do
-            KUBECONFIG="${KUBECONFIG}:$kc"
-        done
-    }
-
-    function lyftkcfg {
-        lyftkube -e $1 --cluster $2 --email $USER@lyft.com kubeconfig > $HOME/.kube/configs/$2
-    }
-fi
-export PATH="/usr/local/sbin:$PATH"
