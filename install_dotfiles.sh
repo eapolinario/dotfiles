@@ -19,9 +19,10 @@ done
 
 if [ ! -d ~/.tmux/plugins/tpm ]; then
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    # I stole this from https://github.com/tmux-plugins/tpm/issues/6
+    TMUX_PLUGIN_MANAGER_PATH=~/.tmux/plugins/ ~/.tmux/plugins/tpm/bin/install_plugins
+    # Remember that tmux plugins have different requirements, e.g. tmux-jump requires ruby to be installed!
 fi
-
-# TODO do I have to clone plugins or can I rely on https://github.com/tmux-plugins/tpm#installing-plugins ?
 
 #######################
 # end of tmux plugins #
