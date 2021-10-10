@@ -56,3 +56,17 @@ fi
 ###################
 # end of zsh area #
 ###################
+
+########
+# Misc #
+########
+
+# fzf has been such an integral part of the toolset
+if [ ! -d ~/.fzf ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install
+fi
+
+###############
+# end of misc #
+###############
