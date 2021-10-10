@@ -64,7 +64,7 @@ fi
 # fzf has been such an integral part of the toolset
 if [ ! -d ~/.fzf ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install
+    ~/.fzf/install --key-bindings --completion --update-rc --no-bash --no-fish
 fi
 
 ###############
