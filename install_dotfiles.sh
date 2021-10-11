@@ -22,6 +22,7 @@ if [ ! -d ~/.tmux/plugins/tpm ]; then
     # I stole this from https://github.com/tmux-plugins/tpm/issues/6
     TMUX_PLUGIN_MANAGER_PATH=~/.tmux/plugins/ ~/.tmux/plugins/tpm/bin/install_plugins
     # Remember that tmux plugins have different requirements, e.g. tmux-jump requires ruby to be installed!
+    # TODO: figure out a way to specify (and install?) tmux-plugins requirements?
 fi
 
 #######################
