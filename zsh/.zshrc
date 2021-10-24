@@ -131,6 +131,7 @@ autoload -U compinit && compinit
 alias gp="git pull"
 alias gc="git checkout"
 alias w5="watch -n5"
+alias la="exa -la"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
