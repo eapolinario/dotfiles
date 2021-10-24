@@ -139,26 +139,40 @@ alias w5="watch -n5"
 
 # Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
 export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
-export FZF_DEFAULT_OPTS='--preview-window=down:10:wrap --height=60% --layout=reverse --border --preview="echo {}"'
 
 # To apply the command to CTRL-T as well
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_OPTS="--ansi --multi --preview 'batcat --style=numbers --color=always --line-range :500 {}'"
+
+export FZF_TAB_OPTS=(
+  --expect='/'
+  --color='hl:$(( $#headers == 0 ? 108 : 255 ))'
+  --nth='2,3'
+  --delimiter='\0'
+  --tiebreak=begin -m --bind=tab:down,change:top,ctrl-space:toggle --cycle
+  --query='$query'
+  --header-lines='$#headers'
+  --preview-window='40%'
+)
 
 # Context-aware completion using the '**' string
 export FZF_COMPLETION_TRIGGER='**'
 
 alias fzfp="fzf --ansi --multi --preview 'batcat --style=numbers --color=always --line-range :500 {}'"
 
-# # fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
+# give a preview of commandline arguments when completing `kill`
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
-# zstyle ':completion:*' list-colors ${LS_COLORS}
-# # TODO: I couldn't make this work. The popup inside the fzf-tab would error out.
-# # zstyle ':fzf-tab:complete:cd:*' fzf-command '--preview --color=always $realpath'
-# zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath' # remember to use single quote here!!!
-# zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
-# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-# zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+  '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath' # remember to use single quote here!!!
+zstyle ':fzf-tab:complete:systemctl:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
+# Catch-all requires an ad-hoc less script.
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+export LESSOPEN='|~/.lessfilter.sh %s'
+
+# # fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
 
 # like normal z when used with arguments but displays an fzf prompt when used without.
 unalias z 2> /dev/null
