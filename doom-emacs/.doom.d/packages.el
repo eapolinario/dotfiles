@@ -54,3 +54,6 @@
 (package! org-reverse-datetree) ;; [[file:config.el::file+function my-org-links-file org-reverse-datetree-goto-date-in-file][Org template used to store links needs this]]
 (package! org-download)
 (package! org-superstar)
+
+;; Prot's theme is indeed amazing. Not sure if I want to pin this going forward.
+(package! modus-themes)
