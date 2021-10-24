@@ -57,3 +57,8 @@
 
 ;; Prot's theme is indeed amazing. Not sure if I want to pin this going forward.
 (package! modus-themes)
+
+;; Set up org-roam-ui as described in the manual: https://github.com/org-roam/org-roam-ui#doom
+(unpin! org-roam)
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
