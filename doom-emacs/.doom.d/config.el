@@ -128,7 +128,6 @@
   (setq org-clock-out-switch-to-state "WAITING"  ;; Change the state of a task to "WAITING" after clocking out.
         org-clock-in-switch-to-state "NEXT"  ;; Change the state of a task to "NEXT" after clocking in.
 
-        org-directory "~/org"  ;; TODO: can I remove this given line 34?
         my-org-work-journal-file (concat org-directory "/work_journal.org")
         my-org-personal-journal-file (concat org-directory "/personal_journal.org")
         my-org-notes-file (concat org-directory "/notes.org")
@@ -158,34 +157,34 @@
                                  "URL"
                                  entry
                                  (file+function my-org-links-file org-reverse-datetree-goto-date-in-file)
-                                 (file ,(concat org-directory "/org-templates/links.template")))
+                                 (file "org-templates/links.template"))
                                 ("i"                                                                    ; hotkey
                                  "INTR"                                                                 ; name
                                  entry                                                                  ; type
                                  (file+headline org-default-notes-file "Tasks")                         ; target
-                                 (file ,(concat org-directory "/org-templates/interruption.template"))) ; template
+                                 (file "org-templates/interruption.template")) ; template
                                 ("t"                                                            ; hotkey
                                  "TODO"                                                         ; name
                                  entry                                                          ; type
                                  (file+headline org-default-notes-file "Tasks")                 ; target
-                                 (file ,(concat org-directory "/org-templates/todo.template"))) ; template
+                                 (file "org-templates/todo.template")) ; template
                                 ("n"                                                             ; hotkey
                                  "Notes"                                                         ; name
                                  entry                                                           ; type
                                  (file+headline my-org-notes-file "Notes")                       ; target
-                                 (file ,(concat org-directory "/org-templates/notes.template"))) ; template
+                                 (file "org-templates/notes.template")) ; template
                                 ("j" "Journals")
                                 ("jw"                                                              ; hotkey
                                  "Work Journal"                                                   ; name
                                  entry                                                            ; type
                                  (file+datetree my-org-work-journal-file)                         ; target
-                                 (file ,(concat org-directory "/org-templates/journal.template")) ; template
+                                 (file "org-templates/journal.template") ; template
                                  :tree-type week)                                                 ; properties
                                 ("jp"                                                              ; hotkey
                                  "Personal Journal"                                               ; name
                                  entry                                                            ; type
                                  (file+datetree my-org-personal-journal-file)                     ; target
-                                 (file ,(concat org-directory "/org-templates/journal.template")) ; template
+                                 (file "org-templates/journal.template") ; template
                                  :tree-type week))                                                 ; properties
         org-refile-targets '((org-agenda-files :maxlevel . 1))
         org-agenda-todo-ignore-scheduled t
