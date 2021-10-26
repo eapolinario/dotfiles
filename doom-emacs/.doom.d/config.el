@@ -157,35 +157,35 @@
                                  "URL"
                                  entry
                                  (file+function my-org-links-file org-reverse-datetree-goto-date-in-file)
-                                 (file "org-templates/links.template"))
-                                ("i"                                                                    ; hotkey
-                                 "INTR"                                                                 ; name
-                                 entry                                                                  ; type
-                                 (file+headline org-default-notes-file "Tasks")                         ; target
-                                 (file "org-templates/interruption.template")) ; template
-                                ("t"                                                            ; hotkey
-                                 "TODO"                                                         ; name
-                                 entry                                                          ; type
-                                 (file+headline org-default-notes-file "Tasks")                 ; target
-                                 (file "org-templates/todo.template")) ; template
-                                ("n"                                                             ; hotkey
-                                 "Notes"                                                         ; name
-                                 entry                                                           ; type
-                                 (file+headline my-org-notes-file "Notes")                       ; target
-                                 (file "org-templates/notes.template")) ; template
+                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/links.template")))
+                                ("i"
+                                 "INTR"
+                                 entry
+                                 (file+headline org-default-notes-file "Tasks")
+                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/interruption.template")))
+                                ("t"
+                                 "TODO"
+                                 entry
+                                 (file+headline org-default-notes-file "Tasks")
+                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/todo.template")))
+                                ("n"
+                                 "Notes"
+                                 entry
+                                 (file+headline my-org-notes-file "Notes")
+                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/notes.template")))
                                 ("j" "Journals")
-                                ("jw"                                                              ; hotkey
-                                 "Work Journal"                                                   ; name
-                                 entry                                                            ; type
-                                 (file+datetree my-org-work-journal-file)                         ; target
-                                 (file "org-templates/journal.template") ; template
-                                 :tree-type week)                                                 ; properties
-                                ("jp"                                                              ; hotkey
-                                 "Personal Journal"                                               ; name
-                                 entry                                                            ; type
-                                 (file+datetree my-org-personal-journal-file)                     ; target
-                                 (file "org-templates/journal.template") ; template
-                                 :tree-type week))                                                 ; properties
+                                ("jw"
+                                 "Work Journal"
+                                 entry
+                                 (file+datetree my-org-work-journal-file)
+                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/journal.template"))
+                                 :tree-type week)
+                                ("jp"
+                                 "Personal Journal"
+                                 entry
+                                 (file+datetree my-org-personal-journal-file)
+                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/journal.template"))
+                                 :tree-type week))
         org-refile-targets '((org-agenda-files :maxlevel . 1))
         org-agenda-todo-ignore-scheduled t
         org-outline-path-complete-in-steps nil
