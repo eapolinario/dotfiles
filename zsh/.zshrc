@@ -8,6 +8,9 @@ fi
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# golang binaries should be in the path
+export PATH=$HOME/go/bin:$PATH
+
 # Path to your oh-my-zsh installation.
 export ZSH="/home/eduardo/.oh-my-zsh"
 
@@ -191,8 +194,23 @@ function prev() {
   sh -c "pet new `printf %q "$PREV"`"
 }
 
+# Kill a process by specifying a port it's listening to
+function kill-by-port() {
+  kill "$(lsof -t -i ":$1")"
+}
+
 # Change zsh auto-suggest highlight colors (as described in https://github.com/zsh-users/zsh-autosuggestions#configuration)
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=grey,bold,underline"
 
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# enable pyenv on initialization
+# TODO: ensure pyenv is installed on a clean box.
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
+
+# Add goland to path
+export PATH="$HOME/repos/GoLand-2021.3/bin:$PATH"
