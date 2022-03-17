@@ -31,11 +31,14 @@
 ;; (setq doom-theme 'doom-acario-light)
 ;; (setq doom-theme 'doom-solarized-light)
 ;; (setq doom-theme 'doom-dark+)
-(setq doom-theme 'modus-vivendi)
+;; (setq doom-theme 'modus-vivendi)
+(setq doom-theme 'doom-gruvbox)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
+;; TODO maybe there is a Doom variable that contains this already
+(setq doom-config-directory "~/.doom.d/")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -99,10 +102,10 @@
   (add-hook 'org-mode-hook 'org-autolist-mode))
 
 ;; TODO Not sure why those are configured. After figuring it out, leave a comment
-;; (after! org
-;;   (setq org-log-note-clock-out t)
-;;   (setq org-log-done 'note)
-;;   (setq org-log-into-drawer t))
+(after! org
+  (setq org-log-note-clock-out t)
+  (setq org-log-done 'note)
+  (setq org-log-into-drawer t))
 
 ;; Disable linum mode in org-mode
 (after! org
@@ -157,36 +160,36 @@
                                  "URL"
                                  entry
                                  (file+function my-org-links-file org-reverse-datetree-goto-date-in-file)
-                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/links.template")))
+                                 (file ,(concat doom-config-directory "org-templates/links.template")))
                                 ("i"
                                  "INTR"
                                  entry
                                  (file+headline org-default-notes-file "Tasks")
-                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/interruption.template")))
+                                 (file ,(concat doom-config-directory "org-templates/interruption.template")))
                                 ("t"
                                  "TODO"
                                  entry
                                  (file+headline org-default-notes-file "Tasks")
-                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/todo.template")))
+                                 (file ,(concat doom-config-directory "org-templates/todo.template")))
                                 ("n"
                                  "Notes"
                                  entry
                                  (file+headline my-org-notes-file "Notes")
-                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/notes.template")))
+                                 (file ,(concat doom-config-directory "org-templates/notes.template")))
                                 ("j" "Journals")
                                 ("jw"
                                  "Work Journal"
                                  entry
                                  (file+datetree my-org-work-journal-file)
-                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/journal.template"))
+                                 (file ,(concat doom-config-directory "org-templates/journal.template"))
                                  :tree-type week)
                                 ("jp"
                                  "Personal Journal"
                                  entry
                                  (file+datetree my-org-personal-journal-file)
-                                 (file ,(concat (file-name-directory buffer-file-name) "org-templates/journal.template"))
+                                 (file ,(concat doom-config-directory "org-templates/journal.template"))
                                  :tree-type week))
-        org-refile-targets '((org-agenda-files :maxlevel . 1))
+        org-refile-targets '((org-agenda-files :maxlevel . 2))
         org-agenda-todo-ignore-scheduled t
         org-outline-path-complete-in-steps nil
         org-refile-use-outline-path t
@@ -199,7 +202,12 @@
 
 (after! org-roam
   (setq org-roam-directory (file-truename "~/org/org-roam-v2"))
-  )
+  (setq org-roam-completion-everywhere t)
+  (setq org-roam-mode-section-functions
+        (list #'org-roam-backlinks-section
+              #'org-roam-reflinks-section
+              #'org-roam-unlinked-references-section))
+)
 
 ;; end of org-related configuration
 
@@ -218,3 +226,7 @@
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
+
+
+;; Disable flycheck in org-mode
+(setq flycheck-global-modes '(not org-mode))
