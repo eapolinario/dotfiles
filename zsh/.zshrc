@@ -84,6 +84,7 @@ plugins=(
     emacs
     fzf-tab
     git
+    kubectl
     z
     zsh-256color
     zsh-autosuggestions
