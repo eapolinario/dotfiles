@@ -82,8 +82,12 @@ HIST_STAMPS="yyyy-mm-dd"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     emacs
+    extract
     fzf-tab
     git
+    history
+    kubectl
+    python
     z
     zsh-256color
     zsh-autosuggestions
@@ -135,7 +139,6 @@ alias gp="git pull"
 alias gc="git checkout"
 alias w5="watch -n5"
 alias la="exa -la"
-alias k="kubectl"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
