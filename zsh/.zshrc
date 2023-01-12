@@ -140,6 +140,10 @@ alias gc="git checkout"
 alias w5="watch -n5"
 alias la="exa -la"
 
+# Honestly, this is probably my favorite shell hack of all. Full explanation in https://unix.stackexchange.com/a/25329/109848
+alias watch='watch '
+alias w5='watch -n5 '
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
