@@ -6,7 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.local/emacs/bin:$HOME/.cargo/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.config/emacs/bin:$HOME/.local/emacs/bin:$HOME/.cargo/bin:/usr/local/bin:$PATH
 
 # golang binaries should be in the path
 export PATH=$HOME/go/bin:$PATH
@@ -57,12 +57,12 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Uncomment the following line to display red dots whilst waiting for completion.
 # Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
 # See https://github.com/ohmyzsh/ohmyzsh/issues/5765
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -88,8 +88,8 @@ plugins=(
     history
     kubectl
     python
-    z
     zsh-256color
+    zsh-ask
     zsh-autosuggestions
     zsh-completions
     zsh-syntax-highlighting
@@ -137,7 +137,6 @@ autoload -U compinit && compinit
 
 alias gp="git pull"
 alias gc="git checkout"
-alias w5="watch -n5"
 alias la="exa -la"
 
 # Honestly, this is probably my favorite shell hack of all. Full explanation in https://unix.stackexchange.com/a/25329/109848
@@ -150,10 +149,10 @@ alias w5='watch -n5 '
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Setting fd as the default source for fzf. Follow symbolic links, do not exclude hidden files and .git
-export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 
 # To apply the command to CTRL-T as well
-export FZF_CTRL_T_OPTS="--ansi --multi --preview 'batcat --style=numbers --color=always --line-range :500 {}'"
+export FZF_CTRL_T_OPTS="--ansi --multi --preview 'bat --style=numbers --color=always --line-range :500 {}'"
 
 export FZF_TAB_OPTS=(
   --expect='/'
@@ -169,7 +168,7 @@ export FZF_TAB_OPTS=(
 # Context-aware completion using the '**' string
 export FZF_COMPLETION_TRIGGER='**'
 
-alias fzfp="fzf --ansi --multi --preview 'batcat --style=numbers --color=always --line-range :500 {}'"
+alias fzfp="fzf --ansi --multi --preview 'bat --style=numbers --color=always --line-range :500 {}'"
 
 # give a preview of commandline arguments when completing `kill`
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
@@ -187,11 +186,11 @@ export LESSOPEN='|~/.lessfilter.sh %s'
 # # fzf-tab + tmux integration. Saw on this reddit thread: https://www.reddit.com/r/zsh/comments/jhcmkp/get_a_popup_completion_menu_with_fzftab_and_tmux/
 
 # like normal z when used with arguments but displays an fzf prompt when used without.
-unalias z 2> /dev/null
-z() {
-    [ $# -gt 0 ] && _z "$*" && return
-    cd "$(_z -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
-}
+# unalias z 2> /dev/null
+# z() {
+#     [ $# -gt 0 ] && zshz "$*" && return
+#     cd "$(zshz -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
+# }
 
 
 # Register the previous command in pet (https://github.com/knqyf263/pet).
@@ -207,7 +206,8 @@ function kill-by-port() {
 }
 
 # Change zsh auto-suggest highlight colors (as described in https://github.com/zsh-users/zsh-autosuggestions#configuration)
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=grey,bold,underline"
+# export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=grey,bold,underline"
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#147494"
 
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -215,9 +215,26 @@ source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highli
 # enable pyenv on initialization
 # TODO: ensure pyenv is installed on a clean box.
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Add goland to path
 export PATH="$HOME/repos/GoLand-2021.3/bin:$PATH"
+
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
+
+# Experimenting with https://github.com/nvbn/thefuck
+eval $(thefuck --alias)
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Enable zoxide
+eval "$(zoxide init zsh)"
+
+# Add openjdk to path
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"

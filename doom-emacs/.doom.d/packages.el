@@ -11,7 +11,7 @@
 
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
-;; https://github.com/raxod502/straight.el#the-recipe-format
+;; https://github.com/radian-software/straight.el#the-recipe-format
 ;(package! another-package
 ;  :recipe (:host github :repo "username/repo"))
 
@@ -34,7 +34,7 @@
 
 ;; Specify a `:branch' to install a package from a particular branch or tag.
 ;; This is required for some packages whose default branch isn't 'master' (which
-;; our package manager can't deal with; see raxod502/straight.el#279)
+;; our package manager can't deal with; see radian-software/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
 ;; Use `:pin' to specify a particular commit to install.
@@ -53,7 +53,7 @@
 (package! org-autolist)
 (package! org-reverse-datetree) ;; [[file:config.el::file+function my-org-links-file org-reverse-datetree-goto-date-in-file][Org template used to store links needs this]]
 (package! org-download)
-(package! org-superstar)
+;; (package! org-superstar)
 
 ;; Prot's theme is indeed amazing. Not sure if I want to pin this going forward.
 (package! modus-themes)
@@ -62,3 +62,29 @@
 (unpin! org-roam)
 (package! websocket)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+
+;; Github copilot
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+
+;; Protobuf mode
+(package! protobuf-mode
+  :recipe (:host github :repo "protocolbuffers/protobuf"
+           :files ("editors/protobuf-mode.el")))
+
+(package! flycheck-golangci-lint)
+
+;; All the LLM goodies
+(package! gptel)
+(package! gptel-extensions     ; extended functionality
+  :recipe (:host github :repo "kamushadenes/gptel-extensions.el"
+                 :files ("gptel-extensions.el")))
+
+(package! consult-org-roam)
+
+;; excalidraw for org-mode
+(package! org-excalidraw
+  :recipe (:host github :repo "wdavew/org-excalidraw" :files ("*.el" "dist")))
+
+;; self-explanatory
+(package! catppuccin-theme)
