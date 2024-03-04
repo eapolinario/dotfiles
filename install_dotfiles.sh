@@ -5,7 +5,14 @@ set -eux  # defensive bash programming.
 ################
 # stow'd files #
 ################
-for d in doom-emacs tmux zsh pip; do
+for d in \
+    doom-emacs \
+    pip \
+    skhd \
+    tmux \
+    yabai \
+    zsh \
+    ; do
     stow -vt ~ $d
 done
 
