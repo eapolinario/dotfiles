@@ -1,5 +1,6 @@
-import = ["/Users/eduardo/.config/alacritty/themes/themes/gruvbox_dark.toml"]
-
+import = [
+  "~/.config/alacritty/themes/themes/gruvbox_material_medium_dark.toml"
+]
 [font.normal]
 family = "Hack Nerd Font Mono"
 style = "Regular"
