@@ -6,7 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:$HOME/.config/emacs/bin:$HOME/.local/emacs/bin:$HOME/.cargo/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$HOME/.cargo/bin:/usr/local/bin:$PATH
 
 # golang binaries should be in the path
 export PATH=$HOME/go/bin:$PATH
@@ -81,7 +81,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    emacs
+    # emacs
     extract
     fzf-tab
     git
@@ -137,11 +137,15 @@ autoload -U compinit && compinit
 
 alias gp="git pull"
 alias gc="git checkout"
-alias la="exa -la"
+alias gcms="git commit --signoff -m"
+alias la="eza -la"
 
-# Honestly, this is probably my favorite shell hack of all. Full explanation in https://unix.stackexchange.com/a/25329/109848
+# Honestly, this is probably my favorite shell hack of all time. Full explanation in https://unix.stackexchange.com/a/25329/109848
 alias watch='watch '
 alias w5='watch -n5 '
+
+# Assumes that the emacs server is already started
+alias e="emacsclient --no-wait"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -192,7 +196,6 @@ export LESSOPEN='|~/.lessfilter.sh %s'
 #     cd "$(zshz -l 2>&1 | fzf --height 40% --nth 2.. --reverse --inline-info +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')"
 # }
 
-
 # Register the previous command in pet (https://github.com/knqyf263/pet).
 # It requires pet to be installed.
 function prev() {
@@ -214,10 +217,14 @@ source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highli
 
 # enable pyenv on initialization
 # TODO: ensure pyenv is installed on a clean box.
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# export PYENV_ROOT="$HOME/.pyenv"
+# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
+
+
+# Add go 1.21 from homebrew
+export PATH="/opt/homebrew/opt/go@1.21/bin:$PATH"
 
 # Add goland to path
 export PATH="$HOME/repos/GoLand-2021.3/bin:$PATH"
@@ -229,12 +236,52 @@ export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 eval $(thefuck --alias)
 
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+# TODO: only enable this if working with nvm
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Enable zoxide
 eval "$(zoxide init zsh)"
 
 # Add openjdk to path
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# # >>> conda initialize >>>
+# # !! Contents within this block are managed by 'conda init' !!
+# __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+#         . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
+# # <<< conda initialize <<<
+
+eval "$(gh copilot alias -- zsh)"
+
+eval "$(uv generate-shell-completion zsh)"
+
+# go 1.22 back to PATH again
+export PATH="/opt/homebrew/opt/go@1.22/bin:$PATH:$HOME/go/bin"
+
+
+# Union specific configuration
+export CLOUD_REPO=${HOME}/repos/cloud
+export AWS_CONFIG_FILE=${CLOUD_REPO}/gen/cli-config/aws
+export PATH=${CLOUD_REPO}/cli/uctl-admin/bin:${PATH}
+
+# We really only need the generated kubeconfig here (second one below),
+# but kubectx will modify the first file on this list, and we do not want
+# those modifications checked in. To avoid that, any file at the beginning
+# of this list will do (even an empty one).
+export KUBECONFIG=${HOME}/.kube/config:${CLOUD_REPO}/gen/cli-config/kubeconfig
+touch ${HOME}/.kube/config
+
+function fconfig() {
+  export FLYTECTL_CONFIG="${CLOUD_REPO}/gen/cli-config/uctl/$(ls ${CLOUD_REPO}/gen/cli-config/uctl/ | fzf)"
+}
