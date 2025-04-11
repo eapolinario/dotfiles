@@ -80,6 +80,13 @@
   :recipe (:host github :repo "kamushadenes/gptel-extensions.el"
                  :files ("gptel-extensions.el")))
 
+(package! whisper :recipe (:host github :repo "natrys/whisper.el" :files ("*.el")))
+
+;; TODO: try this again. Couldn't get the instructions in https://github.com/Exafunction/codeium.el to work.
+;; https://github.com/jo3moor3/doom/blob/main/config.el has a potentially working example.
+;; (package! codeium :recipe (:host github :repo "Exafunction/codeium.el"))
+;; End of all the LLM goodies
+
 (package! consult-org-roam)
 
 ;; excalidraw for org-mode
@@ -88,3 +95,25 @@
 
 ;; self-explanatory
 (package! catppuccin-theme)
+
+(package! git-link)
+
+(package! rainbow-delimiters)
+
+;; Enable the splendid https://github.com/rksm/clj-org-analyzer
+(package! org-analyzer)
+
+(package! beacon)
+
+
+;; Copied from https://github.com/doomemacs/doomemacs/issues/7863
+;; Not sure if this is going to fix the lsp m
+;(unpin! consult)
+;
+;(unpin! lsp-mode)
+
+
+(package! copy-as-format
+  :recipe (:host github :repo "sshaw/copy-as-format" :files ("*.el")))
+
+(package! codeium :recipe (:host github :repo "Exafunction/codeium.el"))
