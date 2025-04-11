@@ -32,9 +32,10 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-opera)
-(setq doom-theme 'catppuccin)
-(setq catppuccin-flavor 'mocha)
+(setq doom-theme 'doom-opera)
+;; (setq doom-theme 'catppuccin)
+;; (setq catppuccin-flavor 'frappuccino)
+;; (setq doom-theme 'doom-nord)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -103,6 +104,7 @@
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save))
 
+;; TODO: remove this as doom moved away from org-superstar in favor of org-modern
 ;; Improve org bullet list
 (after! org-superstar
   (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
@@ -113,6 +115,9 @@
 
 ;; org-related configuration
 (setq doom-config-directory "~/.doom.d/")
+
+(after! org
+  (setq org-yank-image-save-method "images/"))
 
 ;; better list management
 (after! org
@@ -213,7 +218,8 @@
 
         ;; org-pomodoro settings
         ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
-        ;; org-pomodoro-ticking-sound-p t
+        org-pomodoro-ticking-sound-p nil
+        org-pomodoro-finished-sound-p nil
   )
 )
 
@@ -261,7 +267,10 @@
          ("C-<tab>" . 'copilot-accept-completion-by-word)
          :map copilot-completion-map
          ("<tab>" . 'copilot-accept-completion)
-         ("TAB" . 'copilot-accept-completion)))
+         ("TAB" . 'copilot-accept-completion))
+  :custom
+  (copilot-max-char -1)
+  (copilot-indent-offset-warning-disable t))
 
 (use-package! protobuf-mode
   :defer-incrementally t)
@@ -280,7 +289,7 @@
 
 
 ;; Enable rainbow-mode in prog-mode
-(add-hook 'prog-mode-hook 'rainbow-mode)
+;; (add-hook 'prog-mode-hook 'rainbow-mode)
 ;; (add-hook! prog-mode 'rainbow-mode)
 
 (use-package flycheck-golangci-lint
@@ -292,10 +301,51 @@
 ;; tbh I don't understand why this is not the default.
 (setq compilation-scroll-output t)
 
+;; All the LLMs!
 (use-package! gptel
   :config
-  ;; TODO: Do not commit this to git!
-  (setq! gptel-api-key "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"))
+  ;; TODO: Do not commit these keys to git!
+  (setq! gptel-api-key "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")
+  (gptel-make-gemini "Gemini"
+    :key "AIzaSyCU6-erLCeVMH5-vkkOpQL45lA0YQciVzE"
+    :stream t)
+  (setq
+   gptel-model "llama3.1:8b"
+   gptel-backend (gptel-make-ollama "Ollama"
+                   :host "localhost:11434"
+                   :stream t
+                   :models '("llama3.1:8b")))
+  )
+
+(use-package! gptel-extensions
+  :after gptel
+  :config
+  (map!
+   :leader
+   (:prefix "y"
+    :desc "Send Buffer gptel" :n "b" #'gptel-ext-send-whole-buffer
+    :desc "Question Document" :n "q" #'gptel-ext-ask-document
+    :desc "Rewrite Region" :n "R" #'gptel-ext-rewrite-and-replace
+    :desc "Refactor Region" :n "r" #'gptel-ext-refactor)))
+
+(use-package! whisper
+  :config
+  (setq whisper-install-directory (concat doom-data-dir "whisper")
+        ;; TODO whisper-install-whispercpp nil
+        whisper-model "medium"
+        whisper-language "en"
+        ;; whisper-translate nil
+        ;; whisper-enable-speed-up nil ;; FIXME this just fails
+        ;; whisper-use-threads 8
+        ;; whisper--ffmpeg-input-format "pulse"
+        ;; whisper--ffmpeg-input-device "default"
+        )
+  (map! :leader
+        (:prefix "y"
+         :desc "Whisper" :n "w" #'whisper-run
+         :desc "Whisper File" :n "W" #'whisper-file)))
+
+;; End of all the LLMs! (for now)
 
 ;; Better visualization of backlinks in org-roam
 (use-package consult-org-roam
@@ -326,8 +376,131 @@
    ("C-c n l" . consult-org-roam-forward-links)
    ("C-c n r" . consult-org-roam-search))
 
-;; TODO: set org directory from a variable
 (use-package! org-excalidraw
   :config
-  (setq org-excalidraw-directory "~/org/excalidraw"))
+  (setq org-excalidraw-directory (concat org-directory "excalidraw")))
 (after! org (org-excalidraw-initialize))
+
+(use-package! lsp-mode
+  :defer t
+  :custom
+  (gc-cons-threshold (* 400 1024 1024))      ; increase GC threshold to improve perf in LSP mode
+  (read-process-output-max (* 1 1024 1024))  ; handle large LSP responses
+  (add-hook 'lsp-after-open-hook 'lsp-lens-mode)
+  :config (setq lsp-lens-enable t
+                lsp-auto-execute-action nil
+                lsp-verify-signature t)
+  )
+
+(after! lsp-ui
+  :defer t
+  :config (setq lsp-ui-doc-enable t
+                lsp-ui-doc-show-with-cursor t
+                lsp-ui-doc-show-with-mouse t))
+
+(use-package! git-link
+  :defer t
+  :custom
+  (git-link-use-commit t)
+  (git-link-use-single-line-number t)
+  :commands (git-link git-link-commit git-link-homepage)
+  :bind
+  ("C-c v &" . git-link))
+
+(use-package! rainbow-delimiters
+  :defer t
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
+
+;; ruff-lsp
+(defcustom lsp-ruff-executable "ruff-lsp"
+  "Command to start the Ruff language server."
+  :group 'lsp-python
+  :risky t
+  :type 'file)
+
+;; Register ruff-lsp with the LSP client.
+(after! lsp-mode
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection (lambda () (list lsp-ruff-executable)))
+    :activation-fn (lsp-activate-on "python")
+    :add-on? t
+    :server-id 'ruff)))
+
+(use-package! beacon
+  :defer t
+  :config
+  (beacon-mode 1))
+
+(after! dap-mode
+  (require 'dap-python)
+  ;; if you installed debugpy, you need to set this
+  ;; https://github.com/emacs-lsp/dap-mode/issues/306
+  (setq dap-python-debugger 'debugpy)
+
+  (dap-ui-mode)
+  (dap-ui-controls-mode 1)
+  )
+
+;; Find all references in a project using lsp
+;;
+(map! :leader
+      :desc "Find all references" :n "r" #'lsp-find-references)
+
+;; we recommend using use-package to organize your init.el
+(use-package codeium
+    :init
+    (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
+    ;; or on a hook
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
+
+    ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local completion-at-point-functions
+    ;;             (list (cape-super-capf #'codeium-completion-at-point #'lsp-completion-at-point)))))
+    ;; an async company-backend is coming soon!
+
+    ;; codeium-completion-at-point is autoloaded, but you can
+    ;; optionally set a timer, which might speed up things as the
+    ;; codeium local language server takes ~0.2s to start up
+    ;; (add-hook 'emacs-startup-hook
+    ;;  (lambda () (run-with-timer 0.1 nil #'codeium-init)))
+
+    ;; :defer t ;; lazy loading, if you want
+    :config
+    (setq use-dialog-box nil) ;; do not use popup boxes
+
+    ;; if you don't want to use customize to save the api-key
+    ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+
+    ;; get codeium status in the modeline
+    (setq codeium-mode-line-enable
+        (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+    (add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+    ;; alternatively for a more extensive mode-line
+    ;; (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+
+    ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+    (setq codeium-api-enabled
+        (lambda (api)
+            (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+    ;; you can also set a config for a single buffer like this:
+    ;; (add-hook 'python-mode-hook
+    ;;     (lambda ()
+    ;;         (setq-local codeium/editor_options/tab_size 4)))
+
+    ;; You can overwrite all the codeium configs!
+    ;; for example, we recommend limiting the string sent to codeium for better performance
+    (defun my-codeium/document/text ()
+        (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+    ;; if you change the text, you should also change the cursor_offset
+    ;; warning: this is measured by UTF-8 encoded bytes
+    (defun my-codeium/document/cursor_offset ()
+        (codeium-utf8-byte-length
+            (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+    (setq codeium/document/text 'my-codeium/document/text)
+    (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
