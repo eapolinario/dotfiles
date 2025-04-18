@@ -5,6 +5,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Make homebrew binaries show up first
+export PATH="/opt/homebrew/bin:$PATH"
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:$HOME/.cargo/bin:/usr/local/bin:$PATH
 
@@ -89,7 +92,6 @@ plugins=(
     kubectl
     python
     zsh-256color
-    zsh-ask
     zsh-autosuggestions
     zsh-completions
     zsh-syntax-highlighting
@@ -215,73 +217,3 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#147494"
 # As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
 source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# enable pyenv on initialization
-# TODO: ensure pyenv is installed on a clean box.
-# export PYENV_ROOT="$HOME/.pyenv"
-# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init -)"
-# eval "$(pyenv virtualenv-init -)"
-
-
-# Add go 1.21 from homebrew
-export PATH="/opt/homebrew/opt/go@1.21/bin:$PATH"
-
-# Add goland to path
-export PATH="$HOME/repos/GoLand-2021.3/bin:$PATH"
-
-export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
-export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
-
-# Experimenting with https://github.com/nvbn/thefuck
-eval $(thefuck --alias)
-
-
-# TODO: only enable this if working with nvm
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-# Enable zoxide
-eval "$(zoxide init zsh)"
-
-# Add openjdk to path
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-
-# # >>> conda initialize >>>
-# # !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-#         . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
-# # <<< conda initialize <<<
-
-eval "$(gh copilot alias -- zsh)"
-
-eval "$(uv generate-shell-completion zsh)"
-
-# go 1.22 back to PATH again
-export PATH="/opt/homebrew/opt/go@1.22/bin:$PATH:$HOME/go/bin"
-
-
-# Union specific configuration
-export CLOUD_REPO=${HOME}/repos/cloud
-export AWS_CONFIG_FILE=${CLOUD_REPO}/gen/cli-config/aws
-export PATH=${CLOUD_REPO}/cli/uctl-admin/bin:${PATH}
-
-# We really only need the generated kubeconfig here (second one below),
-# but kubectx will modify the first file on this list, and we do not want
-# those modifications checked in. To avoid that, any file at the beginning
-# of this list will do (even an empty one).
-export KUBECONFIG=${HOME}/.kube/config:${CLOUD_REPO}/gen/cli-config/kubeconfig
-touch ${HOME}/.kube/config
-
-function fconfig() {
-  export FLYTECTL_CONFIG="${CLOUD_REPO}/gen/cli-config/uctl/$(ls ${CLOUD_REPO}/gen/cli-config/uctl/ | fzf)"
-}
