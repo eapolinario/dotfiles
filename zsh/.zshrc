@@ -94,7 +94,7 @@ plugins=(
     zsh-256color
     zsh-autosuggestions
     zsh-completions
-    zsh-syntax-highlighting
+    fast-syntax-highlighting
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -214,6 +214,5 @@ function kill-by-port() {
 # export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=blue,bg=grey,bold,underline"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#147494"
 
-# As per the documentation, we should the syntax highlighting plugin only at the end of the .zshrc file
-source $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
+# As per https://github.com/ajeetdsouza/zoxide, need to initialize it in the shell
+eval "$(zoxide init zsh)"

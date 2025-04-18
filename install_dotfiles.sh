@@ -61,12 +61,15 @@ if [ ! -d ~/.oh-my-zsh ]; then
 fi
 
 # zsh plugins
-for PLUGIN in zsh-autosuggestions zsh-completions zsh-syntax-highlighting; do
+for PLUGIN in zsh-autosuggestions zsh-completions; do
 	if [ ! -d ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/$PLUGIN ]; then
 		git clone https://github.com/zsh-users/$PLUGIN ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/$PLUGIN
 	fi
 done
 
+if [ ! -d ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting ]; then
+	git clone https://github.com/zdharma-continuum/fast-syntax-highlighting ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
+fi
 if [ ! -d ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-256color ]; then
 	git clone https://github.com/chrissicool/zsh-256color ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-256color
 fi
