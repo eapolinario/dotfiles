@@ -1,3 +1,4 @@
+tap "felixkratz/formulae"
 tap "koekeishiya/formulae"
 tap "railwaycat/emacsmacport"
 brew "bat"
@@ -15,9 +16,10 @@ brew "ripgrep"
 brew "stow"
 brew "tmux"
 brew "tree"
+brew "felixkratz/formulae/borders"
 brew "koekeishiya/formulae/skhd"
 brew "koekeishiya/formulae/yabai"
-brew "railwaycat/emacsmacport/emacs-mac", args: ["with-emacs-sexy-icon", "with-librsvg", "with-mac-metal", "with-native-compilation", "with-starter"]
+brew "railwaycat/emacsmacport/emacs-mac", args: ["with-emacs-sexy-icon", "with-librsvg", "with-mac-metal", "with-native-compilation", "with-no-title-bars", "with-starter", "without-modules"]
 cask "alfred"
 cask "bitwarden"
 cask "claude"
