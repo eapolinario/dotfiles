@@ -70,6 +70,7 @@ done
 if [ ! -d ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting ]; then
 	git clone https://github.com/zdharma-continuum/fast-syntax-highlighting ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
 fi
+
 if [ ! -d ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-256color ]; then
 	git clone https://github.com/chrissicool/zsh-256color ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-256color
 fi
@@ -85,6 +86,20 @@ fi
 ###################
 # end of zsh area #
 ###################
+
+############################
+# Overwrite macos defaults #
+############################
+defaults write com.apple.dock appswitcher-all-displays -bool true
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.screencapture location -string "$HOME/Desktop"
+defaults write com.apple.screencapture disable-shadow -bool true
+defaults write com.apple.screencapture type -string "png"
+defaults write com.apple.Finder AppleShowAllFiles -bool true
+
+###################################
+# End of Overwrite macos defaults #
+###################################
 
 ########
 # Misc #
