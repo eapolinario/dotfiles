@@ -2,17 +2,24 @@
 
 set -eux # defensive bash programming.
 
+CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+echo $CONFIG_HOME
+
 ################
 # stow'd files #
 ################
-for d in \
-	doom-emacs \
-	pip \
-	skhd \
-	tmux \
-	yabai \
-	zsh; do
-	stow -vt ~ $d
+
+# Special-case zsh because that one is harder to force to read from `.config`
+stow -vt ~ zsh
+
+for component in \
+		doom \
+		pip \
+		skhd \
+		tmux \
+		yabai; do
+	mkdir -p ${CONFIG_HOME}/${component}
+	stow -vt ${CONFIG_HOME}/${component} ${component}
 done
 
 #######################
@@ -23,6 +30,7 @@ done
 # tmux plugins #
 ################
 
+# TODO: move this to XDG
 if [ ! -d ~/.tmux/plugins/tpm ]; then
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 	# I stole this from https://github.com/tmux-plugins/tpm/issues/6
