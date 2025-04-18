@@ -48,4 +48,8 @@ yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^Activity Monitor$" manage=off
 yabai -m rule --add app="^Stats$" manage=off sticky=off mouse_follows_focus=off
 
+# Add an active border using janky borders
+borders style=round active_color=0xff00ff00 inactive_color=0xff494d64 width=5.0 hidpi=on &
+
 echo "yabai configuration loaded.."
+
