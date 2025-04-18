@@ -113,9 +113,6 @@
   (setq org-superstar-prettify-item-bullets t
         org-hide-leading-stars t))
 
-;; org-related configuration
-(setq doom-config-directory "~/.doom.d/")
-
 (after! org
   (setq org-yank-image-save-method "images/"))
 
@@ -182,34 +179,34 @@
                                  "URL"
                                  entry
                                  (file+function my-org-links-file org-reverse-datetree-goto-date-in-file)
-                                 (file ,(concat doom-config-directory "org-templates/links.template")))
+                                 (file ,(concat doom-user-dir "org-templates/links.template")))
                                 ("i"
                                  "INTR"
                                  entry
                                  (file+headline org-default-notes-file "Tasks")
-                                 (file ,(concat doom-config-directory "org-templates/interruption.template")))
+                                 (file ,(concat doom-user-dir "org-templates/interruption.template")))
                                 ("t"
                                  "TODO"
                                  entry
                                  (file+headline org-default-notes-file "Tasks")
-                                 (file ,(concat doom-config-directory "org-templates/todo.template")))
+                                 (file ,(concat doom-user-dir "org-templates/todo.template")))
                                 ("n"
                                  "Notes"
                                  entry
                                  (file+headline my-org-notes-file "Notes")
-                                 (file ,(concat doom-config-directory "org-templates/notes.template")))
+                                 (file ,(concat doom-user-dir "org-templates/notes.template")))
                                 ("j" "Journals")
                                 ("jw"
                                  "Work Journal"
                                  entry
                                  (file+datetree my-org-work-journal-file)
-                                 (file ,(concat doom-config-directory "org-templates/journal.template"))
+                                 (file ,(concat doom-user-dir "org-templates/journal.template"))
                                  :tree-type week)
                                 ("jp"
                                  "Personal Journal"
                                  entry
                                  (file+datetree my-org-personal-journal-file)
-                                 (file ,(concat doom-config-directory "org-templates/journal.template"))
+                                 (file ,(concat doom-user-dir "org-templates/journal.template"))
                                  :tree-type week))
         org-refile-targets '((org-agenda-files :maxlevel . 2))
         org-agenda-todo-ignore-scheduled t
