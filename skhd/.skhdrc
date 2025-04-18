@@ -145,10 +145,10 @@
 # alt - p : yabai -m window --toggle sticky --toggle topmost --toggle pip
 
 # change window focus within space
-shift + cmd - down : yabai -m window --focus south
-shift + cmd - up : yabai -m window --focus north
-shift + cmd - left : yabai -m window --focus west
-shift + cmd - right : yabai -m window --focus east
+cmd - down : yabai -m window --focus south
+cmd - up : yabai -m window --focus north
+cmd - left : yabai -m window --focus west
+cmd - right : yabai -m window --focus east
 
 shift + alt + cmd - left: yabai -m window --display west; yabai -m display --focus west;
 shift + alt + cmd - right: yabai -m window --display east; yabai -m display --focus east;
