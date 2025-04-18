@@ -6,7 +6,6 @@ set -eux # defensive bash programming.
 # stow'd files #
 ################
 for d in \
-	alacritty \
 	doom-emacs \
 	pip \
 	skhd \
