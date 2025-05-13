@@ -14,6 +14,9 @@ export PATH=$HOME/bin:$HOME/.cargo/bin:/usr/local/bin:$PATH
 # golang binaries should be in the path
 export PATH=$HOME/go/bin:$PATH
 
+# rust toolchain (via homebrew) should also be in the path
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -84,7 +87,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    # emacs
+    emacs
     extract
     fzf-tab
     git
@@ -145,9 +148,6 @@ alias la="eza -la"
 # Honestly, this is probably my favorite shell hack of all time. Full explanation in https://unix.stackexchange.com/a/25329/109848
 alias watch='watch '
 alias w5='watch -n5 '
-
-# Assumes that the emacs server is already started
-alias e="emacsclient --no-wait"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
