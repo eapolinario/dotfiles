@@ -149,33 +149,6 @@
 ;;                    :models '("llama3.1:8b")))
 ;;   )
 
-;; ;; TODO: Still couldn't make this work
-;; (use-package! gptel-quick
-;;   :after gptel
-;;   ;; (map! :leader
-;;   ;;       (:prefix "?"
-;;   ;;        :desc "gptel-quick" :n "g" #'gptel-quick))
-;;   )
-
-;; (use-package! whisper
-;;   :config
-;;   (setq whisper-install-directory (concat doom-data-dir "whisper")
-;;         ;; TODO whisper-install-whispercpp nil
-;;         whisper-model "medium"
-;;         whisper-language "en"
-;;         ;; whisper-translate nil
-;;         ;; whisper-enable-speed-up nil ;; FIXME this just fails
-;;         ;; whisper-use-threads 8
-;;         whisper--ffmpeg-input-format "pulse"
-;;         whisper--ffmpeg-input-device "default"
-;;         )
-;;   (map! :leader
-;;         (:prefix "y"
-;;          :desc "Whisper" :n "w" #'whisper-run
-;;          :desc "Whisper File" :n "W" #'whisper-file)))
-
-;; End of all the LLMs! (for now)
-
 (use-package! lsp-mode
   :defer t
   :custom
@@ -207,40 +180,11 @@
   :hook
   (prog-mode . rainbow-delimiters-mode))
 
-;; ruff-lsp
-(defcustom lsp-ruff-executable "ruff-lsp"
-  "Command to start the Ruff language server."
-  :group 'lsp-python
-  :risky t
-  :type 'file)
-
-;; Register ruff-lsp with the LSP client.
-(after! lsp-mode
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection (lambda () (list lsp-ruff-executable)))
-    :activation-fn (lsp-activate-on "python")
-    :add-on? t
-    :server-id 'ruff)))
-
-(use-package! beacon
-  :defer t
+(use-package! dap-mode
+  :after go-mode
   :config
-  (beacon-mode 1))
+  (require 'dap-dlv-go))
 
-(after! dap-mode
-  (require 'dap-python)
-  ;; if you installed debugpy, you need to set this
-  ;; https://github.com/emacs-lsp/dap-mode/issues/306
-  (setq dap-python-debugger 'debugpy)
-
-  (dap-ui-mode)
-  (dap-ui-controls-mode 1)
-  )
-
-;; Find all references in a project using lsp
-;;
-(map! :leader
-      :desc "Find all references" :n "r" #'lsp-find-references)
-
-;; we recommend using use-package to organize your init.el
+(use-package! eglot-booster
+  :after eglot
+  :config (eglot-booster-mode))
