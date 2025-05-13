@@ -53,7 +53,6 @@
 (package! org-autolist)
 (package! org-reverse-datetree) ;; [[file:config.el::file+function my-org-links-file org-reverse-datetree-goto-date-in-file][Org template used to store links needs this]]
 (package! org-download)
-;; (package! org-superstar)
 
 ;; Prot's theme is indeed amazing. Not sure if I want to pin this going forward.
 (package! modus-themes)
@@ -74,19 +73,6 @@
 
 (package! flycheck-golangci-lint)
 
-;; All the LLM goodies
-(package! gptel)
-(package! gptel-extensions     ; extended functionality
-  :recipe (:host github :repo "kamushadenes/gptel-extensions.el"
-                 :files ("gptel-extensions.el")))
-
-(package! whisper :recipe (:host github :repo "natrys/whisper.el" :files ("*.el")))
-
-;; TODO: try this again. Couldn't get the instructions in https://github.com/Exafunction/codeium.el to work.
-;; https://github.com/jo3moor3/doom/blob/main/config.el has a potentially working example.
-;; (package! codeium :recipe (:host github :repo "Exafunction/codeium.el"))
-;; End of all the LLM goodies
-
 (package! consult-org-roam)
 
 ;; excalidraw for org-mode
@@ -103,17 +89,10 @@
 ;; Enable the splendid https://github.com/rksm/clj-org-analyzer
 (package! org-analyzer)
 
-(package! beacon)
-
-
-;; Copied from https://github.com/doomemacs/doomemacs/issues/7863
-;; Not sure if this is going to fix the lsp m
-;(unpin! consult)
-;
-;(unpin! lsp-mode)
-
-
 (package! copy-as-format
   :recipe (:host github :repo "sshaw/copy-as-format" :files ("*.el")))
 
-(package! codeium :recipe (:host github :repo "Exafunction/codeium.el"))
+(package! dap-mode)
+
+(package! eglot-booster
+  :recipe (:host github :repo "jdtsmith/eglot-booster"))
