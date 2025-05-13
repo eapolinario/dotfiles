@@ -37,7 +37,12 @@
       (delete-char 1)
       (insert (format "\n%s)" (make-string (current-indentation) ? ))))))
 
-(map! :leader
-      "c S" #'ea/split-comma-separated-list)
+(map!
+ :leader
+ (:map prog-mode-map
+  :desc "Find all references" :n "r" #'lsp-find-references
+  :desc "Split comma-separated list" :n "c S" #'ea/split-comma-separated-list
+  )
+ )
 
 ;;; +bindings.el ends here
