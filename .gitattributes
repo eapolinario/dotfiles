@@ -1,1 +1,2 @@
 .authinfo filter=git-crypt diff=git-crypt
+authinfo/.authinfo filter=git-crypt diff=git-crypt
