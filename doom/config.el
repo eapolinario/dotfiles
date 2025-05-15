@@ -131,22 +131,6 @@
 ;; tbh I don't understand why this is not the default.
 (setq compilation-scroll-output t)
 
-;; All the LLMs!
-;; (use-package! gptel
-;;   :config
-;;   ;; TODO: Do not commit these keys to git!
-;;   (setq! gptel-api-key "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")
-;;   (gptel-make-gemini "Gemini"
-;;     :key "AIzaSyCU6-erLCeVMH5-vkkOpQL45lA0YQciVzE"
-;;     :stream t)
-;;   (setq
-;;    gptel-model "o4-mini"
-;;    gptel-backend (gptel-make-ollama "Ollama"
-;;                    :host "localhost:11434"
-;;                    :stream t
-;;                    :models '("llama3.1:8b")))
-;;   )
-
 (use-package! lsp-mode
   :defer t
   :custom
@@ -186,3 +170,10 @@
 (use-package! eglot-booster
   :after eglot
   :config (eglot-booster-mode))
+
+;; All the LLMs!
+(after! gptel
+  (setq gptel-log-level 'info) ;; help in debugging
+  ;; Configure providers
+  (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))
+  (gptel-make-gemini "Gemini" :stream t :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
