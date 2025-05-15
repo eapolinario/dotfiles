@@ -9,8 +9,9 @@ echo $CONFIG_HOME
 # stow'd files #
 ################
 
-# Special-case zsh because that one is harder to force to read from `.config`
+# Special-case zsh and authinfo because they do not follow the XDG spec
 stow -vt ~ zsh
+stow -vt ~ authinfo
 
 for component in \
 		doom \
