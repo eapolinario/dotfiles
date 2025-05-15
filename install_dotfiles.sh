@@ -5,6 +5,18 @@ set -eux # defensive bash programming.
 CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
 echo $CONFIG_HOME
 
+if ! command -v gpg >/dev/null 2>&1; then
+	echo "GPG is not installed. Please install it (e.g., brew install gpg)."
+	exit 1
+fi
+
+# Check if the GPG key is available (replace "your_key_id" with your actual key ID)
+if ! gpg --list-keys 5C9B334784343A49 >/dev/null 2>&1; then
+	echo "GPG key with ID '5C9B334784343A49' is not available.  Please import it."
+	echo "For example: gpg --import path/to/your/keyfile"
+	exit 1
+fi
+
 ################
 # stow'd files #
 ################
