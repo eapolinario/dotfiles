@@ -118,7 +118,7 @@
                                  (file+datetree my-org-personal-journal-file)
                                  (file ,(concat doom-user-dir "org-templates/journal.template"))
                                  :tree-type week))
-        org-refile-targets '((org-agenda-files :maxlevel . 2))
+        org-refile-targets '((org-agenda-files :maxlevel . 3))
         org-agenda-todo-ignore-scheduled t
         org-outline-path-complete-in-steps nil
         org-refile-use-outline-path t
