@@ -92,7 +92,7 @@
 (package! copy-as-format
   :recipe (:host github :repo "sshaw/copy-as-format" :files ("*.el")))
 
-(package! dap-mode)
+;; (package! dap-mode)
 
 (package! eglot-booster
   :recipe (:host github :repo "jdtsmith/eglot-booster"))
