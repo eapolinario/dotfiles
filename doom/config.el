@@ -176,6 +176,16 @@
 ;; All the LLMs!
 (after! gptel
   (setq gptel-log-level 'info) ;; help in debugging
+  ;; (require 'gptel-integrations) ;; TODO
+  ;; (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
+  ;; (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
+
+  ;; TODO: indent and figure out if this is overriding other important values in that variable
+   ;; (setq gptel-prompt-prefix-alist '((markdown-mode . "\n** ### ") (org-mode . "-----\n*** ")
+   ;;                               (text-mode . "------\n### ")))
+   ;;  (setq gptel-response-prefix-alist '((markdown-mode . "\n")
+   ;;                                 (org-mode . "-----\n")
+   ;;                                 (text-mode . "------\n")))
   ;; Configure providers
   (gptel-make-gh-copilot "Copilot")
   (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))
