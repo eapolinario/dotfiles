@@ -164,10 +164,10 @@
   :hook
   (prog-mode . rainbow-delimiters-mode))
 
-(use-package! dap-mode
-  :after go-mode
-  :config
-  (require 'dap-dlv-go))
+;; (use-package! dap-mode
+;;   :after go-mode
+;;   :config
+;;   (require 'dap-dlv-go))
 
 (use-package! eglot-booster
   :after eglot
@@ -179,3 +179,5 @@
   ;; Configure providers
   (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))
   (gptel-make-gemini "Gemini" :stream t :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
+;; (after! dap-mode
+;;   (setq dap-python-debugger 'debugpy))
