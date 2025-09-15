@@ -22,7 +22,7 @@
 
        :completion
        ;; (company +childframe)           ; the ultimate code completion backend
-       (corfu +icons +orderless)  ; complete with cap(f), cape and a flying feather!
+       (corfu +icons +orderless +dabbrev)  ; complete with cap(f), cape and a flying feather!
        ;; (helm +childframe +fuzzy +icons)              ; the *other* search engine for love and life
        ;; ido               ; the other *other* search engine...
        ;; (ivy +childframe +fuzzy +icons +prescient)              ; a search engine for love and life
@@ -38,7 +38,7 @@
        hydra
        indent-guides     ; highlighted indent columns
        (ligatures +extra)         ; ligatures and symbols to make your code pretty again
-       ;;minimap           ; show a map of the code on the side
+       minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
@@ -58,10 +58,10 @@
        (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
-       ;;(format +onsave)  ; automated prettiness
+       (format +onsave)  ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
        ;;lispy             ; vim for lisp, for people who don't like vim
-       ;; multiple-cursors  ; editing in many places at once
+       multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
        ;;rotate-text       ; cycle region at point between text candidates
@@ -83,13 +83,13 @@
 
        :checkers
        (syntax +childframe +flymake +icons)              ; tasing you for every semicolon you forget
-       ;;(spell +flyspell) ; tasing you for misspelling mispelling
-       ;;grammar           ; tasing grammar mistake every you make
+       (spell +flyspell) ; tasing you for misspelling mispelling
+       grammar           ; tasing grammar mistake every you make
 
        :tools
        ;;ansible
        ;;biblio            ; Writes a PhD for you (citation needed)
-       (debugger)          ; FIXME stepping through code, to help you add bugs
+       (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
        ;;direnv
        docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -138,7 +138,7 @@
        ;;fsharp            ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;gdscript          ; the language you waited for
-       (go +lsp +tree-sitter)         ; the hipster dialect
+       (go +lsp)         ; the hipster dialect
        ;;(graphql +lsp)    ; Give queries a REST
        ;;(haskell +lsp)    ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
