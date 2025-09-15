@@ -1,6 +1,4 @@
 # Simple helper targets for this dotfiles repository
-#
-# TODO: remove later than 2025-09-15 15:12
 
 # Path to baseline file that suppresses historical leaks
 BASELINE := gitleaks.baseline
