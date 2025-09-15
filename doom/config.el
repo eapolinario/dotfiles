@@ -177,8 +177,9 @@
 (after! gptel
   (setq gptel-log-level 'info) ;; help in debugging
   ;; Configure providers
+  (gptel-make-gh-copilot "Copilot")
   (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))
-  (gptel-make-gemini "Gemini" :stream t :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
+  (gptel-make-gemini "Gemini" :stream t :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com")))
 
 
 ;; (use-package! dape
