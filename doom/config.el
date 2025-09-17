@@ -25,8 +25,8 @@
 ;;
 ;; (setq doom-font (font-spec :family "Iosevka" :size 12)
 ;;      doom-variable-pitch-font (font-spec :family "Iosevka" :size 13))
-(setq doom-font (font-spec :family "IosevkaTerm Nerd Font" :size 12 :weight medium)
-     doom-variable-pitch-font (font-spec :family "IosevkaTerm Nerd Font" :size 13))
+(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 4 :weight medium)
+      doom-variable-pitch-font (font-spec :family "FiraCode Nerd Font" :size 11))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -176,11 +176,11 @@
   ;; (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
 
   ;; TODO: indent and figure out if this is overriding other important values in that variable
-   ;; (setq gptel-prompt-prefix-alist '((markdown-mode . "\n** ### ") (org-mode . "-----\n*** ")
-   ;;                               (text-mode . "------\n### ")))
-   ;;  (setq gptel-response-prefix-alist '((markdown-mode . "\n")
-   ;;                                 (org-mode . "-----\n")
-   ;;                                 (text-mode . "------\n")))
+  ;; (setq gptel-prompt-prefix-alist '((markdown-mode . "\n** ### ") (org-mode . "-----\n*** ")
+  ;;                               (text-mode . "------\n### ")))
+  ;;  (setq gptel-response-prefix-alist '((markdown-mode . "\n")
+  ;;                                 (org-mode . "-----\n")
+  ;;                                 (text-mode . "------\n")))
   ;; Configure providers
   (gptel-make-gh-copilot "Copilot")
   (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))
