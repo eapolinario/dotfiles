@@ -13,6 +13,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Install gitleaks binary
+        env:
+          GITLEAKS_VERSION: 8.18.2
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo mv gitleaks /usr/local/bin/gitleaks
+          rm gitleaks.tar.gz
+
       - name: Run make gitleaks
         run: make gitleaks
 
