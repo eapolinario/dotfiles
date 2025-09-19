@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 DRY_RUN=false
 declare -a STOW_FLAGS=()
 
@@ -35,12 +37,44 @@ require_cmd() {
   fi
 }
 
-stow_doom() {
-  local script_dir
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+run_user_systemctl() {
+  if [[ "$DRY_RUN" == true ]]; then
+    printf '[DRY RUN] systemctl --user'
+    printf ' %q' "$@"
+    printf '\n'
+  else
+    systemctl --user "$@"
+  fi
+}
 
-  if [[ ! -d "$script_dir/doom" ]]; then
-    printf 'Doom configuration directory not found in %s.\n' "$script_dir" >&2
+remove_target_if_identical() {
+  local target="$1"
+  local source="$2"
+
+  if [[ -L "$target" || ! -e "$target" ]]; then
+    return
+  fi
+
+  if [[ -d "$target" ]]; then
+    printf 'Unexpected directory at %s. Remove it before continuing.\n' "$target" >&2
+    exit 1
+  fi
+
+  if cmp -s "$target" "$source"; then
+    if [[ "$DRY_RUN" == true ]]; then
+      printf '[DRY RUN] would remove %s to replace with managed symlink.\n' "$target"
+    else
+      rm "$target"
+    fi
+  else
+    printf 'Existing %s differs from the tracked version. Remove or back it up before rerunning.\n' "$target" >&2
+    exit 1
+  fi
+}
+
+stow_doom() {
+  if [[ ! -d "$SCRIPT_DIR/doom" ]]; then
+    printf 'Doom configuration directory not found in %s.\n' "$SCRIPT_DIR" >&2
     exit 1
   fi
 
@@ -48,7 +82,44 @@ stow_doom() {
   local target_dir="$config_home/doom"
 
   mkdir -p "$target_dir"
-  stow "${STOW_FLAGS[@]}" -vt "$target_dir" doom
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$target_dir" doom
+}
+
+stow_systemd_configs() {
+  if [[ ! -d "$SCRIPT_DIR/systemd" ]]; then
+    printf 'Systemd configuration directory not found in %s.\n' "$SCRIPT_DIR" >&2
+    exit 1
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  mkdir -p "$config_home/systemd/user" "$config_home/user-tmpfiles.d"
+
+  local service_source="$SCRIPT_DIR/systemd/.config/systemd/user/downloads-clean-at-login.service"
+  local service_target="$config_home/systemd/user/downloads-clean-at-login.service"
+  local tmpfiles_source="$SCRIPT_DIR/systemd/.config/user-tmpfiles.d/empty-downloads.conf"
+  local tmpfiles_target="$config_home/user-tmpfiles.d/empty-downloads.conf"
+
+  remove_target_if_identical "$service_target" "$service_source"
+  remove_target_if_identical "$tmpfiles_target" "$tmpfiles_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" systemd
+}
+
+enable_downloads_clean_service() {
+  if [[ "$DRY_RUN" == true ]]; then
+    run_user_systemctl daemon-reload
+    run_user_systemctl enable --now downloads-clean-at-login.service
+    return
+  fi
+
+  if ! systemctl --user show-environment >/dev/null 2>&1; then
+    printf 'User systemd instance not available; skipping downloads-clean-at-login.service enablement.\n' >&2
+    return
+  fi
+
+  run_user_systemctl daemon-reload
+  run_user_systemctl enable --now downloads-clean-at-login.service
+  printf 'downloads-clean-at-login.service enabled for the user.\n'
 }
 
 main() {
@@ -74,11 +145,16 @@ main() {
   done
 
   require_cmd stow "Install it via your package manager"
+  require_cmd systemctl "Required to manage user services"
+
   stow_doom
+  stow_systemd_configs
+  enable_downloads_clean_service
+
   if [[ "$DRY_RUN" == true ]]; then
-    printf 'Dry run complete. Review stow output above for planned changes.\n'
+    printf 'Dry run complete. Review stow and systemctl output above for planned changes.\n'
   else
-    printf 'Doom configuration symlinked into %s/doom.\n' "${XDG_CONFIG_HOME:-$HOME/.config}"
+    printf 'Dotfiles installed. Doom configuration symlinked and downloads-clean-at-login.service ensured.\n'
   fi
 }
 
