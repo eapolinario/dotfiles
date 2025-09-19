@@ -1,0 +1,10 @@
+[Unit]
+Description=Clean `~/Downloads/` at login
+After=default.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemd-tmpfiles --user --clean
+
+[Install]
+WantedBy=default.target
