@@ -6,11 +6,17 @@ BASELINE := gitleaks.baseline
 # Executable; override if you have gitleaks elsewhere, e.g. `make GITLEAKS=/path/to/gitleaks gitleaks`
 GITLEAKS ?= gitleaks
 
-.PHONY: gitleaks
+.PHONY: gitleaks install-linux install-macos
 # Scan the repository for new secrets. Fails (non-zero exit status) if any leak
 # that is *not* in $(BASELINE) is detected.
 gitleaks:
 	$(GITLEAKS) detect --source . --baseline-path $(BASELINE) --redact
+
+install-linux:
+	./install_dotfiles_linux.sh
+
+install-macos:
+	./install_dotfiles.sh
 
 .PHONY: help
 help:
