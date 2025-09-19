@@ -1,13 +1,16 @@
-;;DOOMDIR/config.el -*- lexical-binding: t; -*-
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
+;; Personal bindings
 (load! "+bindings")
+
+;; Who doesn't love org?
 (load! "+org")
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
+;; clients, file templates and snippets.
 (setq user-full-name "Eduardo Apolinario"
       user-mail-address "curupa@gmail.com")
 
@@ -17,16 +20,14 @@
 ;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
 ;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
 ;;   presentations or streaming.
-;; - `doom-unicode-font' -- for unicode glyphs
+;; - `doom-symbol-font' -- for symbols
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;; (setq doom-font (font-spec :family "Iosevka" :size 12)
-;;      doom-variable-pitch-font (font-spec :family "Iosevka" :size 13))
-(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 4 :weight medium)
-      doom-variable-pitch-font (font-spec :family "FiraCode Nerd Font" :size 11))
+(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 13 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "FiraCode Nerd Font" :size 13))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -35,13 +36,19 @@
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function.
-(setq doom-theme 'catppuccin)
-(setq catppuccin-flavor 'mocha) ; latte, frappe, macchiato, mocha
+;; `load-theme' function. This is the default:
+(setq doom-theme 'doom-molokai)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
+
+;; A more ergonomic escape sequence for evil
+(setq-default evil-escape-key-sequence "fd")
+;; Ensure output of `make compile' scrolls to the bottom
+;; Learned this on https://www.youtube.com/watch?v=6oeE52bIFyE
+;; tbh I don't understand why this is not the default.
+(setq compilation-scroll-output t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -76,30 +83,10 @@
 ;; they are implemented.
 
 ;; magit prefix
-(use-package! magit
-  :init
+;; I grew accustomed to this for whatever reason
+(after! magit
   (map! :leader :prefix "g"
         "s" #'magit-status))
-
-;; A more ergonomic escape sequence for evil
-(setq-default evil-escape-key-sequence "fd")
-
-;; counsel should search for hidden files too.
-;; https://github.com/hlissner/doom-emacs/issues/3190#issuecomment-631932638
-(after! counsel
-  (setq counsel-find-file-ignore-regexp
-        (concat
-         ;; File names beginning with #
-         "\\(?:\\`[#]\\)"
-         ;; File names ending with # or ~
-         "\\|\\(?:\\`.+?[#~]\\'\\)"))
-  (setq counsel-rg-base-command
-        "rg -M 240 --hidden --with-filename --no-heading --line-number --color never %s || true"))
-
-;; Golang
-(add-hook! go-mode
-  (setq gofmt-command "goimports")
-  (add-hook 'before-save-hook 'gofmt-before-save))
 
 ;; Github copilot
 ;; accept completion from copilot and fallback to company
@@ -114,42 +101,13 @@
   (copilot-max-char -1)
   (copilot-indent-offset-warning-disable t))
 
-(use-package! protobuf-mode
-  :defer-incrementally t)
+; (use-package! protobuf-mode
+;   :defer-incrementally t)
 
 ;; Enable which-function-mode in prog-mode
 (add-hook 'prog-mode-hook 'which-function-mode)
 
-;; Enable rainbow-mode in prog-mode
-;; (add-hook 'prog-mode-hook 'rainbow-mode)
-;; (add-hook! prog-mode 'rainbow-mode)
-
-(use-package flycheck-golangci-lint
-  :ensure t
-  :hook (go-mode . flycheck-golangci-lint-setup))
-
-;; Ensure output of `make compile' scrolls to the bottom
-;; Learned this on https://www.youtube.com/watch?v=6oeE52bIFyE
-;; tbh I don't understand why this is not the default.
-(setq compilation-scroll-output t)
-
-(use-package! lsp-mode
-  :defer t
-  :custom
-  (gc-cons-threshold (* 400 1024 1024))      ; increase GC threshold to improve perf in LSP mode
-  (read-process-output-max (* 1 1024 1024))  ; handle large LSP responses
-  (add-hook 'lsp-after-open-hook 'lsp-lens-mode)
-  :config (setq lsp-lens-enable t
-                lsp-auto-execute-action nil
-                lsp-verify-signature t)
-  )
-
-(after! lsp-ui
-  :defer t
-  :config (setq lsp-ui-doc-enable t
-                lsp-ui-doc-show-with-cursor t
-                lsp-ui-doc-show-with-mouse t))
-
+;; git-link :heart:
 (use-package! git-link
   :defer t
   :custom
@@ -159,28 +117,14 @@
   :bind
   ("C-c v &" . git-link))
 
-(use-package! rainbow-delimiters
-  :defer t
-  :hook
-  (prog-mode . rainbow-delimiters-mode))
-
-(use-package! eglot-booster
-  :after eglot
-  :config (eglot-booster-mode))
-
-;; All the LLMs!
+;; LLM stuff
 (after! gptel
-  (setq gptel-log-level 'info) ;; help in debugging
-  ;; (require 'gptel-integrations) ;; TODO
+  (setq gptel-log-level 'info ;; help in debugging
+        gptel-include-reasoning t)
+  (require 'gptel-integrations) ;; TODO
   ;; (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
   ;; (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
 
-  ;; TODO: indent and figure out if this is overriding other important values in that variable
-  ;; (setq gptel-prompt-prefix-alist '((markdown-mode . "\n** ### ") (org-mode . "-----\n*** ")
-  ;;                               (text-mode . "------\n### ")))
-  ;;  (setq gptel-response-prefix-alist '((markdown-mode . "\n")
-  ;;                                 (org-mode . "-----\n")
-  ;;                                 (text-mode . "------\n")))
   ;; Configure providers
   (gptel-make-gh-copilot "Copilot")
   (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))

@@ -1,4 +1,5 @@
-;;; +bindings.el --- This is just a list of key bindings to be used in my doom emacs configuration -*- lexical-binding: t; -*-
+;;; +bindings.el -*- lexical-binding: t; -*-
+
 ;;
 ;; Copyright (C) 2025 Eduardo Apolinario
 ;;
@@ -9,7 +10,6 @@
 ;;
 ;;
 ;;; Code:
-
 
 ;; Since elisp doesn't have namespaces, we need to prefix our functions with a unique prefix, usually people use their
 ;; initials or a short name. In this case, I am using "ea" for Eduardo Apolinario.
@@ -37,11 +37,20 @@
       (delete-char 1)
       (insert (format "\n%s)" (make-string (current-indentation) ? ))))))
 
+(defun ea/org-archive-done-tasks ()
+  "Archive all done tasks."
+  (interactive)
+  (org-map-entries 'org-archive-subtree "/DONE" 'file))
+
 (map!
  :leader
  (:map prog-mode-map
   :desc "Find all references" :n "r" #'lsp-find-references
   :desc "Split comma-separated list" :n "c S" #'ea/split-comma-separated-list
+  )
+ ;; Archive done tasks in org mode
+ (:map org-mode-map
+  :desc "Archive done tasks" :n "t A" #'ea/org-archive-done-tasks
   )
  )
 
