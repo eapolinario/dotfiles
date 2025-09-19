@@ -7,23 +7,16 @@ on:
 
 jobs:
   run-gitleaks:
-    name: Run gitleaks via make
+    name: Scan with gitleaks
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install gitleaks binary
-        env:
-          GITLEAKS_VERSION: 8.18.2
-        run: |
-          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz -o gitleaks.tar.gz
-          tar -xzf gitleaks.tar.gz gitleaks
-          sudo mv gitleaks /usr/local/bin/gitleaks
-          rm gitleaks.tar.gz
-
-      - name: Run make gitleaks
-        run: make gitleaks
+      - name: Run gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --baseline-path gitleaks.baseline --config .gitleaks.toml --redact
 
   notify-on-failure:
     name: Notify on failure
@@ -42,7 +35,7 @@ jobs:
           to: ${{ secrets.ALERT_EMAIL }}
           from: ${{ secrets.ALERT_EMAIL }}
           body: |
-            The `make gitleaks` job failed for ${{ github.repository }}.
+            The gitleaks scan failed for ${{ github.repository }}.
 
             Commit: ${{ github.sha }}
             Author: ${{ github.actor }}
