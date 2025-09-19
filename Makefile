@@ -16,7 +16,7 @@ install-linux:
 	./install_dotfiles_linux.sh
 
 install-macos:
-	./install_dotfiles.sh
+	./install_dotfiles_macos.sh
 
 .PHONY: help
 help:
