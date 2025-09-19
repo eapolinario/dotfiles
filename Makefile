@@ -10,7 +10,7 @@ GITLEAKS ?= gitleaks
 # Scan the repository for new secrets. Fails (non-zero exit status) if any leak
 # that is *not* in $(BASELINE) is detected.
 gitleaks:
-	$(GITLEAKS) detect --source . --baseline-path $(BASELINE) --redact
+	$(GITLEAKS) detect --source . --baseline-path $(BASELINE) --config .gitleaks.toml --redact
 
 install-linux:
 	./install_dotfiles_linux.sh

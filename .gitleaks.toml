@@ -1,0 +1,7 @@
+title = "Dotfiles gitleaks config"
+
+[allowlist]
+  description = "Ignore git-crypt managed authinfo"
+  regexes = [
+    '''authinfo/\\.authinfo$'''
+  ]
