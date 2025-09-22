@@ -58,6 +58,8 @@
 (package! websocket)
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+;; This was needed to get org-roam to work on Linux
+(package! simple-httpd)
 
 ;; Github copilot
 (package! copilot
