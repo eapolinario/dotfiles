@@ -85,5 +85,6 @@
 (package! org-reverse-datetree) ;; [[file:config.el::file+function my-org-links-file org-reverse-datetree-goto-date-in-file][Org template used to store links needs this]]
 (package! org-download)
 
-;; TODO: explain why I need this
-(package! simple-httpd)
+;; ast-grep
+;; what wonders will that unlock?
+(package! ast-grep)
