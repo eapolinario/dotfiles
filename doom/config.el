@@ -151,6 +151,10 @@
 (after! gptel-magit
   (setq gptel-magit-model 'gpt-4.1-mini))
 
+;; Let me write longer commit messages
+(after! git-commit
+  (setq git-commit-summary-max-length 120))
+
 ;; Enable ast-grep
 (use-package! ast-grep
   :ensure t)
