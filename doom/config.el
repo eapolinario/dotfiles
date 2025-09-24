@@ -150,6 +150,10 @@
   ;; Set default model. Right now this is very OpenAI-centric, i.e. might change in the future.
   (setq gptel-model 'gpt-5))
 
+;; Magit integration for gptel 
+(after! gptel-magit
+  (setq gptel-magit-model 'gpt-4.1-mini))
+
 ;; Enable ast-grep
 (use-package! ast-grep
   :ensure t)
