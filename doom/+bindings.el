@@ -43,7 +43,7 @@
   (interactive)
   (org-map-entries 'org-archive-subtree "/DONE" 'file))
 
-
+;; Navigate to next/previous sibling in org mode, hiding the previous one
 (defun ea/org-forward-sibling-and-hide-previous ()
   "Hide current subtree, then move to next sibling."
   (interactive)
@@ -56,8 +56,7 @@
   (interactive)
   (outline-hide-subtree)
   (outline-previous-visible-heading 1)
-  (outline-show-subtree))
-
+  (outline-show-subtree)) 
 
 (map!
  :leader
