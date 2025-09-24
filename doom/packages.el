@@ -83,3 +83,6 @@
 ;; ast-grep
 ;; what wonders will that unlock?
 (package! ast-grep)
+
+;; org-web-tools
+(package! org-web-tools)
