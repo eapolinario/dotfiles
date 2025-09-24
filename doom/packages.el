@@ -65,11 +65,6 @@
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 
-;; Protobuf mode
-; (package! protobuf-mode
-;   :recipe (:host github :repo "protocolbuffers/protobuf"
-;            :files ("editors/protobuf-mode.el")))
-
 ;; git-link :heart:
 (package! git-link)
 

@@ -101,9 +101,6 @@
   (copilot-max-char -1)
   (copilot-indent-offset-warning-disable t))
 
-; (use-package! protobuf-mode
-;   :defer-incrementally t)
-
 ;; Enable which-function-mode in prog-mode
 (add-hook 'prog-mode-hook 'which-function-mode)
 
