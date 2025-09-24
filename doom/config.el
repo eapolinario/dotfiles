@@ -86,7 +86,8 @@
 ;; I grew accustomed to this for whatever reason
 (after! magit
   (map! :leader :prefix "g"
-        "s" #'magit-status))
+        "s" #'magit-status)
+  (setq magit-diff-refine-hunk 'all))
 
 ;; Github copilot
 ;; accept completion from copilot and fallback to company
