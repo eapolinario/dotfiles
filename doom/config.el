@@ -154,3 +154,6 @@
 ;; Enable ast-grep
 (use-package! ast-grep
   :ensure t)
+
+(use-package! org-web-tools
+  :after (org))
