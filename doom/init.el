@@ -26,7 +26,7 @@
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        ;;ivy               ; a search engine for love and life
-       vertico           ; the search engine of the future
+       (vertico +childframe +icons)           ; the search engine of the future
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -61,8 +61,8 @@
        ;;god              ; run Emacs commands without modifier keys
        ;;lispy            ; vim for lisp, for people who don't like vim
        multiple-cursors   ; editing in many places at once
-                          ;;objed           ; text object editing for the innocent
-                          ;;parinfer        ; turn lisp into python, sort of
+       ;;objed           ; text object editing for the innocent
+       ;;parinfer        ; turn lisp into python, sort of
        rotate-text        ; cycle region at point between text candidates
        snippets           ; my elves. They type so I don't have to
        word-wrap          ; soft wrapping with language-aware indent
@@ -70,8 +70,8 @@
        :emacs
        (dired +dirvish +icons) ; making dired pretty [functional]
        electric                ; smarter, keyword-based electric-indent
-      ;; eww                   ; the internet is gross
-      ;; ibuffer               ; interactive buffer management
+       ;; eww                   ; the internet is gross
+       ;; ibuffer               ; interactive buffer management
        tramp                   ; remote files at your arthritic fingertips
        (undo +tree)            ; persistent, smarter undo for your inevitable mistakes
        vc                      ; version-control and Emacs, sitting in a tree
@@ -156,7 +156,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pretty +dragndrop +roam2)               ; organize your plain life in plain text
+       (org +pretty +dragndrop +roam)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;graphviz          ; diagrams for confusing yourself even more
