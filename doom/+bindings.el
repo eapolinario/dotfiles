@@ -32,26 +32,42 @@
       (delete-char 1)
       (backward-char 2)
       (when (not (looking-at ","))
-          (forward-char)
-          (insert ","))
+        (forward-char)
+        (insert ","))
       (delete-char 1)
       (insert (format "\n%s)" (make-string (current-indentation) ? ))))))
 
+;; Cribbed from jethro's emacs config
 (defun ea/org-archive-done-tasks ()
   "Archive all done tasks."
   (interactive)
   (org-map-entries 'org-archive-subtree "/DONE" 'file))
 
+
+(defun ea/org-forward-sibling-and-hide-previous ()
+  "Hide current subtree, then move to next sibling."
+  (interactive)
+  (outline-hide-subtree)
+  (outline-next-visible-heading 1)
+  (outline-show-subtree))
+
+(defun ea/org-backward-sibling-and-hide-previous ()
+  "Hide current subtree, then move to previous sibling."
+  (interactive)
+  (outline-hide-subtree)
+  (outline-previous-visible-heading 1)
+  (outline-show-subtree))
+
+
 (map!
  :leader
  (:map prog-mode-map
   :desc "Find all references" :n "r" #'lsp-find-references
-  :desc "Split comma-separated list" :n "c S" #'ea/split-comma-separated-list
-  )
+  :desc "Split comma-separated list" :n "c S" #'ea/split-comma-separated-list)
  ;; Archive done tasks in org mode
  (:map org-mode-map
   :desc "Archive done tasks" :n "t A" #'ea/org-archive-done-tasks
-  )
- )
+  :desc "Forward sibling and hide previous" :n "] ]" #'ea/org-forward-sibling-and-hide-previous
+  :desc "Backward sibling and hide previous" :n "[ [" #'ea/org-backward-sibling-and-hide-previous))
 
 ;;; +bindings.el ends here
