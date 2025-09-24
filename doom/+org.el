@@ -151,6 +151,12 @@
         ;; cribbed from https://gist.github.com/bravosierrasierra/1d98a89a7bcb618ef70c6c4a92af1a96
         org-pomodoro-ticking-sound-p nil
         org-pomodoro-finished-sound-p nil
+
+        ;; org-habit settings
+        org-modules '(org-habit)
+        org-habit-following-days 7
+        org-habit-preceding-days 35
+        org-habit-show-habits t
         )
   )
 
