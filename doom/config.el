@@ -127,9 +127,28 @@
 
   ;; Configure providers
   (gptel-make-gh-copilot "Copilot")
-  (gptel-make-deepseek "DeepSeek" :stream t :key (auth-source-pick-first-password :host "api.deepseek.com"))
-  (gptel-make-gemini "Gemini" :stream t :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com")))
+  ;; N.B.: the key is the prefix in the list of models in gptel.
+  ;; There's a default list prefixed by "ChatGPT" which is not controlled by this.
+  ;; TODO: figure out what happens if we override the name "ChatGPT" here.
+  (gptel-make-openai "OpenAI"
+    :stream t
+    :key (auth-source-pick-first-password :host "api.openai.com")
+    :models '((gpt-5         . "gpt-5")
+              (gpt-5-mini    . "gpt-5-mini")
+              (gpt-4o-mini   . "gpt-4o-mini")
+              (gpt-4o        . "gpt-4o")
+              (gpt-4.1       . "gpt-4.1")
+              (gpt-4.1-mini  . "gpt-4.1-mini"))
+    )
+  (gptel-make-deepseek "DeepSeek"
+    :stream t
+    :key (auth-source-pick-first-password :host "api.deepseek.com"))
+  (gptel-make-gemini "Gemini"
+    :stream t
+    :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
 
+  ;; Set default model. Right now this is very OpenAI-centric, i.e. might change in the future.
+  (setq gptel-model 'gpt-5))
 
 ;; Enable ast-grep
 (use-package! ast-grep
