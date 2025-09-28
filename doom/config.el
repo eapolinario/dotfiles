@@ -160,5 +160,6 @@
 (use-package! ast-grep
   :ensure t)
 
+;; A surprising package to turn URLs into org-mode
 (use-package! org-web-tools
   :after (org))
