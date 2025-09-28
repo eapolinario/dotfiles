@@ -164,7 +164,6 @@
   (setq rmh-elfeed-org-files (list (file-truename (concat org-directory "elfeed.org")))
         elfeed-log-level 'debug))
 
-
 ;; ;; Misc
 ;; ;; ===========================
 ;; ;;
