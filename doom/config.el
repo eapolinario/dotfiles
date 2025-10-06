@@ -163,3 +163,21 @@
 ;; A surprising package to turn URLs into org-mode
 (use-package! org-web-tools
   :after (org))
+
+;; TODO: give yankpad a try
+;; yankpad
+;; (use-package! yankpad :defer-incrementally t)
+;; (after! yankpad
+;;   (map! :leader
+;;         :prefix "i"
+;;         :desc "Yankpad expand" "y" #'yankpad-expand))
+;; (map! )
+;;               :config
+;;               (setq yankpad-file (concat org-directory "/yankpad.org"))
+;;               (yankpad-mode 1)
+;;               :bind (("C-c y" . yankpad-expand)
+;;                      :map yankpad-map
+;;                      ("n" . yankpad-next)
+;;                      ("p" . yankpad-previous)
+;;                      ("i" . yankpad-insert)
+;;                      ("s" . yankpad-search)))
