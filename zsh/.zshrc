@@ -183,7 +183,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
   '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath' # remember to use single quote here!!!
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath' # remember to use single quote here!!!
 zstyle ':fzf-tab:complete:systemctl:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
 # Catch-all requires an ad-hoc less script.
 zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
@@ -216,3 +216,9 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#147494"
 
 # As per https://github.com/ajeetdsouza/zoxide, need to initialize it in the shell
 eval "$(zoxide init zsh)"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/eduardo/.lmstudio/bin"
+# End of LM Studio CLI section
+
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
