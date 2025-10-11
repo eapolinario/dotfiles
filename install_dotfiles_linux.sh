@@ -105,6 +105,27 @@ stow_systemd_configs() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" systemd
 }
 
+stow_hypr_configs() {
+  if [[ ! -d "$SCRIPT_DIR/hypr" ]]; then
+    printf 'Hypr configuration directory not found in %s.\n' "$SCRIPT_DIR" >&2
+    exit 1
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local hypr_dir="$config_home/hypr"
+  local input_source="$SCRIPT_DIR/hypr/.config/hypr/input.conf"
+  local bindings_source="$SCRIPT_DIR/hypr/.config/hypr/bindings.conf"
+  local input_target="$hypr_dir/input.conf"
+  local bindings_target="$hypr_dir/bindings.conf"
+
+  mkdir -p "$hypr_dir"
+
+  remove_target_if_identical "$input_target" "$input_source"
+  remove_target_if_identical "$bindings_target" "$bindings_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hypr
+}
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -149,6 +170,7 @@ main() {
 
   stow_doom
   stow_systemd_configs
+  stow_hypr_configs
   enable_downloads_clean_service
 
   if [[ "$DRY_RUN" == true ]]; then
