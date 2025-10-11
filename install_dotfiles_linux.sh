@@ -126,6 +126,24 @@ stow_hypr_configs() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hypr
 }
 
+
+stow_starship_config() {
+  if [[ ! -f "$SCRIPT_DIR/starship/.config/starship.toml" ]]; then
+    printf 'Starship configuration file not found in %s.\n' "$SCRIPT_DIR/starship/.config" >&2
+    exit 1
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local config_target="$config_home/starship.toml"
+  local config_source="$SCRIPT_DIR/starship/.config/starship.toml"
+
+  mkdir -p "$config_home"
+  remove_target_if_identical "$config_target" "$config_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" starship
+}
+
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -171,6 +189,7 @@ main() {
   stow_doom
   stow_systemd_configs
   stow_hypr_configs
+  stow_starship_config
   enable_downloads_clean_service
 
   if [[ "$DRY_RUN" == true ]]; then
