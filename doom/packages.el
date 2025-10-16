@@ -87,4 +87,9 @@
 ;; org-web-tools
 (package! org-web-tools)
 
+;; yankpad
 (package! yankpad)
+
+;; alabaster theme as explained in https://tonsky.me/blog/syntax-highlighting/
+(package! doom-alabaster-theme :recipe (:host github :repo "agraul/doom-alabaster-theme"))
+
