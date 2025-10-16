@@ -58,6 +58,14 @@
   (outline-previous-visible-heading 1)
   (outline-show-subtree)) 
 
+(defun ea/insert-gh-commit-url (repo-url hash)
+  "Insert https://github.com/OWNER/REPO/commit/HASH."
+  (interactive "sGitHub repo URL: \nsCommit hash: ")
+  (let* ((base (replace-regexp-in-string "\\.git\\'" "" repo-url))
+         (base (replace-regexp-in-string "\\`git@github\\.com:" "https://github.com/" base)))
+    (insert (format "%s/commit/%s" base hash))))
+
+
 ;; Cribbed from https://karthinks.com/software/jumping-directories-in-eshell/
 (defun eshell/z (&optional regexp)
   "Navigate to a previously visited directory in eshell, or to
