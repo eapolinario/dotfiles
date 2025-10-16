@@ -41,7 +41,7 @@
 (defun ea/org-archive-done-tasks ()
   "Archive all done tasks."
   (interactive)
-  (org-map-entries 'org-archive-subtree "/DONE" 'file))
+  (org-map-entries 'org-archive-subtree "/DONE|CANCELLED" 'file))
 
 ;; Navigate to next/previous sibling in org mode, hiding the previous one
 (defun ea/org-forward-sibling-and-hide-previous ()
