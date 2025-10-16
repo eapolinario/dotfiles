@@ -45,6 +45,7 @@
 
 ;; A more ergonomic escape sequence for evil
 (setq-default evil-escape-key-sequence "fd")
+
 ;; Ensure output of `make compile' scrolls to the bottom
 ;; Learned this on https://www.youtube.com/watch?v=6oeE52bIFyE
 ;; tbh I don't understand why this is not the default.
@@ -105,7 +106,7 @@
 ;; Enable which-function-mode in prog-mode
 (add-hook 'prog-mode-hook 'which-function-mode)
 
-;; git-link :heart:
+;; git-link ❤
 (use-package! git-link
   :defer t
   :custom
