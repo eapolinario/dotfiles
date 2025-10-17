@@ -68,7 +68,7 @@
 ;; Define a function to generate a link to a commit in the original repository
 ;; Works for GitHub, GitLab, Bitbucket, and other platforms
 (defun ea/git-commit-link (commit)
-  "Build a web URL to COMMIT for the current repo's origin and copy it.
+  "Insert a web URL to COMMIT for the current repo's origin at point.
 Supports GitHub, GitLab, Bitbucket, and generic servers.
 When called interactively, prompt for COMMIT (defaults to HEAD)."
   (interactive
@@ -115,10 +115,10 @@ When called interactively, prompt for COMMIT (defaults to HEAD)."
               ('gitlab    (format "https://%s/%s/%s/-/commit/%s" host user repo resolved))
               ('bitbucket (format "https://%s/%s/%s/commits/%s" host user repo resolved))
               (_          (format "https://%s/%s/%s/commit/%s" host user repo resolved)))))
-      (kill-new url)
-      (message "Commit link copied: %s" url)
+      ;; Instead of copying, insert it at point
+      (insert url)
+      (message "Inserted commit link: %s" url)
       url)))
-
 
 ;; Cribbed from https://karthinks.com/software/jumping-directories-in-eshell/
 (defun eshell/z (&optional regexp)
