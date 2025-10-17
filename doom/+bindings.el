@@ -65,6 +65,60 @@
          (base (replace-regexp-in-string "\\`git@github\\.com:" "https://github.com/" base)))
     (insert (format "%s/commit/%s" base hash))))
 
+;; Define a function to generate a link to a commit in the original repository
+;; Works for GitHub, GitLab, Bitbucket, and other platforms
+(defun ea/git-commit-link (commit)
+  "Build a web URL to COMMIT for the current repo's origin and copy it.
+Supports GitHub, GitLab, Bitbucket, and generic servers.
+When called interactively, prompt for COMMIT (defaults to HEAD)."
+  (interactive
+   (list (let ((s (read-string "Commit (SHA or ref, default HEAD): ")))
+           (if (or (null s) (string= s "")) "HEAD" s))))
+  (require 'subr-x) ;; for string-trim
+  (let* ((remote (string-trim
+                  (condition-case _
+                      (car (process-lines "git" "config" "--get" "remote.origin.url"))
+                    (error (user-error "Not in a Git repo or no remote.origin.url")))))
+         host user repo)
+    ;; SSH: git@HOST:USER/REPO(.git)
+    (when (string-match
+           "\\`[^@]+@\\([^:]+\\):\\([^/]+\\)/\\([^/]+?\\)\\(?:\\.git\\)?/?\\'"
+           remote)
+      (setq host (match-string 1 remote)
+            user (match-string 2 remote)
+            repo (match-string 3 remote)))
+    ;; HTTPS: https://HOST/USER/REPO(.git)
+    (when (and (not host)
+               (string-match
+                "\\`https?://\\([^/]+\\)/\\([^/]+\\)/\\([^/]+?\\)\\(?:\\.git\\)?/?\\'"
+                remote))
+      (setq host (match-string 1 remote)
+            user (match-string 2 remote)
+            repo (match-string 3 remote)))
+    (unless (and host user repo)
+      (user-error "Couldn't parse remote URL: %s" remote))
+    ;; Resolve commit to full SHA if possible
+    (let* ((resolved
+            (string-trim
+             (condition-case _
+                 (car (process-lines "git" "rev-parse" "--verify" "--quiet" commit))
+               (error commit))))
+           (platform
+            (cond
+             ((string-match-p "github\\.com\\'" host) 'github)
+             ((string-match-p "gitlab\\.com\\'" host) 'gitlab)
+             ((string-match-p "bitbucket\\.org\\'" host) 'bitbucket)
+             (t 'generic)))
+           (url
+            (pcase platform
+              ('github    (format "https://%s/%s/%s/commit/%s" host user repo resolved))
+              ('gitlab    (format "https://%s/%s/%s/-/commit/%s" host user repo resolved))
+              ('bitbucket (format "https://%s/%s/%s/commits/%s" host user repo resolved))
+              (_          (format "https://%s/%s/%s/commit/%s" host user repo resolved)))))
+      (kill-new url)
+      (message "Commit link copied: %s" url)
+      url)))
+
 
 ;; Cribbed from https://karthinks.com/software/jumping-directories-in-eshell/
 (defun eshell/z (&optional regexp)
