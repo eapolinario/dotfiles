@@ -1,0 +1,7 @@
+{
+  "providers" : {
+    "openai" : {
+      "keyRc" : "eca-api.openai.com"
+    }
+  }
+}
