@@ -161,6 +161,23 @@ stow_uwsm_config() {
 }
 
 
+stow_eca_config() {
+  if [[ ! -f "$SCRIPT_DIR/eca/.config/eca/config.json" ]]; then
+    printf 'ECA configuration file not found in %s.\n' "$SCRIPT_DIR/eca/.config/eca" >&2
+    exit 1
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local eca_dir="$config_home/eca"
+  local config_source="$SCRIPT_DIR/eca/.config/eca/config.json"
+  local config_target="$eca_dir/config.json"
+
+  mkdir -p "$eca_dir"
+  remove_target_if_identical "$config_target" "$config_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" eca
+}
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -207,6 +224,7 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_starship_config
+  stow_eca_config
   stow_uwsm_config
   enable_downloads_clean_service
 
