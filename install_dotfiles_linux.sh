@@ -144,6 +144,23 @@ stow_starship_config() {
 }
 
 
+stow_uwsm_config() {
+  local uwsm_dir="$HOME/.local/share/omarchy/config/uwsm"
+  local config_source="$SCRIPT_DIR/uwsm/.local/share/omarchy/config/uwsm/default"
+  local config_target="$uwsm_dir/default"
+
+  if [[ ! -f "$config_source" ]]; then
+    printf 'UWSM default file not found in %s.\n' "$SCRIPT_DIR/uwsm/.local/share/omarchy/config/uwsm" >&2
+    exit 1
+  fi
+
+  mkdir -p "$uwsm_dir"
+  remove_target_if_identical "$config_target" "$config_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" uwsm
+}
+
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -190,6 +207,7 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_starship_config
+  stow_uwsm_config
   enable_downloads_clean_service
 
   if [[ "$DRY_RUN" == true ]]; then
