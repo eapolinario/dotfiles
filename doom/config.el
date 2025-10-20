@@ -182,3 +182,5 @@
 ;;                      ("p" . yankpad-previous)
 ;;                      ("i" . yankpad-insert)
 ;;                      ("s" . yankpad-search)))
+
+(use-package! eca)
