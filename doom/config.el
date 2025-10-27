@@ -184,3 +184,20 @@
 ;;                      ("s" . yankpad-search)))
 
 (use-package! eca)
+
+(use-package! rainbow-mode
+  :defer 5
+  :hook ((css-mode
+          scss-mode
+          org-mode
+          typescript-mode
+          js-mode
+          emacs-lisp-mode)
+         . rainbow-mode)
+  :config
+  ;; Disable hl-line while rainbow-mode is active
+  (add-hook! 'rainbow-mode-hook
+    (hl-line-mode (if rainbow-mode -1 +1)))
+
+  ;; Don’t highlight X color names like "red" or "blue"
+  (setq rainbow-x-colors nil))
