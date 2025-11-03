@@ -37,7 +37,7 @@
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        indent-guides     ; highlighted indent columns
        (ligatures +extra)         ; ligatures and symbols to make your code pretty again
-       ;;minimap           ; show a map of the code on the side
+       minimap           ; show a map of the code on the side
        (modeline +light)          ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
@@ -84,14 +84,14 @@
 
        :checkers
        (syntax +childframe +flymake +icons) ; tasing you for every semicolon you forget
-       (spell +flyspell)                    ; tasing you for misspelling mispelling
+       ;; (spell +flyspell)                    ; tasing you for misspelling mispelling
        grammar                              ; tasing grammar mistake every you make
 
        :tools
        ;;ansible
        ;;biblio            ; Writes a PhD for you (citation needed)
        ;;collab            ; buffers with friends
-       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       debugger          ; FIXME stepping through code, to help you add bugs
        direnv
        (docker +lsp +tree-sitter)
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -99,7 +99,7 @@
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
        llm               ; when I said you needed friends, I didn't mean...
-       (lsp +eglot +booster); M-x vscode
+       (lsp +peek +booster); M-x vscode
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -118,7 +118,7 @@
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
        (cc +lsp +tree-sitter)         ; C > C++ == 1
-       ;;clojure           ; java with a lisp
+       ;; (clojure +lsp +tree-sitter)           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
@@ -144,8 +144,8 @@
        ;;idris             ; a language you can depend on
        (json +tree-sitter)              ; At least it ain't XML
        ;;janet             ; Fun fact: Janet is me!
-       (java +lsp +tree-sitter)       ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       ;; (java +lsp +tree-sitter)       ; the poster child for carpal tunnel syndrome
+       (javascript +lsp +tree-sitter)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        ;;latex             ; writing papers in Emacs has never been so fun
@@ -174,11 +174,11 @@
        sh                ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
-       (swift +lsp)             ; who asked for emoji variables?
+       ;; (swift +lsp)             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
-       (yaml +lsp +tree-sitter); JSON, but readable
-       ;;zig               ; C, but simpler
+       (yaml +lsp +tree-sitter) ; JSON, but readable
+       (zig +lsp +tree-sitter)               ; C, but simpler
 
        :email
        ;;(mu4e +org +gmail)
