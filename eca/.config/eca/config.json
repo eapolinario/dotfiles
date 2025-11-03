@@ -3,5 +3,38 @@
     "openai" : {
       "keyRc" : "eca-api.openai.com"
     }
+  },
+  "mcpServers": {
+    "beads": {
+      "command": "beads-mcp",
+      "args": []
+    },
+    "memory": {
+      "command": "docker",
+      "args": ["run", "-i", "-v", "claude-memory:/app/dist", "--rm", "mcp/memory"]
+    },
+    "mindpilot": {
+      "command": "npx",
+      "args": ["@mindpilot/mcp@latest"]
+    }
+  },
+  "customTools": {
+    "file-search": {
+      "description": "Finds files within a directory that match a specific name pattern.",
+      "command": "find {{directory}} -name {{pattern}}",
+      "schema": {
+        "properties": {
+          "directory": {
+            "type": "string",
+            "description": "The directory to start the search from."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "The search pattern for the filename (e.g., '*.clj')."
+          }
+        },
+        "required": ["directory", "pattern"]
+      }
+    }
   }
 }
