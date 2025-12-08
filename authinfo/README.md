@@ -67,6 +67,25 @@ The file format (when decrypted) is typically:
 machine example.com login myuser password mypass port 587
 ```
 
-## Security Note
+## Security Notes
 
-Never commit the decrypted `.authinfo` file to the repository. The encryption is automatically handled by git-crypt filters configured in `.gitattributes`.
+### Protection of Encrypted Files
+
+- Never commit the decrypted `.authinfo` file to the repository. The encryption is automatically handled by git-crypt filters configured in `.gitattributes`.
+- The encrypted files remain encrypted in the Git history and cannot be decrypted without the appropriate GPG private key.
+
+### Forking This Repository
+
+If someone forks this repository, they can:
+- Modify `.gitattributes` to change which files are encrypted
+- Add or remove files from the encryption list
+- Initialize their own git-crypt setup with their own keys
+
+However, they **cannot**:
+- Decrypt the existing `.authinfo` file without the original GPG private key
+- Access the symmetric encryption key without the GPG private key that was used to encrypt it
+
+When forking this repository, you would need to:
+1. Remove or replace the encrypted `.authinfo` file with your own
+2. Set up git-crypt with your own GPG keys
+3. Configure your own `.gitattributes` if needed
