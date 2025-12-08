@@ -62,9 +62,9 @@ The `.authinfo` file typically contains authentication credentials in a format u
 - Email credentials
 - Other sensitive authentication information
 
-The file format is typically:
+The file format (when decrypted) is typically:
 ```
-machine HOSTNAME login USERNAME password PASSWORD
+machine example.com login myuser password mypass port 587
 ```
 
 ## Security Note
