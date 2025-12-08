@@ -62,10 +62,17 @@ The `.authinfo` file typically contains authentication credentials in a format u
 - Email credentials
 - Other sensitive authentication information
 
-The file format (when decrypted) is typically:
+The file format (when decrypted) follows the `.netrc` format documented in the netrc(5) manual page:
 ```
-machine example.com login myuser password mypass port 587
+machine example.com login myuser password mypass
 ```
+
+Common fields include:
+- `machine` - the hostname or IP address
+- `login` - the username
+- `password` - the password
+
+Some tools may support additional fields like `port`, but these are extensions to the standard format.
 
 ## Security Notes
 
