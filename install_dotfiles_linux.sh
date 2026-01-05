@@ -178,6 +178,22 @@ stow_eca_config() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" eca
 }
 
+stow_applications() {
+  if [[ ! -d "$SCRIPT_DIR/applications" ]]; then
+    printf 'Applications directory not found in %s.\n' "$SCRIPT_DIR" >&2
+    exit 1
+  fi
+
+  local share_dir="$HOME/.local/share/applications"
+  local desktop_source="$SCRIPT_DIR/applications/.local/share/applications/org-protocol.desktop"
+  local desktop_target="$share_dir/org-protocol.desktop"
+
+  mkdir -p "$share_dir"
+  remove_target_if_identical "$desktop_target" "$desktop_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" applications
+}
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -226,6 +242,7 @@ main() {
   stow_starship_config
   stow_eca_config
   stow_uwsm_config
+  stow_applications
   enable_downloads_clean_service
 
   if [[ "$DRY_RUN" == true ]]; then
