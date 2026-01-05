@@ -138,6 +138,13 @@
                                  "* %U %?\n %i\n %a" :heading "Notes" :prepend t)
                                 ("oc" "Project changelog" entry #'+org-capture-central-project-changelog-file
                                  "* %U %?\n %i\n %a" :heading "Changelog" :prepend t)
+                                ;; org-protocol templates
+                                ("p" "Protocol" entry
+                                 (file+headline org-default-notes-file "Browser Captures")
+                                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?")
+                                ("L" "Protocol Link" entry
+                                 (file+headline org-default-notes-file "Browser Captures")
+                                 "* %? [[%:link][%:description]] \nCaptured On: %U")
                                 )
         org-refile-targets '((org-agenda-files :maxlevel . 3))
         org-agenda-todo-ignore-scheduled t
@@ -176,3 +183,18 @@
         org-download-abbreviate-filename-function #'file-relative-name)
   (setq org-download-link-format-function #'org-download-link-format-function-default))
 ;; ;; End of Misc
+
+;; org-protocol configuration
+;; ===========================
+(after! org-protocol
+  ;; Auto-save and close Emacs after protocol capture finishes
+  (add-hook 'org-capture-after-finalize-hook
+            (lambda ()
+              (when (get 'org-protocol-last-capture 'initiated)
+                (save-some-buffers t)
+                (kill-emacs))))
+
+  ;; Mark when protocol initiates capture
+  (advice-add 'org-protocol-capture :before
+              (lambda (&rest _)
+                (put 'org-protocol-last-capture 'initiated t))))
