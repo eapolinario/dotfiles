@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Org Protocol
-Exec=emacsclient -n -a "" %u
+Exec=emacs %u
 Type=Application
 Terminal=false
 Categories=System;
