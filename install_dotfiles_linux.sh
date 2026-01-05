@@ -195,6 +195,24 @@ enable_downloads_clean_service() {
   printf 'downloads-clean-at-login.service enabled for the user.\n'
 }
 
+enable_grasp_service() {
+  if [[ "$DRY_RUN" == true ]]; then
+    run_user_systemctl daemon-reload
+    run_user_systemctl enable --now grasp.service
+    return
+  fi
+
+  if ! systemctl --user show-environment >/dev/null 2>&1; then
+    printf 'User systemd instance not available; skipping grasp.service enablement.\n' >&2
+    return
+  fi
+
+  run_user_systemctl daemon-reload
+  run_user_systemctl enable --now grasp.service
+  printf 'grasp.service enabled for the user.\n'
+  printf 'Ensure the browser extension is installed: https://github.com/karlicoss/grasp\n'
+}
+
 main() {
   ensure_linux
 
@@ -227,11 +245,12 @@ main() {
   stow_eca_config
   stow_uwsm_config
   enable_downloads_clean_service
+  enable_grasp_service
 
   if [[ "$DRY_RUN" == true ]]; then
     printf 'Dry run complete. Review stow and systemctl output above for planned changes.\n'
   else
-    printf 'Dotfiles installed. Doom configuration symlinked and downloads-clean-at-login.service ensured.\n'
+    printf 'Dotfiles installed. Doom configuration symlinked and user services enabled.\n'
   fi
 }
 

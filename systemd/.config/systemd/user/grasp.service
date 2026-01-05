@@ -1,0 +1,12 @@
+[Unit]
+Description=Grasp browser capture backend
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/uvx --from grasp-backend grasp_backend serve --path ~/org/capture.org
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
