@@ -152,4 +152,10 @@ any directory proferred by `consult-dir'."
   :desc "Forward sibling and hide previous" :n "] ]" #'ea/org-forward-sibling-and-hide-previous
   :desc "Backward sibling and hide previous" :n "[ [" #'ea/org-backward-sibling-and-hide-previous))
 
+;; Embark bindings
+;; TODO: I'm not happy with these bindings yet, but they will do for now.
+(map! "M-/"   #'embark-act
+      "C-;"   #'embark-dwim
+      "C-h B" #'embark-bindings)
+
 ;;; +bindings.el ends here
