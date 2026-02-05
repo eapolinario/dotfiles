@@ -103,3 +103,10 @@
 (package! shell-maker)
 (package! acp)
 (package! agent-shell)
+
+;; TODO: Trying to make the two tla mode work
+;;
+;; (package! tla-mode
+;;   :recipe (:host github :repo "ratish-punnoose/tla-mode"))
+;; (package! tla-ts-mode
+;;   :recipe (:host github :repo "Davidbrcz/tla-ts-mode" :files ("*.el")))
