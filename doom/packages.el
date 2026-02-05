@@ -98,3 +98,8 @@
 
 ;; Highlight hex color codes
 (package! rainbow-mode)
+
+;; Experimenting with agent-shell
+(package! shell-maker)
+(package! acp)
+(package! agent-shell)
