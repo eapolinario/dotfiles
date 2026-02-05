@@ -222,3 +222,9 @@ export PATH="$PATH:/Users/eduardo/.lmstudio/bin"
 # End of LM Studio CLI section
 
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# Good stuff in ~/.local/bin
+export PATH="$HOME/.local/bin:$PATH"
+
+# Setup direnv
+eval "$(direnv hook zsh)"
