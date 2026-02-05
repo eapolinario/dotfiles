@@ -203,3 +203,11 @@
 
   ;; Don’t highlight X color names like "red" or "blue"
   (setq rainbow-x-colors nil))
+
+;; agent-shell experiment
+(require 'acp)
+(require 'agent-shell)
+
+(setq agent-shell-anthropic-authentication
+      (agent-shell-anthropic-make-authentication
+       :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))))
