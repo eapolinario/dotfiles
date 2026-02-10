@@ -208,9 +208,18 @@
 (require 'acp)
 (require 'agent-shell)
 
-(setq agent-shell-anthropic-authentication
-      (agent-shell-anthropic-make-authentication
-       :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))))
+(after! agent-shell
+  (setq agent-shell-enable-logging t)
+  (setq agent-shell-enable-debug t)
+  (setq agent-shell-enable-traces t)
+  (setq agent-shell-anthropic-authentication
+        (agent-shell-anthropic-make-authentication
+         :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))))
+
+  (setq agent-shell-openai-authentication
+        (agent-shell-openai-make-authentication
+         :api-key (lambda () (auth-source-pick-first-password :host "api.openai.com"))))
+  )
 
 ;; TODO: Trying to make the two tla mode work
 ;;
