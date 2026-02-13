@@ -6,7 +6,7 @@ BASELINE := gitleaks.baseline
 # Executable; override if you have gitleaks elsewhere, e.g. `make GITLEAKS=/path/to/gitleaks gitleaks`
 GITLEAKS ?= gitleaks
 
-.PHONY: gitleaks install-linux install-macos gitleaks-baseline-regen
+.PHONY: gitleaks install-linux install-macos gitleaks-baseline-regen brewfile-update
 # Scan the repository for new secrets. Fails (non-zero exit status) if any leak
 # that is *not* in $(BASELINE) is detected.
 gitleaks:
@@ -21,7 +21,11 @@ install-linux:
 install-macos:
 	./install_dotfiles_macos.sh
 
+brewfile-update:
+	brew bundle dump --file ./Brewfile --force
+
 .PHONY: help
 help:
 	@echo "Available targets:"
 	@echo "  gitleaks   – Run gitleaks with baseline $(BASELINE)"
+	@echo "  brewfile-update – Update Brewfile from current Homebrew state"
