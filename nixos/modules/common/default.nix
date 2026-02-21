@@ -29,4 +29,12 @@
   };
 
   security.sudo.wheelNeedsPassword = false;
+
+  fonts = {
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      nerd-fonts.fira-code
+    ];
+    fontconfig.defaultFonts.monospace = [ "FiraCode Nerd Font Mono" ];
+  };
 }
