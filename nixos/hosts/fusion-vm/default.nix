@@ -11,7 +11,11 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Hyprland
-  programs.hyprland.enable = true;
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+  };
+  programs.uwsm.enable = true;
 
   # Link hyprland config into eduardo's home via tmpfiles
   systemd.tmpfiles.rules = [
@@ -29,11 +33,11 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd 'uwsm start hyprland-uwsm.desktop'";
         user = "eduardo";
       };
       initial_session = {
-        command = "Hyprland";
+        command = "uwsm start hyprland-uwsm.desktop";
         user = "eduardo";
       };
     };
