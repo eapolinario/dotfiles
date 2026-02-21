@@ -25,7 +25,8 @@
   environment.systemPackages = with pkgs; [
     ghostty # terminal
     wofi   # app launcher
-    waybar # status bar
+    waybar   # status bar
+    chromium
   ];
 
   # Display manager
