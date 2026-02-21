@@ -13,6 +13,17 @@
   # Hyprland
   programs.hyprland.enable = true;
 
+  # Link hyprland config into eduardo's home via tmpfiles
+  systemd.tmpfiles.rules = [
+    "L+ /home/eduardo/.config/hypr/hyprland.conf - - - - ${../../hypr/hyprland.conf}"
+  ];
+
+  environment.systemPackages = with pkgs; [
+    foot   # terminal
+    wofi   # app launcher
+    waybar # status bar
+  ];
+
   # Display manager
   services.greetd = {
     enable = true;
