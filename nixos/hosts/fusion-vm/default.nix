@@ -16,9 +16,15 @@
   # Display manager
   services.greetd = {
     enable = true;
-    settings.default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
-      user = "eduardo";
+    settings = {
+      default_session = {
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd Hyprland";
+        user = "eduardo";
+      };
+      initial_session = {
+        command = "Hyprland";
+        user = "eduardo";
+      };
     };
   };
 
