@@ -23,7 +23,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    foot   # terminal
+    ghostty # terminal
     wofi   # app launcher
     waybar # status bar
   ];
