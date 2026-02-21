@@ -24,6 +24,7 @@
 
   environment.systemPackages = with pkgs; [
     ghostty # terminal
+    foot
     wofi   # app launcher
     waybar   # status bar
     chromium
