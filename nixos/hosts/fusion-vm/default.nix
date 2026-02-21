@@ -27,6 +27,7 @@
     wofi   # app launcher
     waybar   # status bar
     chromium
+    wlr-randr
   ];
 
   # Display manager
