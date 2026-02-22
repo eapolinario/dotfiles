@@ -10,6 +10,7 @@
     neovim
     curl
     wget
+    ripgrep
   ];
 
   services.openssh = {
