@@ -19,6 +19,7 @@
     fd
     cmake
     gnumake
+    nodejs_24
   ];
 
   services.openssh = {
