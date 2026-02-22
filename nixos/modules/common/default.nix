@@ -11,6 +11,7 @@
     curl
     wget
     ripgrep
+    direnv
   ];
 
   services.openssh = {
