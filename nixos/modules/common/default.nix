@@ -12,6 +12,9 @@
     wget
     ripgrep
     direnv
+    fd
+    cmake
+    gnumake
   ];
 
   services.openssh = {
