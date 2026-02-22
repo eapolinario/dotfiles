@@ -17,6 +17,7 @@
     wget
     ripgrep
     direnv
+    git-crypt
     fd
     cmake
     gnumake
