@@ -13,6 +13,8 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    claude-code.url = "github:sadjow/claude-code-nix";
   };
 
   outputs = { self, nixpkgs, disko, ... }@inputs:
