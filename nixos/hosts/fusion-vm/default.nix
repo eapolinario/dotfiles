@@ -1,9 +1,11 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 {
   imports = [
     ./disko.nix
     # ./hardware-configuration.nix  # uncomment after first nixos-anywhere run
   ];
+
+  nixpkgs.overlays = [ inputs.claude-code.overlays.default ];
 
   networking.hostName = "fusion-vm";
 
@@ -32,6 +34,7 @@
     bitwarden-desktop
     bitwarden-cli
     gnupg
+    claude-code
     wlr-randr
     emacs30-pgtk
   ];
