@@ -1,0 +1,21 @@
+HOST     ?= fusion-vm
+TARGET   ?= eduardo@192.168.4.85
+FLAKE_DIR = $(shell pwd)
+
+.PHONY: switch deploy fmt help
+
+## switch: rebuild and switch the config on the target host (ssh)
+switch:
+	ssh $(TARGET) "cd ~/dotfiles/nixos && sudo nixos-rebuild switch --flake .#$(HOST)"
+
+## deploy: full nixos-anywhere install (first-time, wipes disk)
+deploy:
+	bash $(FLAKE_DIR)/deploy.sh $(HOST) $(TARGET)
+
+## fmt: format all nix files
+fmt:
+	nix fmt $(FLAKE_DIR)
+
+## help: show this help
+help:
+	@grep -E '^## ' Makefile | sed 's/## //'
