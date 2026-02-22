@@ -48,6 +48,9 @@
 
   # Required for Wayland/Hyprland
   hardware.graphics.enable = true;
+
+  # VMware guest tools (better graphics, clipboard, drag-and-drop)
+  virtualisation.vmware.guest.enable = true;
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
