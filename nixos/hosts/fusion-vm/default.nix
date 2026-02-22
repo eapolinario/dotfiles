@@ -30,6 +30,7 @@
     waybar   # status bar
     chromium
     bitwarden-desktop
+    bitwarden-cli
     gnupg
     wlr-randr
     emacs30-pgtk
