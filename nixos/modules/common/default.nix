@@ -2,7 +2,6 @@
 {
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "symbola"
-    "google-chrome"
   ];
 
   nix.settings = {
