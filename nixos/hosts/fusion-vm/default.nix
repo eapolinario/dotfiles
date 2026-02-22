@@ -29,6 +29,7 @@
     wofi   # app launcher
     waybar   # status bar
     chromium
+    google-chrome
     wlr-randr
     emacs30-pgtk
   ];
