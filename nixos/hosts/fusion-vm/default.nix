@@ -46,6 +46,9 @@
     };
   };
 
+  # VMware Fusion on aarch64 has no SVGA3D Mesa driver — force software rendering
+  environment.variables.LIBGL_ALWAYS_SOFTWARE = "1";
+
   # Required for Wayland/Hyprland
   hardware.graphics.enable = true;
 
