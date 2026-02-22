@@ -20,6 +20,7 @@
   # Link hyprland config into eduardo's home via tmpfiles
   systemd.tmpfiles.rules = [
     "L+ /home/eduardo/.config/hypr/hyprland.conf - - - - ${../../hypr/hyprland.conf}"
+    "L+ /home/eduardo/.config/doom - - - - /home/eduardo/dotfiles/doom"
   ];
 
   environment.systemPackages = with pkgs; [
