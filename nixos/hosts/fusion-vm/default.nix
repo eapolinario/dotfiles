@@ -61,5 +61,23 @@
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
   };
 
+  # Install Doom Emacs on first login if not already present
+  systemd.user.services.doom-emacs-install = {
+    description = "Install Doom Emacs on first run";
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "doom-install" ''
+        set -euo pipefail
+        if [ ! -f "$HOME/.config/emacs/bin/doom" ]; then
+          ${pkgs.git}/bin/git clone --depth=1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
+          export PATH="${pkgs.emacs30-pgtk}/bin:${pkgs.git}/bin:$PATH"
+          "$HOME/.config/emacs/bin/doom" install --no-fonts
+        fi
+      '';
+    };
+  };
+
   system.stateVersion = "24.11";
 }
