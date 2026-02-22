@@ -73,10 +73,10 @@
       User = "eduardo";
       ExecStart = pkgs.writeShellScript "doom-install" ''
         set -euo pipefail
-        if [ ! -f "/home/eduardo/.config/emacs/bin/doom" ]; then
-          export HOME="/home/eduardo"
-          ${pkgs.git}/bin/git clone --depth=1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
-          export PATH="${pkgs.emacs30-pgtk}/bin:${pkgs.git}/bin:$PATH"
+        export HOME="/home/eduardo"
+        export PATH="${lib.makeBinPath (with pkgs; [ bash coreutils findutils git emacs30-pgtk gnugrep gnused gawk ])}:/run/current-system/sw/bin"
+        if [ ! -f "$HOME/.config/emacs/bin/doom" ]; then
+          git clone --depth=1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
           "$HOME/.config/emacs/bin/doom" install --no-fonts
         fi
       '';
