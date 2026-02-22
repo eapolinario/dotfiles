@@ -48,9 +48,6 @@
 
   # Required for Wayland/Hyprland
   hardware.graphics.enable = true;
-  # Enable OpenGL/Vulkan support
-  hardware.opengl.enable = true;
-
 
   # VMware guest tools (better graphics, clipboard, drag-and-drop)
   virtualisation.vmware.guest.enable = true;
