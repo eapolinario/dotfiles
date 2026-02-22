@@ -77,7 +77,7 @@
         export PATH="${lib.makeBinPath (with pkgs; [ bash coreutils findutils git emacs30-pgtk gnugrep gnused gawk ])}:/run/current-system/sw/bin"
         if [ ! -f "$HOME/.config/emacs/bin/doom" ]; then
           git clone --depth=1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
-          "$HOME/.config/emacs/bin/doom" install --no-fonts
+          "$HOME/.config/emacs/bin/doom" install --no-config
         fi
       '';
     };
