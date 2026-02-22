@@ -1,5 +1,9 @@
 { config, pkgs, lib, ... }:
 {
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "symbola"
+  ];
+
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
