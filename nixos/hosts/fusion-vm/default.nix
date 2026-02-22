@@ -29,6 +29,8 @@
     wofi   # app launcher
     waybar   # status bar
     chromium
+    bitwarden-desktop
+    gnupg
     wlr-randr
     emacs30-pgtk
   ];
