@@ -29,6 +29,7 @@
     waybar   # status bar
     chromium
     wlr-randr
+    emacs30-pgtk
   ];
 
   # Display manager
