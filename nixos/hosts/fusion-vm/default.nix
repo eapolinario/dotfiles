@@ -38,9 +38,9 @@
     wlr-randr
     emacs30-pgtk
     clang
+    nushell
   ];
 
-  programs.nushell.enable = true;
   users.users.eduardo.shell = pkgs.nushell;
 
   programs.zoxide = {
