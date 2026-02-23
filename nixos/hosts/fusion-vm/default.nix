@@ -19,31 +19,7 @@
   };
   programs.uwsm.enable = true;
 
-  # Link hyprland config into eduardo's home via tmpfiles
-  systemd.tmpfiles.rules = [
-    "L+ /home/eduardo/.config/hypr/hyprland.conf - - - - ${../../hypr/hyprland.conf}"
-    "L+ /home/eduardo/.config/doom - - - - /home/eduardo/dotfiles/doom"
-  ];
-
-  environment.systemPackages = with pkgs; [
-    ghostty # terminal
-    foot
-    wofi   # app launcher
-    waybar   # status bar
-    chromium
-    bitwarden-desktop
-    bitwarden-cli
-    gnupg
-    claude-code
-    wlr-randr
-    emacs30-pgtk
-    clang
-    nushell
-  ];
-
   users.users.eduardo.shell = pkgs.nushell;
-
-  programs.zoxide.enable = true;
 
   # Display manager
   services.greetd = {
@@ -71,28 +47,6 @@
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-  };
-
-  # Install Doom Emacs on first boot if not already present
-  systemd.services.doom-emacs-install = {
-    description = "Install Doom Emacs for eduardo";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      User = "eduardo";
-      ExecStart = pkgs.writeShellScript "doom-install" ''
-        set -euo pipefail
-        export HOME="/home/eduardo"
-        export PATH="${lib.makeBinPath (with pkgs; [ bash coreutils findutils git emacs30-pgtk gnugrep gnused gawk ])}:/run/current-system/sw/bin"
-        if [ ! -f "$HOME/.config/emacs/bin/doom" ]; then
-          git clone --depth=1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
-          "$HOME/.config/emacs/bin/doom" install --no-config --no-env
-        fi
-      '';
-    };
   };
 
   system.stateVersion = "24.11";
