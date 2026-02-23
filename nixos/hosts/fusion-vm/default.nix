@@ -37,7 +37,13 @@
     claude-code
     wlr-randr
     emacs30-pgtk
+    clang
   ];
+
+  programs.zoxide = {
+    enable = true;
+    enableBashIntegration = true;
+  };
 
   # Display manager
   services.greetd = {
