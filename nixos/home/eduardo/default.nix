@@ -24,6 +24,7 @@
     gnumake
     nodejs_24
     btop
+    fzf
     neovim
     ripgrep
     direnv
