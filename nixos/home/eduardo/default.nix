@@ -19,9 +19,6 @@
     # Dev tools
     claude-code
     gnupg
-    clang
-    cmake
-    gnumake
     nodejs_24
     btop
     neovim
