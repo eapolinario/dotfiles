@@ -163,10 +163,6 @@
 (use-package! ast-grep
   :ensure t)
 
-;; A surprising package to turn URLs into org-mode
-(use-package! org-web-tools
-  :after (org))
-
 ;; TODO: give yankpad a try
 ;; yankpad
 ;; (use-package! yankpad :defer-incrementally t)

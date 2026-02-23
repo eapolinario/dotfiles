@@ -176,3 +176,7 @@
         org-download-abbreviate-filename-function #'file-relative-name)
   (setq org-download-link-format-function #'org-download-link-format-function-default))
 ;; ;; End of Misc
+
+;; A surprising package to turn URLs into org-mode
+(use-package! org-web-tools
+  :after (org))
