@@ -147,6 +147,11 @@
 
   programs.nushell.enable = true;
 
+  services.gpg-agent = {
+    enable = true;
+    pinentry.package = pkgs.pinentry-gnome3;
+  };
+
   programs.fzf.enable = true;
 
   programs.zoxide = {
