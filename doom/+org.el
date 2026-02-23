@@ -156,9 +156,12 @@
         org-modules '(org-habit)
         org-habit-following-days 7
         org-habit-preceding-days 35
-        org-habit-show-habits t
-        )
-  )
+        org-habit-show-habits t))
+
+(after! org-modern
+  ;; org-modern doesn't read org-todo-keyword-faces directly; sync them so
+  ;; pretty mode shows the same colors as org-mode defaults/agenda.
+  (setq org-modern-todo-faces org-todo-keyword-faces))
 
 (after! elfeed-org
   (setq rmh-elfeed-org-files (list (file-truename (concat org-directory "elfeed.org")))
