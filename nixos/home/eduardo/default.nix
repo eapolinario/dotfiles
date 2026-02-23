@@ -27,6 +27,7 @@
     direnv
     git-crypt
     fd
+    go_1_25
   ];
 
   home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
