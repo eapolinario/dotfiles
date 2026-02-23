@@ -34,6 +34,9 @@
 
   home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
 
+  home.file.".authinfo".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/dotfiles/authinfo/.authinfo";
+
   xdg.configFile."ghostty/config".text = ''
     command = nu
   '';
