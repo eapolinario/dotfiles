@@ -32,6 +32,10 @@
 
   home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
 
+  xdg.configFile."ghostty/config".text = ''
+    command = nu
+  '';
+
   programs.nushell.enable = true;
 
   programs.zoxide = {
