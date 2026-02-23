@@ -43,11 +43,7 @@
 
   users.users.eduardo.shell = pkgs.nushell;
 
-  programs.zoxide = {
-    enable = true;
-    enableBashIntegration = true;
-    enableNushellIntegration = true;
-  };
+  programs.zoxide.enable = true;
 
   # Display manager
   services.greetd = {
