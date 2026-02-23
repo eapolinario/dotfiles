@@ -12,16 +12,8 @@
 
   environment.systemPackages = with pkgs; [
     git
-    neovim
     curl
     wget
-    ripgrep
-    direnv
-    git-crypt
-    fd
-    cmake
-    gnumake
-    nodejs_24
   ];
 
   services.openssh = {
