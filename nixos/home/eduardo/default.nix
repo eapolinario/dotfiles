@@ -24,7 +24,6 @@
     gnumake
     nodejs_24
     btop
-    fzf
     neovim
     ripgrep
     direnv
@@ -147,6 +146,8 @@
   };
 
   programs.nushell.enable = true;
+
+  programs.fzf.enable = true;
 
   programs.zoxide = {
     enable = true;
