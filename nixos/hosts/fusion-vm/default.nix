@@ -40,9 +40,13 @@
     clang
   ];
 
+  programs.nushell.enable = true;
+  users.users.eduardo.shell = pkgs.nushell;
+
   programs.zoxide = {
     enable = true;
     enableBashIntegration = true;
+    enableNushellIntegration = true;
   };
 
   # Display manager
