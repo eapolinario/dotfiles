@@ -14,6 +14,7 @@
     bitwarden-desktop
     bitwarden-cli
     wlr-randr
+    wl-clipboard
     emacs30-pgtk
 
     # Dev tools
