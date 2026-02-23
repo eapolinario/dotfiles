@@ -14,7 +14,13 @@
     git
     curl
     wget
+    clang
+    cmake
+    gnumake
+    libtool
   ];
+
+  programs.nix-ld.enable = true;
 
   services.openssh = {
     enable = true;
