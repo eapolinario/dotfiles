@@ -25,6 +25,7 @@
     nodejs_24
     btop
     neovim
+    nixd
     ripgrep
     direnv
     git-crypt
