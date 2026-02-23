@@ -23,6 +23,7 @@
     cmake
     gnumake
     nodejs_24
+    btop
     neovim
     ripgrep
     direnv
