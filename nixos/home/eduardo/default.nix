@@ -178,11 +178,14 @@
           remap = {
             "C-a" = "Home";
             "C-e" = "End";
+            "C-n" = "Down";
+            "C-p" = "Up";
             "M-f" = "C-Right";
             "M-b" = "C-Left";
             "M-d" = "C-Delete";
             "M-BackSpace" = "C-BackSpace";
             "C-k" = { launch = ["wtype" "-M" "shift" "-k" "End" "-m" "shift" "-k" "BackSpace"]; };
+            "Super-n" = "C-n";
           };
         }
       ];
