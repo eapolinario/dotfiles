@@ -173,7 +173,7 @@
       keymap = [
         {
           name = "Chromium Emacs bindings";
-          application.only = [ "chromium" ];
+          application.only = [ "chromium-browser" ];
           remap = {
             "C-a" = "Home";
             "C-e" = "End";
