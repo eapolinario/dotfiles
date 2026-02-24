@@ -35,6 +35,9 @@
   home.file.".authinfo".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/dotfiles/authinfo/.authinfo";
 
+  home.file."org".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/repos/org-files/source_files";
+
   xdg.configFile."ghostty/config".text = ''
     command = nu
   '';
