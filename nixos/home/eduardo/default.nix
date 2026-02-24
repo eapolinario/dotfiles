@@ -165,4 +165,26 @@
   };
 
   programs.home-manager.enable = true;
+
+  services.xremap = {
+    enable = true;
+    withWlroots = true;
+    config = {
+      keymap = [
+        {
+          name = "Chromium Emacs bindings";
+          application.only = [ "chromium" ];
+          remap = {
+            "C-a" = "Home";
+            "C-e" = "End";
+            "C-f" = "right";
+            "C-b" = "left";
+            "C-n" = "down";
+            "C-p" = "up";
+            "C-d" = "delete";
+          };
+        }
+      ];
+    };
+  };
 }

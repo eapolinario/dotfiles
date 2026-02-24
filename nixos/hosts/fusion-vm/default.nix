@@ -20,6 +20,7 @@
   programs.uwsm.enable = true;
 
   users.users.eduardo.shell = pkgs.nushell;
+  users.users.eduardo.extraGroups = [ "input" ];
 
   # Display manager
   services.greetd = {
