@@ -20,6 +20,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    xremap-flake = {
+      url = "github:xremap/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, disko, home-manager, ... }@inputs:
@@ -34,7 +39,9 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
-            home-manager.users.eduardo = import ./home/eduardo;
+            home-manager.users.eduardo = {
+              imports = [ inputs.xremap-flake.homeManagerModules.default ./home/eduardo ];
+            };
           }
           ./hosts/${hostname}
           ./modules/common
