@@ -19,6 +19,7 @@
 
     # Dev tools
     gh
+    uv
     claude-code
     gnupg
     nodejs_24
