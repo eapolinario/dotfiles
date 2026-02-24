@@ -14,6 +14,7 @@
     bitwarden-cli
     wlr-randr
     wl-clipboard
+    wtype
     emacs30-pgtk
 
     # Dev tools
@@ -177,6 +178,11 @@
           remap = {
             "C-a" = "Home";
             "C-e" = "End";
+            "M-f" = "C-Right";
+            "M-b" = "C-Left";
+            "M-d" = "C-Delete";
+            "M-BackSpace" = "C-BackSpace";
+            "C-k" = { launch = ["wtype" "-M" "shift" "-k" "End" "-m" "shift" "-k" "BackSpace"]; };
           };
         }
       ];
