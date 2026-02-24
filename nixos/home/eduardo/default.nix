@@ -18,6 +18,7 @@
     emacs30-pgtk
 
     # Dev tools
+    gh
     claude-code
     gnupg
     nodejs_24
