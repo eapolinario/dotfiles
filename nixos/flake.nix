@@ -27,6 +27,8 @@
     };
 
     llm-agents.url = "github:numtide/llm-agents.nix";
+
+    beads.url = "github:steveyegge/beads";
   };
 
   outputs = { self, nixpkgs, disko, home-manager, llm-agents, ... }@inputs:
@@ -45,9 +47,10 @@
               imports = [ inputs.xremap-flake.homeManagerModules.default ./home/eduardo ];
             };
           }
-          ({ pkgs, ... }: {
+          ({ pkgs, inputs, ... }: {
             nixpkgs.overlays = [ llm-agents.overlays.default ];
             environment.systemPackages = [
+              inputs.beads.packages.${pkgs.stdenv.hostPlatform.system}.default
               pkgs.llm-agents.claude-code-acp
               pkgs.llm-agents.codex-acp
             ];
