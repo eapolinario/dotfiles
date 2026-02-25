@@ -34,6 +34,7 @@
     nodejs_24
     ripgrep
     sqlite
+    tree
     squashfsTools
     uv
   ];
