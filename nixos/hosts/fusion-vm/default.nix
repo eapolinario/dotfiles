@@ -20,7 +20,9 @@
   programs.uwsm.enable = true;
 
   users.users.eduardo.shell = pkgs.nushell;
-  users.users.eduardo.extraGroups = [ "input" "uinput" ];
+  users.users.eduardo.extraGroups = [ "input" "uinput" "kvm" ];
+
+  virtualisation.libvirtd.enable = true;
 
   hardware.uinput.enable = true;
 
