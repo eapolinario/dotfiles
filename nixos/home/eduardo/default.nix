@@ -30,6 +30,7 @@
     nixd
     nodejs_24
     ripgrep
+    sqlite
     uv
   ];
 
