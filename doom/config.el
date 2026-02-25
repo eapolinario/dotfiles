@@ -90,7 +90,9 @@
 (after! magit
   (map! :leader :prefix "g"
         "s" #'magit-status)
-  (setq magit-diff-refine-hunk 'all))
+  (setq magit-diff-refine-hunk 'all)
+  ;; Easier way to copy the remote url for a git sha
+  (define-key magit-log-mode-map (kbd "Y") #'browse-at-remote-kill))
 
 ;; Github copilot
 ;; accept completion from copilot and fallback to company
