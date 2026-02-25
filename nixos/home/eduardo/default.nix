@@ -23,6 +23,7 @@
     direnv
     fd
     firecracker
+    just
     gh
     git-crypt
     gnupg
