@@ -25,9 +25,11 @@
       url = "github:xremap/nix-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
-  outputs = { self, nixpkgs, disko, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, disko, home-manager, llm-agents, ... }@inputs:
     let
       mkHost = hostname: nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
@@ -43,6 +45,13 @@
               imports = [ inputs.xremap-flake.homeManagerModules.default ./home/eduardo ];
             };
           }
+          ({ pkgs, ... }: {
+            nixpkgs.overlays = [ llm-agents.overlays.default ];
+            environment.systemPackages = [
+              pkgs.llm-agents.claude-code-acp
+              pkgs.llm-agents.codex-acp
+            ];
+          })
           ./hosts/${hostname}
           ./modules/common
         ];
