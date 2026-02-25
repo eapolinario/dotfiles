@@ -27,6 +27,7 @@
     git-crypt
     gnupg
     go_1_25
+    gopls
     neovim
     nixd
     nodejs_24
