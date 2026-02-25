@@ -6,31 +6,31 @@
 
   home.packages = with pkgs; [
     # Desktop apps
-    ghostty
-    foot
-    wofi
-    chromium
-    bitwarden-desktop
     bitwarden-cli
-    wlr-randr
-    wl-clipboard
-    wtype
+    bitwarden-desktop
+    chromium
     emacs30-pgtk
+    foot
+    ghostty
+    wl-clipboard
+    wlr-randr
+    wofi
+    wtype
 
     # Dev tools
-    gh
-    uv
-    claude-code
-    gnupg
-    nodejs_24
     btop
+    claude-code
+    direnv
+    fd
+    gh
+    git-crypt
+    gnupg
+    go_1_25
     neovim
     nixd
+    nodejs_24
     ripgrep
-    direnv
-    git-crypt
-    fd
-    go_1_25
+    uv
   ];
 
   home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
@@ -168,6 +168,8 @@
   };
 
   programs.home-manager.enable = true;
+
+  services.cliphist.enable = true;
 
   services.xremap = {
     enable = true;
