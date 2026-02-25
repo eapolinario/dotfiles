@@ -22,6 +22,7 @@
     claude-code
     direnv
     fd
+    firecracker
     gh
     git-crypt
     gnupg
