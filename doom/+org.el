@@ -34,6 +34,15 @@
 (after! org
   (add-hook 'org-mode-hook (lambda() (display-line-numbers-mode -1))))
 
+;; Prettier code blocks
+(after! org
+  ;; Fontify src blocks in the Org buffer (nice to have)
+  (setq org-src-fontify-natively t)
+
+  ;; Use htmlize for HTML export highlighting
+  (setq org-html-htmlize-output-type 'css) ;; or 'inline-css
+  (require 'htmlize))
+
 ;; I have started using org-clock to track time I spend on tasks. Often I restart Emacs for different reasons in
 ;; the middle of a session, so I want to persist all the running clocks and their history.
 (after! org-clock
