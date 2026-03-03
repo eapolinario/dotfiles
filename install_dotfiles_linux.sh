@@ -119,9 +119,15 @@ stow_hypr_configs() {
   local bindings_target="$hypr_dir/bindings.conf"
 
   mkdir -p "$hypr_dir"
+  mkdir -p "$hypr_dir/scripts"
 
   remove_target_if_identical "$input_target" "$input_source"
   remove_target_if_identical "$bindings_target" "$bindings_source"
+  remove_target_if_identical "$hypr_dir/monitors.conf" "$SCRIPT_DIR/hypr/.config/hypr/monitors.conf"
+  remove_target_if_identical "$hypr_dir/looknfeel.conf" "$SCRIPT_DIR/hypr/.config/hypr/looknfeel.conf"
+  remove_target_if_identical "$hypr_dir/scripts/laptop-display-auto.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/laptop-display-auto.sh"
+  remove_target_if_identical "$hypr_dir/scripts/power-profile-default.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/power-profile-default.sh"
+  remove_target_if_identical "$hypr_dir/scripts/omarchy-battery-limit.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/omarchy-battery-limit.sh"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hypr
 }
@@ -154,10 +160,54 @@ stow_uwsm_config() {
     exit 1
   fi
 
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
   mkdir -p "$uwsm_dir"
+  mkdir -p "$config_home/uwsm"
   remove_target_if_identical "$config_target" "$config_source"
+  remove_target_if_identical "$config_home/uwsm/default" "$SCRIPT_DIR/uwsm/.config/uwsm/default"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" uwsm
+}
+
+
+stow_waybar_config() {
+  if [[ ! -d "$SCRIPT_DIR/waybar" ]]; then
+    return
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local waybar_dir="$config_home/waybar"
+
+  mkdir -p "$waybar_dir"
+  remove_target_if_identical "$waybar_dir/config.jsonc" "$SCRIPT_DIR/waybar/.config/waybar/config.jsonc"
+  remove_target_if_identical "$waybar_dir/style.css" "$SCRIPT_DIR/waybar/.config/waybar/style.css"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" waybar
+}
+
+
+stow_omarchy_config() {
+  if [[ ! -d "$SCRIPT_DIR/omarchy" ]]; then
+    return
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+  mkdir -p "$config_home/omarchy/extensions"
+  remove_target_if_identical "$config_home/omarchy/extensions/menu.sh" "$SCRIPT_DIR/omarchy/.config/omarchy/extensions/menu.sh"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" omarchy
+}
+
+
+stow_xcompose_config() {
+  if [[ ! -f "$SCRIPT_DIR/xcompose/.XCompose" ]]; then
+    return
+  fi
+
+  remove_target_if_identical "$HOME/.XCompose" "$SCRIPT_DIR/xcompose/.XCompose"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" xcompose
 }
 
 
@@ -241,6 +291,9 @@ main() {
   stow_doom
   stow_systemd_configs
   stow_hypr_configs
+  stow_waybar_config
+  stow_omarchy_config
+  stow_xcompose_config
   stow_starship_config
   stow_eca_config
   stow_uwsm_config
