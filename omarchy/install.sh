@@ -9,7 +9,7 @@ declare -a STOW_FLAGS=()
 
 usage() {
   cat <<'EOF'
-Usage: install_dotfiles_linux.sh [OPTIONS]
+Usage: install.sh [OPTIONS]
 
 Options:
   -n, --dry-run   Pass --no/--simulate to stow (no filesystem changes)
@@ -73,8 +73,8 @@ remove_target_if_identical() {
 }
 
 stow_doom() {
-  if [[ ! -d "$SCRIPT_DIR/doom" ]]; then
-    printf 'Doom configuration directory not found in %s.\n' "$SCRIPT_DIR" >&2
+  if [[ ! -d "$SCRIPT_DIR/../common/doom" ]]; then
+    printf 'Doom configuration directory not found in %s.\n' "$SCRIPT_DIR/../common" >&2
     exit 1
   fi
 
@@ -82,7 +82,7 @@ stow_doom() {
   local target_dir="$config_home/doom"
 
   mkdir -p "$target_dir"
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$target_dir" doom
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR/../common" -vt "$target_dir" doom
 }
 
 stow_systemd_configs() {

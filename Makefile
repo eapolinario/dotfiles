@@ -6,7 +6,7 @@ BASELINE := gitleaks.baseline
 # Executable; override if you have gitleaks elsewhere, e.g. `make GITLEAKS=/path/to/gitleaks gitleaks`
 GITLEAKS ?= gitleaks
 
-.PHONY: gitleaks install-linux install-macos gitleaks-baseline-regen brewfile-update
+.PHONY: gitleaks install-linux install-macos gitleaks-baseline-regen brewfile-update help
 # Scan the repository for new secrets. Fails (non-zero exit status) if any leak
 # that is *not* in $(BASELINE) is detected.
 gitleaks:
@@ -16,16 +16,17 @@ gitleaks-baseline-regen:
 	$(GITLEAKS) detect --source . --config .gitleaks.toml --report-format json --report-path $(BASELINE)
 
 install-linux:
-	./install_dotfiles_linux.sh
+	./omarchy/install.sh
 
 install-macos:
-	./install_dotfiles_macos.sh
+	./macos/install.sh
 
 brewfile-update:
-	brew bundle dump --file ./Brewfile --force
+	brew bundle dump --file ./macos/Brewfile --force
 
-.PHONY: help
 help:
 	@echo "Available targets:"
 	@echo "  gitleaks   – Run gitleaks with baseline $(BASELINE)"
+	@echo "  install-linux  – Install dotfiles on Arch Linux / omarchy"
+	@echo "  install-macos  – Install dotfiles on macOS"
 	@echo "  brewfile-update – Update Brewfile from current Homebrew state"

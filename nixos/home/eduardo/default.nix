@@ -41,7 +41,7 @@
   home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
 
   home.file.".authinfo".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/dotfiles/authinfo/.authinfo";
+    "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
 
   home.file."org".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/repos/org-files/source_files";
