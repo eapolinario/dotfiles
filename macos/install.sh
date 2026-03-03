@@ -2,6 +2,8 @@
 
 set -eux # defensive bash programming.
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # Only run this script if both gpg *and* the private key are available
 if ! command -v gpg >/dev/null 2>&1; then
 	echo "GPG is not installed. Please install it (e.g., brew install gpg)."
@@ -22,17 +24,19 @@ echo $CONFIG_HOME
 ################
 
 # Special-case zsh and authinfo because they do not follow the XDG spec
-stow -vt ~ zsh
-stow -vt ~ authinfo
+stow -d "$SCRIPT_DIR" -vt ~ zsh
+stow -d "$SCRIPT_DIR/../common" -vt ~ authinfo
+
+mkdir -p ${CONFIG_HOME}/doom
+stow -d "$SCRIPT_DIR/../common" -vt ${CONFIG_HOME}/doom doom
 
 for component in \
-		doom \
 		pip \
 		skhd \
 		tmux \
 		yabai; do
 	mkdir -p ${CONFIG_HOME}/${component}
-	stow -vt ${CONFIG_HOME}/${component} ${component}
+	stow -d "$SCRIPT_DIR" -vt ${CONFIG_HOME}/${component} ${component}
 done
 
 #######################

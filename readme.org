@@ -1,0 +1,102 @@
+#+title: dotfiles
+#+author: Eduardo Apolinario
+
+Personal configuration files for three platforms, organized into per-platform
+top-level directories.
+
+* Layout
+
+#+begin_src
+dotfiles/
+├── omarchy/      Arch Linux desktop (omarchy / Hyprland)
+├── macos/        macOS
+├── nixos/        NixOS
+└── common/       Shared between platforms
+#+end_src
+
+** omarchy/
+
+Configurations for an [[https://github.com/basecamp/omarchy][omarchy]]-based Arch Linux desktop running Hyprland.
+
+- =install.sh= — stows all packages below and enables user systemd services
+- =hypr/= — Hyprland config: keybindings, input, monitors, animations, scripts
+- =waybar/= — status bar layout and styling
+- =starship/= — shell prompt
+- =systemd/= — user services (downloads cleanup, grasp browser extension relay)
+- =uwsm/= — session environment variables (=TERMINAL=, =EDITOR=) for Hyprland
+- =xcompose/= — custom compose key sequences
+- =eca/= — [[https://github.com/nicholasgasior/eca][eca]] configuration
+- =omarchy/= — omarchy extension overrides (=~/.config/omarchy/extensions/=)
+
+** macos/
+
+Configurations for macOS.
+
+- =install.sh= — stows all packages below, installs Homebrew bundle, sets up
+  oh-my-zsh, fzf, and macOS defaults
+- =Brewfile= — Homebrew formulae, casks, and Mac App Store apps
+- =zsh/= — =.zshrc=, powerlevel10k prompt, =.lessfilter.sh=
+- =tmux/= — tmux config and a CPU/memory status script
+- =skhd/= — hotkey daemon bindings
+- =yabai/= — tiling window manager rules
+- =pip/= — pip configuration
+
+** nixos/
+
+NixOS system configuration managed with [[https://nixos.org/manual/nixpkgs/stable/#sec-flakes][flakes]] and [[https://nix-community.github.io/home-manager/][home-manager]].
+
+- =flake.nix= — inputs and outputs
+- =configuration.nix= — system-level packages and services
+- =home/eduardo/= — user environment (packages, waybar, gpg-agent, xremap,
+  cliphist, nushell, fzf, zoxide)
+
+** common/
+
+Shared configs used on both omarchy and macOS (and referenced from NixOS).
+
+- =doom/= — [[https://github.com/doomemacs/doomemacs][Doom Emacs]] configuration (=init.el=, =config.el=, =packages.el=,
+  keybindings, org templates)
+- =authinfo/= — encrypted =.authinfo= (git-crypted); stowed on macOS, referenced
+  as an out-of-store symlink on NixOS
+
+* Installation
+
+** Arch Linux / omarchy
+
+#+begin_src sh
+make install-linux
+# or directly:
+./omarchy/install.sh
+#+end_src
+
+Requires =stow= and =systemctl=. Pass =--dry-run= to preview changes without
+touching the filesystem.
+
+** macOS
+
+#+begin_src sh
+make install-macos
+# or directly:
+./macos/install.sh
+#+end_src
+
+Requires =gpg= with the signing key imported and =brew= available.
+
+** NixOS
+
+#+begin_src sh
+cd nixos && make switch
+#+end_src
+
+* Secrets
+
+=common/authinfo/.authinfo= is encrypted with [[https://github.com/AGWA/git-crypt][git-crypt]]. Running the installers
+on a machine without the key will silently skip authinfo stowing (macOS) or
+produce a broken symlink (NixOS) until the repo is unlocked.
+
+* Security scanning
+
+#+begin_src sh
+make gitleaks          # scan against stored baseline
+make gitleaks-baseline-regen  # regenerate baseline after a deliberate change
+#+end_src
