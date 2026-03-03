@@ -156,10 +156,10 @@
   (gptel-make-ollama "Ollama"
     :stream t
     :host "localhost:11434"
-    :models '(qwen3.5:0.8b)
+    :models '(DedeProGames/smallcoder:1.5b)
     )
 
-  (setq! gptel-model 'qwen3.5:0.8b)
+  (setq! gptel-model 'DedeProGames/smallcoder:1.5b)
 
   ;; Set default model. Right now this is very OpenAI-centric, i.e. might change in the future.
   ;; (setq gptel-model 'gpt-5))
@@ -177,7 +177,7 @@
          gptel-magit-backend (gptel-make-ollama "Ollama"
                                :stream t
                                :host "localhost:11434"
-                               :models '(qwen3.5:0.8b)
+                               :models '(DedeProGames/smallcoder:1.5b)
                                ))
   )
 
