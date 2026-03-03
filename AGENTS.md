@@ -1,11 +1,11 @@
 AGENTS guide for this repository (dotfiles; no build step)
 - Install: make install-linux (Linux), make install-macos (macOS)
-- Linux dry-run: ./install_dotfiles_linux.sh --dry-run; help: ./install_dotfiles_linux.sh --help
+- Linux dry-run: ./omarchy/install.sh --dry-run; help: ./omarchy/install.sh --help
 - Lint (secrets): make gitleaks; regen baseline (review carefully): make gitleaks-baseline-regen
 - Lint (shell): shellcheck **/*.sh; shfmt -d .; format fix: shfmt -i 2 -ci -w .
 - Syntax check one script: bash -n path/to/script.sh
 - "Single test" analogue: shellcheck path/to/script.sh or shfmt -d path; prefer Linux dry-run above
-- macOS health check: brew bundle (or brew bundle check) from repo root
+- macOS health check: brew bundle (or brew bundle check) from macos/
 
 Code style guidelines
 - Shell: use bash; shebang must match features; start scripts with: set -euo pipefail
