@@ -93,9 +93,6 @@
 ;; alabaster theme as explained in https://tonsky.me/blog/syntax-highlighting/
 (package! doom-alabaster-theme :recipe (:host github :repo "eapolinario/doom-alabaster-dark-theme"))
 
-;; eca.dev
-(package! eca :recipe (:host github :repo "editor-code-assistant/eca-emacs" :files ("*.el")))
-
 ;; Highlight hex color codes
 (package! rainbow-mode)
 
