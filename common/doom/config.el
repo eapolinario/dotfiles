@@ -130,19 +130,9 @@
 
   ;; Configure providers
   (gptel-make-gh-copilot "Copilot")
-  ;; N.B.: the key is the prefix in the list of models in gptel.
-  ;; There's a default list prefixed by "ChatGPT" which is not controlled by this.
-  ;; TODO: figure out what happens if we override the name "ChatGPT" here.
   (gptel-make-openai "OpenAI"
     :stream t
-    :key (auth-source-pick-first-password :host "api.openai.com")
-    ;; :models '((gpt-5         . "gpt-5")
-    ;;           (gpt-5-mini    . "gpt-5-mini")
-    ;;           (gpt-4o-mini   . "gpt-4o-mini")
-    ;;           (gpt-4o        . "gpt-4o")
-    ;;           (gpt-4.1       . "gpt-4.1")
-    ;;           (gpt-4.1-mini  . "gpt-4.1-mini"))
-    )
+    :key (auth-source-pick-first-password :host "api.openai.com"))
   (gptel-make-deepseek "DeepSeek"
     :stream t
     :key (auth-source-pick-first-password :host "api.deepseek.com"))
@@ -150,24 +140,15 @@
     :stream t
     :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
 
-  
-  ;; Set default model. Right now this is very OpenAI-centric, i.e. might change in the future.
-  ;; TODO: fix comment
-  (setq gptel-model 'claude-4.6
+  (setq gptel-model 'claude-opus-4-6
         gptel-backend (gptel-make-anthropic "Anthropic"
                         :stream t
-                        :key (auth-source-pick-first-password :host "api.anthropic.com")
-                        ;; :models '((claude-2.1       . "claude-2.1")
-                        ;;           (claude-2         . "claude-2")
-                        ;;           (claude-1.3       . "claude-1.3")
-                        ;;           (claude-1         . "claude-1")
-                        ;;           (claude-instant-100k . "claude-instant-100k"))
-                        ))
+                        :key (auth-source-pick-first-password :host "api.anthropic.com")))
   )
 
 ;; Magit integration for gptel 
 (after! gptel-magit
-  (setq gptel-magit-model 'gpt-4.1-mini))
+  (setq gptel-magit-model 'claude-sonnet-4-6))
 
 ;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
 ;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
