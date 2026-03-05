@@ -136,12 +136,12 @@
   (gptel-make-openai "OpenAI"
     :stream t
     :key (auth-source-pick-first-password :host "api.openai.com")
-    :models '((gpt-5         . "gpt-5")
-              (gpt-5-mini    . "gpt-5-mini")
-              (gpt-4o-mini   . "gpt-4o-mini")
-              (gpt-4o        . "gpt-4o")
-              (gpt-4.1       . "gpt-4.1")
-              (gpt-4.1-mini  . "gpt-4.1-mini"))
+    ;; :models '((gpt-5         . "gpt-5")
+    ;;           (gpt-5-mini    . "gpt-5-mini")
+    ;;           (gpt-4o-mini   . "gpt-4o-mini")
+    ;;           (gpt-4o        . "gpt-4o")
+    ;;           (gpt-4.1       . "gpt-4.1")
+    ;;           (gpt-4.1-mini  . "gpt-4.1-mini"))
     )
   (gptel-make-deepseek "DeepSeek"
     :stream t
@@ -156,6 +156,10 @@
 ;; Magit integration for gptel 
 (after! gptel-magit
   (setq gptel-magit-model 'gpt-4.1-mini))
+
+;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
+;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
+(setq agent-shell-anthropic-claude-acp-command '("claude-code-acp"))
 
 ;; Let me write longer commit messages
 (after! git-commit
