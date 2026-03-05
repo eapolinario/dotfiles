@@ -39,7 +39,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-alabaster-dark)
-(setq doom-theme 'doom-snazzy)
+(setq doom-theme 'doom-gruvbox)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -121,8 +121,7 @@
   ("C-c v &" . git-link))
 
 ;; LLM stuff
-(use-package! gptel
-  :config
+(after! gptel
   (setq gptel-log-level 'info ;; help in debugging
         gptel-include-reasoning t)
   (require 'gptel-integrations) ;; TODO
@@ -134,52 +133,29 @@
   ;; N.B.: the key is the prefix in the list of models in gptel.
   ;; There's a default list prefixed by "ChatGPT" which is not controlled by this.
   ;; TODO: figure out what happens if we override the name "ChatGPT" here.
-  ;; (gptel-make-openai "OpenAI"
-  ;;   :stream t
-  ;;   :key (auth-source-pick-first-password :host "api.openai.com")
-  ;;   :models '((gpt-5         . "gpt-5")
-  ;;             (gpt-5-mini    . "gpt-5-mini")
-  ;;             (gpt-4o-mini   . "gpt-4o-mini")
-  ;;             (gpt-4o        . "gpt-4o")
-  ;;             (gpt-4.1       . "gpt-4.1")
-  ;;             (gpt-4.1-mini  . "gpt-4.1-mini"))
-  ;;   )
-
+  (gptel-make-openai "OpenAI"
+    :stream t
+    :key (auth-source-pick-first-password :host "api.openai.com")
+    :models '((gpt-5         . "gpt-5")
+              (gpt-5-mini    . "gpt-5-mini")
+              (gpt-4o-mini   . "gpt-4o-mini")
+              (gpt-4o        . "gpt-4o")
+              (gpt-4.1       . "gpt-4.1")
+              (gpt-4.1-mini  . "gpt-4.1-mini"))
+    )
   (gptel-make-deepseek "DeepSeek"
     :stream t
     :key (auth-source-pick-first-password :host "api.deepseek.com"))
-
   (gptel-make-gemini "Gemini"
     :stream t
     :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
 
-  (gptel-make-ollama "Ollama"
-    :stream t
-    :host "localhost:11434"
-    :models '(DedeProGames/smallcoder:1.5b)
-    )
-
-  (setq! gptel-model 'DedeProGames/smallcoder:1.5b)
-
   ;; Set default model. Right now this is very OpenAI-centric, i.e. might change in the future.
-  ;; (setq gptel-model 'gpt-5))
-  ;; (setq gptel-model 'llama-3.2-3b))
+  (setq gptel-model 'gpt-5))
 
-  )
-
-;; Magit integration for gptel (configure separately since it loads via hook)
-(use-package! gptel-magit
-  :after gptel magit
-  :config
-  ;; (setq gptel-magit-model 'gpt-4.1-mini)
-  
-  (setq! gptel-magit-model 'llama-3.2:3b
-         gptel-magit-backend (gptel-make-ollama "Ollama"
-                               :stream t
-                               :host "localhost:11434"
-                               :models '(DedeProGames/smallcoder:1.5b)
-                               ))
-  )
+;; Magit integration for gptel 
+(after! gptel-magit
+  (setq gptel-magit-model 'gpt-4.1-mini))
 
 ;; Let me write longer commit messages
 (after! git-commit
@@ -207,7 +183,7 @@
 ;;                      ("i" . yankpad-insert)
 ;;                      ("s" . yankpad-search)))
 
-;; (use-package! eca)
+(use-package! eca)
 
 (use-package! rainbow-mode
   :defer 5
@@ -234,9 +210,6 @@
   (setq agent-shell-enable-logging t)
   (setq agent-shell-enable-debug t)
   (setq agent-shell-enable-traces t)
-  ;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
-  ;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
-  (setq agent-shell-anthropic-claude-acp-command '("claude-code-acp"))
   (setq agent-shell-anthropic-authentication
         (agent-shell-anthropic-make-authentication
          :api-key (lambda () (auth-source-pick-first-password :host "api.anthropic.com"))))
@@ -260,10 +233,3 @@
 ;;                                         ; The grammar is called tlaplus, but the mode is called tla
 ;;   (setq treesit-load-name-override-list '((tla "libtree-sitter-tlaplus" "tree_sitter_tlaplus")))
 ;;   )
-
-;; (use-package! claude-code-ide
-;;   ;; :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
-;;   :config
-;;   ;; (setq claude-code-ide-cli-path "/usr/bin/claude")
-;;   ;; (setq claude-code-ide-cli-debug t)
-;;   (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools

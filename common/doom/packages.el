@@ -94,7 +94,7 @@
 (package! doom-alabaster-theme :recipe (:host github :repo "eapolinario/doom-alabaster-dark-theme"))
 
 ;; eca.dev
-;; (package! eca :recipe (:host github :repo "editor-code-assistant/eca-emacs" :files ("*.el")))
+(package! eca :recipe (:host github :repo "editor-code-assistant/eca-emacs" :files ("*.el")))
 
 ;; Highlight hex color codes
 (package! rainbow-mode)
@@ -110,10 +110,3 @@
 ;;   :recipe (:host github :repo "ratish-punnoose/tla-mode"))
 ;; (package! tla-ts-mode
 ;;   :recipe (:host github :repo "Davidbrcz/tla-ts-mode" :files ("*.el")))
-
-;; (package! claude-code-ide
-;;   :recipe (:host github :repo "manzaltu/claude-code-ide.el"))
-
-
-(package! gptel :recipe (:nonrecursive t))
-(package! gptel-magit)
