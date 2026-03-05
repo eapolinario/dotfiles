@@ -150,8 +150,20 @@
     :stream t
     :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
 
+  
   ;; Set default model. Right now this is very OpenAI-centric, i.e. might change in the future.
-  (setq gptel-model 'gpt-5))
+  ;; TODO: fix comment
+  (setq gptel-model 'claude-4.6
+        gptel-backend (gptel-make-anthropic "Anthropic"
+                        :stream t
+                        :key (auth-source-pick-first-password :host "api.anthropic.com")
+                        ;; :models '((claude-2.1       . "claude-2.1")
+                        ;;           (claude-2         . "claude-2")
+                        ;;           (claude-1.3       . "claude-1.3")
+                        ;;           (claude-1         . "claude-1")
+                        ;;           (claude-instant-100k . "claude-instant-100k"))
+                        ))
+  )
 
 ;; Magit integration for gptel 
 (after! gptel-magit
