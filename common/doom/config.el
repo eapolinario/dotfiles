@@ -180,8 +180,6 @@
 ;;                      ("i" . yankpad-insert)
 ;;                      ("s" . yankpad-search)))
 
-(use-package! eca)
-
 (use-package! rainbow-mode
   :defer 5
   :hook ((css-mode
