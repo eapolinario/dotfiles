@@ -85,6 +85,15 @@ stow_doom() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR/../common" -vt "$target_dir" doom
 }
 
+stow_authinfo() {
+  if [[ ! -d "$SCRIPT_DIR/../common/authinfo" ]]; then
+    printf 'authinfo directory not found in %s.\n' "$SCRIPT_DIR/../common" >&2
+    exit 1
+  fi
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR/../common" -vt "$HOME" authinfo
+}
+
 stow_systemd_configs() {
   if [[ ! -d "$SCRIPT_DIR/systemd" ]]; then
     printf 'Systemd configuration directory not found in %s.\n' "$SCRIPT_DIR" >&2
@@ -289,6 +298,7 @@ main() {
   require_cmd systemctl "Required to manage user services"
 
   stow_doom
+  stow_authinfo
   stow_systemd_configs
   stow_hypr_configs
   stow_waybar_config
