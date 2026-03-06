@@ -264,11 +264,10 @@ stow_nushell_config() {
 
   local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
   local nushell_dir="$config_home/nushell"
-  local config_source="$SCRIPT_DIR/nushell/.config/nushell/config.nu"
-  local config_target="$nushell_dir/config.nu"
 
   mkdir -p "$nushell_dir"
-  remove_target_if_identical "$config_target" "$config_source"
+  remove_target_if_identical "$nushell_dir/config.nu" "$SCRIPT_DIR/nushell/.config/nushell/config.nu"
+  remove_target_if_identical "$nushell_dir/env.nu" "$SCRIPT_DIR/nushell/.config/nushell/env.nu"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" nushell
 }

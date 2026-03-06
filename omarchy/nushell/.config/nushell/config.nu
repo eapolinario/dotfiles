@@ -17,3 +17,5 @@
 # options using:
 #     config nu --doc | nu-highlight | less -R
 use /home/eduardo/repos/claude-nu/claude-nu/
+
+source ~/.zoxide.nu
