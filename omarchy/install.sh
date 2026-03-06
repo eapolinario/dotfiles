@@ -237,6 +237,42 @@ stow_eca_config() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" eca
 }
 
+
+stow_hyprwhspr_config() {
+  if [[ ! -f "$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr/config.json" ]]; then
+    printf 'hyprwhspr configuration file not found in %s.\n' "$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr" >&2
+    exit 1
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local hyprwhspr_dir="$config_home/hyprwhspr"
+  local config_source="$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr/config.json"
+  local config_target="$hyprwhspr_dir/config.json"
+
+  mkdir -p "$hyprwhspr_dir"
+  remove_target_if_identical "$config_target" "$config_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hyprwhspr
+}
+
+
+stow_nushell_config() {
+  if [[ ! -f "$SCRIPT_DIR/nushell/.config/nushell/config.nu" ]]; then
+    printf 'Nushell configuration file not found in %s.\n' "$SCRIPT_DIR/nushell/.config/nushell" >&2
+    exit 1
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local nushell_dir="$config_home/nushell"
+  local config_source="$SCRIPT_DIR/nushell/.config/nushell/config.nu"
+  local config_target="$nushell_dir/config.nu"
+
+  mkdir -p "$nushell_dir"
+  remove_target_if_identical "$config_target" "$config_source"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" nushell
+}
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -306,6 +342,8 @@ main() {
   stow_xcompose_config
   stow_starship_config
   stow_eca_config
+  stow_hyprwhspr_config
+  stow_nushell_config
   stow_uwsm_config
   enable_downloads_clean_service
   enable_grasp_service

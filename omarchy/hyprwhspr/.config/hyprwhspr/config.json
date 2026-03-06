@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/goodroot/hyprwhspr/main/share/config.schema.json",
+  "use_hypr_bindings": true,
+  "transcription_backend": "onnx-asr",
+  "audio_ducking": true
+}
