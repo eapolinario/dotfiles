@@ -1,5 +1,5 @@
 AGENTS guide for this repository (dotfiles; no build step)
-- Install: make install-linux (Linux), make install-macos (macOS)
+- Install: make install-omarchy (Linux), make install-macos (macOS)
 - Linux dry-run: ./omarchy/install.sh --dry-run; help: ./omarchy/install.sh --help
 - Lint (secrets): make gitleaks; regen baseline (review carefully): make gitleaks-baseline-regen
 - Lint (shell): shellcheck **/*.sh; shfmt -d .; format fix: shfmt -i 2 -ci -w .
