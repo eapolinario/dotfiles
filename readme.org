@@ -64,7 +64,7 @@ Shared configs used on both omarchy and macOS (and referenced from NixOS).
 ** Arch Linux / omarchy
 
 #+begin_src sh
-make install-linux
+make install-omarchy
 # or directly:
 ./omarchy/install.sh
 #+end_src
