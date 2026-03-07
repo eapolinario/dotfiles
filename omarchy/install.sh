@@ -137,6 +137,7 @@ stow_hypr_configs() {
   remove_target_if_identical "$hypr_dir/scripts/laptop-display-auto.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/laptop-display-auto.sh"
   remove_target_if_identical "$hypr_dir/scripts/power-profile-default.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/power-profile-default.sh"
   remove_target_if_identical "$hypr_dir/scripts/omarchy-battery-limit.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/omarchy-battery-limit.sh"
+  remove_target_if_identical "$hypr_dir/scripts/swap-workspace.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/swap-workspace.sh"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hypr
 }
