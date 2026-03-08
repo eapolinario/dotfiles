@@ -22,11 +22,12 @@ Configurations for an [[https://github.com/basecamp/omarchy][omarchy]]-based Arc
 - =hypr/= — Hyprland config: keybindings, input, monitors, animations, scripts
 - =waybar/= — status bar layout and styling
 - =starship/= — shell prompt
+- =nushell/= — Nushell config and environment (=config.nu=, =env.nu=)
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
 - =uwsm/= — session environment variables (=TERMINAL=, =EDITOR=) for Hyprland
 - =xcompose/= — custom compose key sequences
 - =eca/= — [[https://github.com/nicholasgasior/eca][eca]] configuration
-- =omarchy/= — omarchy extension overrides (=~/.config/omarchy/extensions/=)
+- =hyprwhspr/= — [[https://github.com/hyprwhspr/hyprwhspr][hyprwhspr]] window switcher configuration
 
 ** macos/
 
@@ -46,9 +47,12 @@ Configurations for macOS.
 NixOS system configuration managed with [[https://nixos.org/manual/nixpkgs/stable/#sec-flakes][flakes]] and [[https://nix-community.github.io/home-manager/][home-manager]].
 
 - =flake.nix= — inputs and outputs
-- =configuration.nix= — system-level packages and services
-- =home/eduardo/= — user environment (packages, waybar, gpg-agent, xremap,
-  cliphist, nushell, fzf, zoxide)
+- =hosts/= — per-host configurations (=fusion-vm=, =example=)
+- =modules/= — shared system-level modules (packages, services)
+- =home/eduardo/= — user environment (packages, waybar, gpg-agent, nushell,
+  fzf, zoxide)
+- =hypr/= — Hyprland config for NixOS hosts
+- =deploy.sh= — deployment helper script
 
 ** common/
 
