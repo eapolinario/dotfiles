@@ -50,7 +50,7 @@
             environment.systemPackages = [
               pkgs.llm-agents.beads
               pkgs.llm-agents.claude-code-acp
-              pkgs.llm-agents.codex-acp
+              # pkgs.llm-agents.codex-acp
             ];
           })
           ./hosts/${hostname}
