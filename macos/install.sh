@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-set -eux # defensive bash programming.
+set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Only run this script if both gpg *and* the private key are available
 if ! command -v gpg >/dev/null 2>&1; then
@@ -17,7 +17,7 @@ if ! gpg --list-keys 5C9B334784343A49 >/dev/null 2>&1; then
 fi
 
 CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-echo $CONFIG_HOME
+echo "$CONFIG_HOME"
 
 ################
 # stow'd files #
@@ -27,16 +27,16 @@ echo $CONFIG_HOME
 stow -d "$SCRIPT_DIR" -vt ~ zsh
 stow -d "$SCRIPT_DIR/../common" -vt ~ authinfo
 
-mkdir -p ${CONFIG_HOME}/doom
-stow -d "$SCRIPT_DIR/../common" -vt ${CONFIG_HOME}/doom doom
+mkdir -p "${CONFIG_HOME}/doom"
+stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
 for component in \
 		pip \
 		skhd \
 		tmux \
 		yabai; do
-	mkdir -p ${CONFIG_HOME}/${component}
-	stow -d "$SCRIPT_DIR" -vt ${CONFIG_HOME}/${component} ${component}
+	mkdir -p "${CONFIG_HOME}/${component}"
+	stow -d "$SCRIPT_DIR" -vt "${CONFIG_HOME}/${component}" "${component}"
 done
 
 #######################
