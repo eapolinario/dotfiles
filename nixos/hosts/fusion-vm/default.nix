@@ -24,6 +24,7 @@
 
   virtualisation.libvirtd.enable = true;
 
+  # TODO: Remove once https://github.com/NixOS/nixpkgs/pull/496839 lands on nixos-unstable
   # Fix FHS path assumption in libvirt's upstream systemd unit
   # Empty string first clears the inherited ExecStart before setting the new one
   systemd.services.virt-secret-init-encryption.serviceConfig.ExecStart = lib.mkForce [
