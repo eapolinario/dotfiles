@@ -33,7 +33,6 @@
   ];
 
   hardware.uinput.enable = true;
-  programs.ydotool.enable = true;
 
   # Display manager
   services.greetd = {
