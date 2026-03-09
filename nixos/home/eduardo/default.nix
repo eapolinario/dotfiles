@@ -20,6 +20,7 @@
     # Dev tools
     btop
     jq
+    ydotool
     claude-code
     direnv
     fd
