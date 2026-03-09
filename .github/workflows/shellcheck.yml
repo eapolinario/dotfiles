@@ -20,3 +20,4 @@ jobs:
         with:
           check_together: 'yes'
           severity: warning
+          ignore_paths: macos/zsh
