@@ -19,7 +19,6 @@
 
     # Dev tools
     btop
-    jq
     claude-code
     direnv
     fd
@@ -41,11 +40,6 @@
   ];
 
   home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
-
-  home.file.".config/hypr/focus-warp.sh" = {
-    source = ../../hypr/focus-warp.sh;
-    executable = true;
-  };
 
   home.file.".authinfo".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
