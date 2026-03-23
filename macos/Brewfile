@@ -1,4 +1,3 @@
-tap "asmvik/formulae"
 tap "d12frosted/emacs-plus"
 tap "felixkratz/formulae"
 tap "koekeishiya/formulae"
@@ -66,7 +65,7 @@ brew "uv"
 brew "vcpkg"
 brew "wget"
 brew "zoxide"
-brew "asmvik/formulae/skhd"
+brew "koekeishiya/formulae/skhd"
 brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-compress-install", "with-imagemagick", "with-xwidgets"]
 brew "felixkratz/formulae/borders"
 brew "koekeishiya/formulae/yabai"
