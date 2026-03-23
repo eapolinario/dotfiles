@@ -64,7 +64,9 @@ fi
 # Install Brewfile #
 ####################
 
+pushd macos
 brew bundle
+popd
 
 ###################
 # End of Brewfile #
