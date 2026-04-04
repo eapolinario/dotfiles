@@ -51,7 +51,7 @@
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        ;;window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
-       ;;zen               ; distraction-free coding or writing
+       (zen +focus)               ; distraction-free coding or writing
 
        :editor
        (evil +everywhere) ; come to the dark side, we have cookies
@@ -95,11 +95,11 @@
        direnv
        (docker +lsp +tree-sitter)
        ;;editorconfig      ; let someone else argue about tabs vs spaces
-       ein               ; tame Jupyter notebooks with emacs
+       ;; ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
-       lookup              ; navigate your code and its documentation
+       (lookup +docsets)              ; navigate your code and its documentation
        llm               ; when I said you needed friends, I didn't mean...
-       (lsp +eglot +booster); M-x vscode
+       (lsp +peek); M-x vscode
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -169,7 +169,7 @@
        ;;rst               ; ReST in peace
        ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        (rust +lsp +tree-sitter)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
-       ;;scala             ; java, but good
+       (scala +lsp +tree-sitter)             ; java, but good
        ;;(scheme +guile)   ; a fully conniving family of lisps
        sh                ; she sells {ba,z,fi}sh shells on the C xor
        ;;sml
