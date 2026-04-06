@@ -18,6 +18,7 @@
     wtype
 
     # Dev tools
+    bat
     btop
     claude-code
     direnv
@@ -32,14 +33,18 @@
     neovim
     nixd
     nodejs_24
-    ripgrep
+    (ripgrep.override { withPCRE2 = true; })
     sqlite
     tree
     squashfsTools
     uv
   ];
 
-  home.file.".config/hypr/hyprland.conf".source = ../../hypr/hyprland.conf;
+  home.file.".config/hypr/hyprland.conf".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/dotfiles/nixos/hypr/hyprland.conf";
+
+  home.file.".config/doom".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/dotfiles/common/doom";
 
   home.file.".authinfo".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
