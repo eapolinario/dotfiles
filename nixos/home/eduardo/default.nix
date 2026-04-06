@@ -11,6 +11,7 @@
     chromium
     emacs30-pgtk
     foot
+    maim
     ghostty
     wl-clipboard
     wlr-randr
@@ -23,6 +24,7 @@
     claude-code
     direnv
     fd
+    graphviz
     firecracker
     just
     gh
