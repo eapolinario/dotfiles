@@ -48,7 +48,6 @@
           ({ pkgs, ... }: {
             nixpkgs.overlays = [ llm-agents.overlays.default ];
             environment.systemPackages = [
-              pkgs.llm-agents.beads
               pkgs.llm-agents.claude-code-acp
               # pkgs.llm-agents.codex-acp
             ];
