@@ -3,6 +3,7 @@
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "symbola"
     "claude-code"
+    "copilot-language-server"
   ];
 
   nix.settings = {
