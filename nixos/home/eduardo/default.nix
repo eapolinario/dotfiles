@@ -22,6 +22,7 @@
     bat
     btop
     claude-code
+    copilot-language-server
     direnv
     fd
     graphviz
