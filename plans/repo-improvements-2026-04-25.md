@@ -17,7 +17,7 @@ When work starts or finishes, update the task entry directly.
 
 - Primary environment now: `nixos/`
 - Tracking format: this Markdown file is the source of truth
-- Current active task: Enable CI caching for Nix builds
+- Current active task: none
 
 ## Task tracker
 
@@ -136,8 +136,8 @@ When work starts or finishes, update the task entry directly.
     - Verified host build wiring with `cd nixos && nix build .#nixosConfigurations.fusion-vm.config.system.build.toplevel --dry-run`
     - Verified in GitHub Actions via PR #8 and merged to `main`
 
-- [ ] Enable CI caching for Nix builds
-  - Status: `in-progress`
+- [x] Enable CI caching for Nix builds
+  - Status: `done`
   - Priority: medium
   - Scope: `.github/workflows/`
   - Why: ARM64 host builds add more CI cost and latency, so cache-backed substitutions improve turnaround and keep build validation sustainable
@@ -148,7 +148,9 @@ When work starts or finishes, update the task entry directly.
     - Added repo-level GitHub Actions configuration: `vars.CACHIX_CACHE_NAME=eapolinario` and `secrets.CACHIX_AUTH_TOKEN`
     - Fixed workflow conditionals to avoid direct secret references in `if:` expressions by mapping the token into job env first
     - Confirmed in GitHub Actions logs that `https://eapolinario.cachix.org` was configured as a binary cache
-    - Confirmed ARM64 build outputs were pushed to Cachix in PR #9; next verification is to observe cache hits on a subsequent rerun
+    - Confirmed ARM64 build outputs were pushed to Cachix in PR #9
+    - Confirmed a subsequent rerun fetched many paths from `https://eapolinario.cachix.org`, including the final NixOS system toplevel
+    - Measured job timings: eval stayed roughly flat (~1m), while the ARM64 build dropped from ~8m53s before cache to ~2m13s on a warm rerun
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
