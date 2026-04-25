@@ -1,4 +1,4 @@
-name: NixOS Eval
+name: NixOS Checks
 
 on:
   push:
@@ -28,3 +28,25 @@ jobs:
 
       - name: Run flake checks
         run: make check
+
+  build-arm64:
+    name: ARM64 toplevel build
+    runs-on: ubuntu-24.04-arm
+    needs: eval
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: nixos
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build ARM64 host toplevel
+        run: make build-host HOST=fusion-vm NIX="nix -L"
