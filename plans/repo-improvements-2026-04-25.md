@@ -17,7 +17,7 @@ When work starts or finishes, update the task entry directly.
 
 - Primary environment now: `nixos/`
 - Tracking format: this Markdown file is the source of truth
-- Current active task: Add richer Nix flake checks
+- Current active task: none
 
 ## Task tracker
 
@@ -123,8 +123,8 @@ When work starts or finishes, update the task entry directly.
     - stow conflict handling
   - Notes:
 
-- [ ] Add richer Nix flake checks
-  - Status: `in-progress`
+- [x] Add richer Nix flake checks
+  - Status: `done`
   - Priority: medium
   - Scope: `nixos/flake.nix`, `nixos/Makefile`, `.github/workflows/`
   - Why: NixOS config now deserves project-grade validation
@@ -134,6 +134,23 @@ When work starts or finishes, update the task entry directly.
     - Extended `.github/workflows/nixos-eval.yml` with an ARM64 build job to build the selected host toplevel
     - Verified locally with `cd nixos && make check`
     - Verified host build wiring with `cd nixos && nix build .#nixosConfigurations.fusion-vm.config.system.build.toplevel --dry-run`
+    - Verified in GitHub Actions via PR #8 and merged to `main`
+
+- [x] Enable CI caching for Nix builds
+  - Status: `done`
+  - Priority: medium
+  - Scope: `.github/workflows/`
+  - Why: ARM64 host builds add more CI cost and latency, so cache-backed substitutions improve turnaround and keep build validation sustainable
+  - Notes:
+    - Switched from `DeterminateSystems/magic-nix-cache-action` to `cachix/cachix-action@v17`
+    - Workflow now supports push-enabled Cachix config when `vars.CACHIX_CACHE_NAME` and `secrets.CACHIX_AUTH_TOKEN` are set
+    - Added a pull-only fallback when the Cachix auth token is unavailable
+    - Added repo-level GitHub Actions configuration: `vars.CACHIX_CACHE_NAME=eapolinario` and `secrets.CACHIX_AUTH_TOKEN`
+    - Fixed workflow conditionals to avoid direct secret references in `if:` expressions by mapping the token into job env first
+    - Confirmed in GitHub Actions logs that `https://eapolinario.cachix.org` was configured as a binary cache
+    - Confirmed ARM64 build outputs were pushed to Cachix in PR #9
+    - Confirmed a subsequent rerun fetched many paths from `https://eapolinario.cachix.org`, including the final NixOS system toplevel
+    - Measured job timings: eval stayed roughly flat (~1m), while the ARM64 build dropped from ~8m53s before cache to ~2m13s on a warm rerun
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
