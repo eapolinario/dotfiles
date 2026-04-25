@@ -72,6 +72,39 @@ popd
 # End of Brewfile #
 ###################
 
+#################
+# yabai service #
+#################
+
+# Use launchctl directly — yabai --restart-service has the service label hardcoded
+# and breaks when the tap changes (e.g. asmvik → koekeishiya). Glob for the plist
+# instead so this is resilient to future renames.
+yabai_plist=$(ls ~/Library/LaunchAgents/com.*.yabai.plist 2>/dev/null | head -1)
+if [ -n "$yabai_plist" ]; then
+	launchctl unload "$yabai_plist" 2>/dev/null || true
+	launchctl load "$yabai_plist"
+	echo "yabai service started from: $yabai_plist"
+else
+	echo "Warning: no yabai plist found in ~/Library/LaunchAgents — service not started."
+fi
+
+######################
+# end yabai service  #
+######################
+
+##############
+# Doom Emacs #
+##############
+
+if [ ! -d "${CONFIG_HOME}/emacs" ]; then
+	git clone --depth=1 https://github.com/doomemacs/doomemacs "${CONFIG_HOME}/emacs"
+	DOOMDIR="${CONFIG_HOME}/doom" "${CONFIG_HOME}/emacs/bin/doom" install --no-config --no-env
+fi
+
+#####################
+# End of Doom Emacs #
+#####################
+
 ############
 # zsh area #
 ############
