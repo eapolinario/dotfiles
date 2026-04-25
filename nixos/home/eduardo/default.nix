@@ -11,6 +11,7 @@
     chromium
     emacs30-pgtk
     foot
+    adwaita-icon-theme
     maim
     ghostty
     wl-clipboard
