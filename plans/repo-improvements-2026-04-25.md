@@ -142,8 +142,10 @@ When work starts or finishes, update the task entry directly.
   - Scope: `.github/workflows/`
   - Why: ARM64 host builds add more CI cost and latency, so cache-backed substitutions improve turnaround and keep build validation sustainable
   - Notes:
-    - Added `DeterminateSystems/magic-nix-cache-action@v13` to both jobs in `.github/workflows/nixos-eval.yml`
-    - Chosen approach uses public binary caches and requires no repository-specific cache credentials
+    - Switched from `DeterminateSystems/magic-nix-cache-action` to `cachix/cachix-action@v17`
+    - Workflow now supports push-enabled Cachix config when `vars.CACHIX_CACHE_NAME` and `secrets.CACHIX_AUTH_TOKEN` are set
+    - Added a pull-only fallback when the Cachix auth token is unavailable
+    - Repository currently has no GitHub Actions variables or secrets configured for Cachix, so cache setup still requires repo configuration
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
