@@ -145,7 +145,8 @@ When work starts or finishes, update the task entry directly.
     - Switched from `DeterminateSystems/magic-nix-cache-action` to `cachix/cachix-action@v17`
     - Workflow now supports push-enabled Cachix config when `vars.CACHIX_CACHE_NAME` and `secrets.CACHIX_AUTH_TOKEN` are set
     - Added a pull-only fallback when the Cachix auth token is unavailable
-    - Repository currently has no GitHub Actions variables or secrets configured for Cachix, so cache setup still requires repo configuration
+    - Added repo-level GitHub Actions configuration: `vars.CACHIX_CACHE_NAME=eapolinario` and `secrets.CACHIX_AUTH_TOKEN`
+    - Fixed workflow conditionals to avoid direct secret references in `if:` expressions by mapping the token into job env first
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`

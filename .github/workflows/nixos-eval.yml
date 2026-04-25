@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
     defaults:
       run:
         working-directory: nixos
@@ -27,14 +29,14 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Configure Cachix
-        if: ${{ vars.CACHIX_CACHE_NAME != '' && secrets.CACHIX_AUTH_TOKEN != '' }}
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN != '' }}
         uses: cachix/cachix-action@v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
 
       - name: Configure Cachix (pull-only fallback)
-        if: ${{ vars.CACHIX_CACHE_NAME != '' && secrets.CACHIX_AUTH_TOKEN == '' }}
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN == '' }}
         uses: cachix/cachix-action@v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
@@ -49,6 +51,8 @@ jobs:
     needs: eval
     permissions:
       contents: read
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
     defaults:
       run:
         working-directory: nixos
@@ -63,14 +67,14 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Configure Cachix
-        if: ${{ vars.CACHIX_CACHE_NAME != '' && secrets.CACHIX_AUTH_TOKEN != '' }}
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN != '' }}
         uses: cachix/cachix-action@v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
 
       - name: Configure Cachix (pull-only fallback)
-        if: ${{ vars.CACHIX_CACHE_NAME != '' && secrets.CACHIX_AUTH_TOKEN == '' }}
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN == '' }}
         uses: cachix/cachix-action@v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
