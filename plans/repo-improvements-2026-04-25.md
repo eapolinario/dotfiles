@@ -17,7 +17,7 @@ When work starts or finishes, update the task entry directly.
 
 - Primary environment now: `nixos/`
 - Tracking format: this Markdown file is the source of truth
-- Current active task: Add richer Nix flake checks
+- Current active task: Enable CI caching for Nix builds
 
 ## Task tracker
 
@@ -123,8 +123,8 @@ When work starts or finishes, update the task entry directly.
     - stow conflict handling
   - Notes:
 
-- [ ] Add richer Nix flake checks
-  - Status: `in-progress`
+- [x] Add richer Nix flake checks
+  - Status: `done`
   - Priority: medium
   - Scope: `nixos/flake.nix`, `nixos/Makefile`, `.github/workflows/`
   - Why: NixOS config now deserves project-grade validation
@@ -134,6 +134,16 @@ When work starts or finishes, update the task entry directly.
     - Extended `.github/workflows/nixos-eval.yml` with an ARM64 build job to build the selected host toplevel
     - Verified locally with `cd nixos && make check`
     - Verified host build wiring with `cd nixos && nix build .#nixosConfigurations.fusion-vm.config.system.build.toplevel --dry-run`
+    - Verified in GitHub Actions via PR #8 and merged to `main`
+
+- [ ] Enable CI caching for Nix builds
+  - Status: `in-progress`
+  - Priority: medium
+  - Scope: `.github/workflows/`
+  - Why: ARM64 host builds add more CI cost and latency, so cache-backed substitutions improve turnaround and keep build validation sustainable
+  - Notes:
+    - Added `DeterminateSystems/magic-nix-cache-action@v13` to both jobs in `.github/workflows/nixos-eval.yml`
+    - Chosen approach uses public binary caches and requires no repository-specific cache credentials
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
