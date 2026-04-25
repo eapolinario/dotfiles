@@ -17,7 +17,7 @@ When work starts or finishes, update the task entry directly.
 
 - Primary environment now: `nixos/`
 - Tracking format: this Markdown file is the source of truth
-- Current active task: none
+- Current active task: Centralize NixOS host metadata and use it in CI
 
 ## Task tracker
 
@@ -151,6 +151,19 @@ When work starts or finishes, update the task entry directly.
     - Confirmed ARM64 build outputs were pushed to Cachix in PR #9
     - Confirmed a subsequent rerun fetched many paths from `https://eapolinario.cachix.org`, including the final NixOS system toplevel
     - Measured job timings: eval stayed roughly flat (~1m), while the ARM64 build dropped from ~8m53s before cache to ~2m13s on a warm rerun
+
+- [ ] Centralize NixOS host metadata and use it in CI
+  - Status: `in-progress`
+  - Priority: medium
+  - Scope: `nixos/flake.nix`, `.github/workflows/`, `nixos/Makefile`
+  - Why: host name, system, and CI runner assumptions are currently duplicated across the flake, local tooling, and GitHub Actions
+  - Notes:
+    - Phase 1: centralize declared host metadata in `nixos/flake.nix` and derive configurations/checks from it
+    - Phase 2: have GitHub Actions consume flake-exported metadata instead of hardcoding the build host and runner
+    - Implemented Phase 1 by introducing a `hosts` attrset in `nixos/flake.nix`
+    - `nixosConfigurations` and `checks` are now derived from the host metadata
+    - Exported flake metadata under `lib.hostMetadata` and `lib.ciMetadata`
+    - Verified locally with `cd nixos && make check`, `nix eval --json .#lib.hostMetadata`, and `nix eval --json .#lib.ciMetadata`
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
