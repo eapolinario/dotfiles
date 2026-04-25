@@ -168,7 +168,35 @@
     '';
   };
 
-  programs.nushell.enable = true;
+  programs.nushell = {
+    enable = true;
+    extraConfig = ''
+      $env.config = ($env.config | upsert keybindings (
+        ($env.config.keybindings? | default []) ++ [
+          {
+            name: fzf_history
+            modifier: control
+            keycode: char_r
+            mode: [emacs, vi_normal, vi_insert]
+            event: {
+              send: ExecuteHostCommand
+              cmd: "commandline edit --replace (history | get command | uniq | reverse | str join (char newline) | fzf --layout=reverse --height 40% | str trim)"
+            }
+          }
+          {
+            name: fzf_files
+            modifier: control
+            keycode: char_t
+            mode: [emacs, vi_normal, vi_insert]
+            event: {
+              send: ExecuteHostCommand
+              cmd: "commandline edit --insert (fzf --layout=reverse --height 40% | str trim)"
+            }
+          }
+        ]
+      ))
+    '';
+  };
 
   services.gpg-agent = {
     enable = true;
