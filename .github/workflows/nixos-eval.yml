@@ -1,0 +1,84 @@
+name: NixOS Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  eval:
+    name: Flake check and host evaluation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    defaults:
+      run:
+        working-directory: nixos
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Configure Cachix
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN != '' }}
+        uses: cachix/cachix-action@v17
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+
+      - name: Configure Cachix (pull-only fallback)
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN == '' }}
+        uses: cachix/cachix-action@v17
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          skipPush: true
+
+      - name: Run flake checks
+        run: make check
+
+  build-arm64:
+    name: ARM64 toplevel build
+    runs-on: ubuntu-24.04-arm
+    needs: eval
+    permissions:
+      contents: read
+    env:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    defaults:
+      run:
+        working-directory: nixos
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Configure Cachix
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN != '' }}
+        uses: cachix/cachix-action@v17
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+
+      - name: Configure Cachix (pull-only fallback)
+        if: ${{ vars.CACHIX_CACHE_NAME != '' && env.CACHIX_AUTH_TOKEN == '' }}
+        uses: cachix/cachix-action@v17
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          skipPush: true
+
+      - name: Build ARM64 host toplevel
+        run: make build-host HOST=fusion-vm NIX="nix -L"
