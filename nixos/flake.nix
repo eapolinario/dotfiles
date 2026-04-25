@@ -51,6 +51,10 @@
             ];
             environment.systemPackages = [
               pkgs.llm-agents.claude-code-acp
+              pkgs.llm-agents.copilot-cli
+              pkgs.llm-agents.agentsview
+              pkgs.llm-agents.rtk
+              pkgs.llm-agents.pi
               # pkgs.llm-agents.codex-acp
             ];
           })
