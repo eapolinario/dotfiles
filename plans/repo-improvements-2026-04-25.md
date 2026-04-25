@@ -163,7 +163,11 @@ When work starts or finishes, update the task entry directly.
     - Implemented Phase 1 by introducing a `hosts` attrset in `nixos/flake.nix`
     - `nixosConfigurations` and `checks` are now derived from the host metadata
     - Exported flake metadata under `lib.hostMetadata` and `lib.ciMetadata`
-    - Verified locally with `cd nixos && make check`, `nix eval --json .#lib.hostMetadata`, and `nix eval --json .#lib.ciMetadata`
+    - Implemented Phase 2 by adding a workflow metadata job that reads `lib.ciMetadata`
+    - GitHub Actions now derives eval hosts, build host, and ARM runner from flake metadata instead of hardcoding them in the workflow
+    - Updated the `nixos/Makefile` comment so local defaults explicitly track flake metadata
+    - Verified locally with `cd nixos && make check HOSTS="$(nix eval --raw .#lib.ciMetadata.evalHostsText)"`
+    - Verified local build with `cd nixos && make build-host HOST="$(nix eval --raw .#lib.ciMetadata.defaultBuildHost.name)"`
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
