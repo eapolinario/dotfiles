@@ -32,11 +32,21 @@
   outputs = { self, nixpkgs, disko, home-manager, llm-agents, ... }@inputs:
     let
       lib = nixpkgs.lib;
-      system = "aarch64-linux";
-      host_names = [ "fusion-vm" ];
 
-      mkHost = hostname: lib.nixosSystem {
-        inherit system;
+      hosts = {
+        fusion-vm = {
+          system = "aarch64-linux";
+          modules = [ ./hosts/fusion-vm ];
+          ci = {
+            eval = true;
+            build = true;
+            runner = "ubuntu-24.04-arm";
+          };
+        };
+      };
+
+      mkHost = hostname: host: lib.nixosSystem {
+        inherit (host) system;
         specialArgs = { inherit inputs; };
         modules = [
           disko.nixosModules.disko
@@ -62,19 +72,55 @@
               # pkgs.llm-agents.codex-acp
             ];
           })
-          ./hosts/${hostname}
+        ] ++ host.modules ++ [
           ./modules/common
         ];
       };
 
-      nixos_configurations = lib.genAttrs host_names mkHost;
-      nixos_checks = lib.mapAttrs'
-        (hostname: config:
-          lib.nameValuePair "nixos-${hostname}-toplevel" config.config.system.build.toplevel)
-        nixos_configurations;
+      nixos_configurations = lib.mapAttrs mkHost hosts;
+      nixos_checks = lib.foldlAttrs
+        (acc: hostname: host:
+          acc
+          // {
+            ${host.system} = (acc.${host.system} or {}) // {
+              "nixos-${hostname}-toplevel" =
+                nixos_configurations.${hostname}.config.system.build.toplevel;
+            };
+          })
+        {}
+        hosts;
+
+      host_metadata = lib.mapAttrs (_: host: {
+        inherit (host) system ci;
+      }) hosts;
+
+      ci_eval_hosts = builtins.attrNames (lib.filterAttrs (_: host: host.ci.eval or false) hosts);
+      ci_build_hosts = lib.filterAttrs (_: host: host.ci.build or false) hosts;
+      ci_build_host_names = builtins.attrNames ci_build_hosts;
+      default_build_host =
+        if ci_build_host_names == [] then null else builtins.head ci_build_host_names;
     in
     {
       nixosConfigurations = nixos_configurations;
-      checks.${system} = nixos_checks;
+      checks = nixos_checks;
+      lib = {
+        hostMetadata = host_metadata;
+        ciMetadata = {
+          evalHosts = ci_eval_hosts;
+          evalHostsText = lib.concatStringsSep " " ci_eval_hosts;
+          buildHosts = lib.mapAttrs
+            (_: host: {
+              inherit (host) system;
+              runner = host.ci.runner;
+            })
+            ci_build_hosts;
+          defaultBuildHost =
+            if default_build_host == null then null else {
+              name = default_build_host;
+              inherit (ci_build_hosts.${default_build_host}) system;
+              runner = ci_build_hosts.${default_build_host}.ci.runner;
+            };
+        };
+      };
     };
 }
