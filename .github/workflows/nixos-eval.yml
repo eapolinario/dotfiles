@@ -8,9 +8,45 @@ on:
   workflow_dispatch:
 
 jobs:
+  metadata:
+    name: Resolve host metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: nixos
+    outputs:
+      eval_hosts: ${{ steps.metadata.outputs.eval_hosts }}
+      build_host: ${{ steps.metadata.outputs.build_host }}
+      build_runner: ${{ steps.metadata.outputs.build_runner }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Read CI metadata from flake
+        id: metadata
+        run: |
+          set -euo pipefail
+
+          build_host="$(nix eval --raw .#lib.ciMetadata.defaultBuildHost.name)"
+          build_runner="$(nix eval --raw .#lib.ciMetadata.defaultBuildHost.runner)"
+          eval_hosts="$(nix eval --raw .#lib.ciMetadata.evalHostsText)"
+
+          printf 'build_host=%s\n' "$build_host" >> "$GITHUB_OUTPUT"
+          printf 'build_runner=%s\n' "$build_runner" >> "$GITHUB_OUTPUT"
+          printf 'eval_hosts=%s\n' "$eval_hosts" >> "$GITHUB_OUTPUT"
+
   eval:
     name: Flake check and host evaluation
     runs-on: ubuntu-latest
+    needs: metadata
     permissions:
       contents: read
     env:
@@ -43,12 +79,14 @@ jobs:
           skipPush: true
 
       - name: Run flake checks
-        run: make check
+        run: make check HOSTS="${{ needs.metadata.outputs.eval_hosts }}"
 
   build-arm64:
-    name: ARM64 toplevel build
-    runs-on: ubuntu-24.04-arm
-    needs: eval
+    name: Configured host toplevel build
+    runs-on: ${{ needs.metadata.outputs.build_runner }}
+    needs:
+      - metadata
+      - eval
     permissions:
       contents: read
     env:
@@ -80,5 +118,5 @@ jobs:
           name: ${{ vars.CACHIX_CACHE_NAME }}
           skipPush: true
 
-      - name: Build ARM64 host toplevel
-        run: make build-host HOST=fusion-vm NIX="nix -L"
+      - name: Build configured host toplevel
+        run: make build-host HOST="${{ needs.metadata.outputs.build_host }}" NIX="nix -L"

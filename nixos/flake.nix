@@ -107,6 +107,7 @@
         hostMetadata = host_metadata;
         ciMetadata = {
           evalHosts = ci_eval_hosts;
+          evalHostsText = lib.concatStringsSep " " ci_eval_hosts;
           buildHosts = lib.mapAttrs
             (_: host: {
               inherit (host) system;
