@@ -1,7 +1,11 @@
-HOST     ?= fusion-vm
-FLAKE_DIR = $(shell pwd)
+HOST      ?= fusion-vm
+# Keep HOSTS aligned with declared flake hosts until CI host discovery is automated.
+HOSTS     ?= fusion-vm
+NIX       ?= nix
+FLAKE_DIR := $(shell pwd)
+FLAKE_REF ?= .
 
-.PHONY: switch deploy fmt gc help
+.PHONY: switch deploy fmt gc flake-check eval-hosts check help
 
 ## switch: rebuild and switch the flake on this machine
 switch:
@@ -17,7 +21,22 @@ gc:
 
 ## fmt: format all nix files
 fmt:
-	nix fmt $(FLAKE_DIR)
+	$(NIX) fmt $(FLAKE_DIR)
+
+## flake-check: run nix flake checks for this flake
+flake-check:
+	$(NIX) flake check $(FLAKE_REF)
+
+## eval-hosts: evaluate declared NixOS hosts without building them
+eval-hosts:
+	@set -e; \
+	for host in $(HOSTS); do \
+		printf 'Evaluating nixosConfiguration %s...\n' "$$host"; \
+		$(NIX) eval "$(FLAKE_REF)#nixosConfigurations.$$host.config.system.build.toplevel.drvPath" >/dev/null; \
+	done
+
+## check: run local validation for the NixOS flake
+check: flake-check eval-hosts
 
 ## help: show this help
 help:
