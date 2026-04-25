@@ -31,8 +31,12 @@
 
   outputs = { self, nixpkgs, disko, home-manager, llm-agents, ... }@inputs:
     let
-      mkHost = hostname: nixpkgs.lib.nixosSystem {
-        system = "aarch64-linux";
+      lib = nixpkgs.lib;
+      system = "aarch64-linux";
+      host_names = [ "fusion-vm" ];
+
+      mkHost = hostname: lib.nixosSystem {
+        inherit system;
         specialArgs = { inherit inputs; };
         modules = [
           disko.nixosModules.disko
@@ -62,10 +66,15 @@
           ./modules/common
         ];
       };
+
+      nixos_configurations = lib.genAttrs host_names mkHost;
+      nixos_checks = lib.mapAttrs'
+        (hostname: config:
+          lib.nameValuePair "nixos-${hostname}-toplevel" config.config.system.build.toplevel)
+        nixos_configurations;
     in
     {
-      nixosConfigurations = {
-        fusion-vm = mkHost "fusion-vm";
-      };
+      nixosConfigurations = nixos_configurations;
+      checks.${system} = nixos_checks;
     };
 }
