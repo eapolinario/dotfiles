@@ -5,7 +5,7 @@ NIX       ?= nix
 FLAKE_DIR := $(shell pwd)
 FLAKE_REF ?= .
 
-.PHONY: switch deploy fmt gc flake-check eval-hosts check help
+.PHONY: switch deploy fmt gc flake-check eval-hosts build-host check help
 
 ## switch: rebuild and switch the flake on this machine
 switch:
@@ -34,6 +34,10 @@ eval-hosts:
 		printf 'Evaluating nixosConfiguration %s...\n' "$$host"; \
 		$(NIX) eval "$(FLAKE_REF)#nixosConfigurations.$$host.config.system.build.toplevel.drvPath" >/dev/null; \
 	done
+
+## build-host: build the selected NixOS host toplevel
+build-host:
+	$(NIX) build "$(FLAKE_REF)#nixosConfigurations.$(HOST).config.system.build.toplevel"
 
 ## check: run local validation for the NixOS flake
 check: flake-check eval-hosts

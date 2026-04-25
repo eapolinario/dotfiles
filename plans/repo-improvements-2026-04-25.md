@@ -17,7 +17,7 @@ When work starts or finishes, update the task entry directly.
 
 - Primary environment now: `nixos/`
 - Tracking format: this Markdown file is the source of truth
-- Current active task: Add NixOS evaluation checks
+- Current active task: Add richer Nix flake checks
 
 ## Task tracker
 
@@ -80,8 +80,8 @@ When work starts or finishes, update the task entry directly.
   - Why: catches macOS package drift earlier
   - Notes:
 
-- [ ] Add NixOS evaluation checks
-  - Status: `in-progress`
+- [x] Add NixOS evaluation checks
+  - Status: `done`
   - Priority: high
   - Scope: `nixos/`, CI
   - Why: `nixos/` is now the most active part of the repo
@@ -92,6 +92,8 @@ When work starts or finishes, update the task entry directly.
     - Added local `make flake-check`, `make eval-hosts`, and `make check` targets in `nixos/Makefile`
     - Added GitHub Actions workflow `.github/workflows/nixos-eval.yml` to run `make check`
     - Kept `HOSTS` explicit for now and documented that it should stay aligned with flake hosts until CI host discovery is automated
+    - Verified locally with `cd nixos && make check`
+    - Verified in GitHub Actions via PR #7 and merged to `main`
 
 - [ ] Introduce a clearer mechanism for experiments and host-specific tweaks
   - Status: `todo`
@@ -122,11 +124,16 @@ When work starts or finishes, update the task entry directly.
   - Notes:
 
 - [ ] Add richer Nix flake checks
-  - Status: `todo`
+  - Status: `in-progress`
   - Priority: medium
-  - Scope: `nixos/flake.nix`
+  - Scope: `nixos/flake.nix`, `nixos/Makefile`, `.github/workflows/`
   - Why: NixOS config now deserves project-grade validation
   - Notes:
+    - Added explicit `checks.aarch64-linux` entries in `nixos/flake.nix` for host toplevel derivations
+    - Added `make build-host` in `nixos/Makefile`
+    - Extended `.github/workflows/nixos-eval.yml` with an ARM64 build job to build the selected host toplevel
+    - Verified locally with `cd nixos && make check`
+    - Verified host build wiring with `cd nixos && nix build .#nixosConfigurations.fusion-vm.config.system.build.toplevel --dry-run`
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
