@@ -147,6 +147,8 @@ When work starts or finishes, update the task entry directly.
     - Added a pull-only fallback when the Cachix auth token is unavailable
     - Added repo-level GitHub Actions configuration: `vars.CACHIX_CACHE_NAME=eapolinario` and `secrets.CACHIX_AUTH_TOKEN`
     - Fixed workflow conditionals to avoid direct secret references in `if:` expressions by mapping the token into job env first
+    - Confirmed in GitHub Actions logs that `https://eapolinario.cachix.org` was configured as a binary cache
+    - Confirmed ARM64 build outputs were pushed to Cachix in PR #9; next verification is to observe cache hits on a subsequent rerun
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
