@@ -1,5 +1,5 @@
 HOST      ?= fusion-vm
-# Keep HOSTS aligned with declared flake hosts until CI host discovery is automated.
+# Keep local defaults aligned with the declared host metadata in `nixos/flake.nix`.
 HOSTS     ?= fusion-vm
 NIX       ?= nix
 FLAKE_DIR := $(shell pwd)
