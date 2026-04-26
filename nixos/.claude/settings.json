@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nix search *)",
+      "Bash(hyprctl *)",
+      "Bash(curl -fsSL *)",
+      "Bash(curl --head *)",
+      "Bash(nix eval --expr *)"
+    ]
+  }
+}

@@ -17,7 +17,6 @@
     emacs30-pgtk
     foot
     ghostty
-    gnome-keyring
     maim
     seahorse
     vscode
@@ -41,6 +40,7 @@
     gopls
     graphviz
     just
+    libsecret
     neovim
     nixd
     nodejs_24
