@@ -60,16 +60,17 @@
             };
           }
           ({ pkgs, ... }: {
-            nixpkgs.overlays = [
-              llm-agents.overlays.default
-            ];
-            environment.systemPackages = [
-              pkgs.llm-agents.claude-code-acp
-              pkgs.llm-agents.copilot-cli
-              pkgs.llm-agents.agentsview
-              pkgs.llm-agents.rtk
-              pkgs.llm-agents.pi
-              # pkgs.llm-agents.codex-acp
+            nixpkgs.overlays = [ llm-agents.overlays.default ];
+            environment.systemPackages = with pkgs.llm-agents; [
+              agentsview
+              claude-code-acp
+              copilot-cli
+              pi
+              rtk
+              sidecar
+              # pi-acp might come in https://github.com/svkozak/pi-acp
+              # pi-acp
+              # codex-acp
             ];
           })
         ] ++ host.modules ++ [
