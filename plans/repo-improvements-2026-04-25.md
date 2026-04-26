@@ -17,7 +17,7 @@ When work starts or finishes, update the task entry directly.
 
 - Primary environment now: `nixos/`
 - Tracking format: this Markdown file is the source of truth
-- Current active task: Centralize NixOS host metadata and use it in CI
+- Current active task: Use NixOS flake host metadata in local tooling
 
 ## Task tracker
 
@@ -152,8 +152,8 @@ When work starts or finishes, update the task entry directly.
     - Confirmed a subsequent rerun fetched many paths from `https://eapolinario.cachix.org`, including the final NixOS system toplevel
     - Measured job timings: eval stayed roughly flat (~1m), while the ARM64 build dropped from ~8m53s before cache to ~2m13s on a warm rerun
 
-- [ ] Centralize NixOS host metadata and use it in CI
-  - Status: `in-progress`
+- [x] Centralize NixOS host metadata and use it in CI
+  - Status: `done`
   - Priority: medium
   - Scope: `nixos/flake.nix`, `.github/workflows/`, `nixos/Makefile`
   - Why: host name, system, and CI runner assumptions are currently duplicated across the flake, local tooling, and GitHub Actions
@@ -168,6 +168,19 @@ When work starts or finishes, update the task entry directly.
     - Updated the `nixos/Makefile` comment so local defaults explicitly track flake metadata
     - Verified locally with `cd nixos && make check HOSTS="$(nix eval --raw .#lib.ciMetadata.evalHostsText)"`
     - Verified local build with `cd nixos && make build-host HOST="$(nix eval --raw .#lib.ciMetadata.defaultBuildHost.name)"`
+    - Verified in GitHub Actions via PR #10 and merged to `main`
+
+- [ ] Use NixOS flake host metadata in local tooling
+  - Status: `in-progress`
+  - Priority: low
+  - Scope: `nixos/Makefile`
+  - Why: CI now consumes flake-exported host metadata, but local defaults still hardcode host names
+  - Notes:
+    - `HOST` now defaults from `.#lib.ciMetadata.defaultBuildHost.name`
+    - `HOSTS` now defaults from `.#lib.ciMetadata.evalHostsText`
+    - Added helper targets: `make print-default-host`, `make print-eval-hosts`, and `make print-build-runner`
+    - Verified locally with `cd nixos && make check`
+    - Verified local build with `cd nixos && make build-host`
 
 - [ ] Document intended cross-platform feature parity
   - Status: `todo`
