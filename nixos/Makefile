@@ -1,11 +1,17 @@
-HOST      ?= fusion-vm
-# Keep local defaults aligned with the declared host metadata in `nixos/flake.nix`.
-HOSTS     ?= fusion-vm
 NIX       ?= nix
 FLAKE_DIR := $(shell pwd)
 FLAKE_REF ?= .
+CI_METADATA_ATTR ?= $(FLAKE_REF)\#lib.ciMetadata
 
-.PHONY: switch deploy fmt gc flake-check eval-hosts build-host check help
+DEFAULT_HOST = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).defaultBuildHost.name)
+DEFAULT_HOSTS = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).evalHostsText)
+DEFAULT_BUILD_RUNNER = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).defaultBuildHost.runner)
+
+# Local defaults are derived from flake-exported host metadata, but can still be overridden.
+HOST      ?= $(DEFAULT_HOST)
+HOSTS     ?= $(DEFAULT_HOSTS)
+
+.PHONY: switch deploy fmt gc flake-check eval-hosts build-host check print-default-host print-eval-hosts print-build-runner help
 
 ## switch: rebuild and switch the flake on this machine
 switch:
@@ -41,6 +47,18 @@ build-host:
 
 ## check: run local validation for the NixOS flake
 check: flake-check eval-hosts
+
+## print-default-host: print the default build host derived from flake metadata
+print-default-host:
+	@printf '%s\n' "$(DEFAULT_HOST)"
+
+## print-eval-hosts: print the default evaluation host list derived from flake metadata
+print-eval-hosts:
+	@printf '%s\n' "$(DEFAULT_HOSTS)"
+
+## print-build-runner: print the default CI build runner derived from flake metadata
+print-build-runner:
+	@printf '%s\n' "$(DEFAULT_BUILD_RUNNER)"
 
 ## help: show this help
 help:
