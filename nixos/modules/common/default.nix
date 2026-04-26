@@ -4,6 +4,7 @@
     "symbola"
     "claude-code"
     "copilot-language-server"
+    "opencode"
     "vscode"
   ];
 
