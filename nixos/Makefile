@@ -3,22 +3,31 @@ FLAKE_DIR := $(shell pwd)
 FLAKE_REF ?= .
 CI_METADATA_ATTR ?= $(FLAKE_REF)\#lib.ciMetadata
 
-DEFAULT_HOST = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).defaultBuildHost.name)
-DEFAULT_HOSTS = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).evalHostsText)
-DEFAULT_BUILD_RUNNER = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).defaultBuildHost.runner)
+# Stderr is suppressed so that a missing/unavailable flake does not clutter make output;
+# the _require-host/_require-hosts guards below provide actionable errors when the values
+# are empty.  Remove 2>/dev/null temporarily to see raw nix evaluation errors.
+DEFAULT_HOST = $(shell $(NIX) eval --raw --apply 'meta: if meta.defaultBuildHost == null then "" else meta.defaultBuildHost.name' $(CI_METADATA_ATTR) 2>/dev/null)
+DEFAULT_HOSTS = $(shell $(NIX) eval --raw $(CI_METADATA_ATTR).evalHostsText 2>/dev/null)
+DEFAULT_BUILD_RUNNER = $(shell $(NIX) eval --raw --apply 'meta: if meta.defaultBuildHost == null then "" else meta.defaultBuildHost.runner' $(CI_METADATA_ATTR) 2>/dev/null)
 
 # Local defaults are derived from flake-exported host metadata, but can still be overridden.
 HOST      ?= $(DEFAULT_HOST)
 HOSTS     ?= $(DEFAULT_HOSTS)
 
-.PHONY: switch deploy fmt gc flake-check eval-hosts build-host check print-default-host print-eval-hosts print-build-runner help
+_require-host:
+	@[ -n "$(HOST)" ] || { printf 'Error: HOST is unset — either pass HOST=<name> or mark a host with ci.build = true in your flake.\n' >&2; exit 1; }
+
+_require-hosts:
+	@[ -n "$(HOSTS)" ] || { printf 'Error: HOSTS is unset — either pass HOSTS="h1 h2" or mark hosts with ci.eval = true in your flake.\n' >&2; exit 1; }
+
+.PHONY: switch deploy fmt gc flake-check eval-hosts build-host check print-default-host print-eval-hosts print-build-runner _require-host _require-hosts help
 
 ## switch: rebuild and switch the flake on this machine
-switch:
+switch: _require-host
 	sudo nixos-rebuild switch --flake .#$(HOST)
 
 ## deploy: full nixos-anywhere install (first-time, wipes disk)
-deploy:
+deploy: _require-host
 	bash $(FLAKE_DIR)/deploy.sh $(HOST) $(TARGET)
 
 ## gc: run nix garbage collection
@@ -34,7 +43,7 @@ flake-check:
 	$(NIX) flake check $(FLAKE_REF)
 
 ## eval-hosts: evaluate declared NixOS hosts without building them
-eval-hosts:
+eval-hosts: _require-hosts
 	@set -e; \
 	for host in $(HOSTS); do \
 		printf 'Evaluating nixosConfiguration %s...\n' "$$host"; \
@@ -42,7 +51,7 @@ eval-hosts:
 	done
 
 ## build-host: build the selected NixOS host toplevel
-build-host:
+build-host: _require-host
 	$(NIX) build "$(FLAKE_REF)#nixosConfigurations.$(HOST).config.system.build.toplevel"
 
 ## check: run local validation for the NixOS flake
