@@ -50,7 +50,8 @@ Files marked as "encrypted" need to be unlocked before you can read their conten
 If you are the repository owner and want to add a new collaborator who can decrypt these files:
 
 ```bash
-# Export their GPG public key and add them
+# Obtain and import their GPG public key, then add them
+# GPG_KEY_ID can be the fingerprint or email of an imported key
 git-crypt add-gpg-user GPG_KEY_ID
 ```
 
