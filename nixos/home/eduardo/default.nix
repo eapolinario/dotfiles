@@ -4,16 +4,23 @@
   home.homeDirectory = "/home/eduardo";
   home.stateVersion = "24.11";
 
+  home.sessionVariables = {
+    EDITOR = "emacs";
+  };
+
   home.packages = with pkgs; [
     # Desktop apps
+    adwaita-icon-theme
     bitwarden-cli
     bitwarden-desktop
     chromium
     emacs30-pgtk
     foot
-    adwaita-icon-theme
-    maim
     ghostty
+    gnome-keyring
+    maim
+    seahorse
+    vscode
     wl-clipboard
     wlr-randr
     wofi
@@ -26,21 +33,22 @@
     copilot-language-server
     direnv
     fd
-    graphviz
     firecracker
-    just
     gh
     git-crypt
     gnupg
     go_1_25
     gopls
+    graphviz
+    just
     neovim
     nixd
     nodejs_24
+    opencode
     (ripgrep.override { withPCRE2 = true; })
     sqlite
-    tree
     squashfsTools
+    tree
     uv
   ];
 
