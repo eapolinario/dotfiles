@@ -41,6 +41,7 @@
     gopls
     graphviz
     just
+    libsecret
     neovim
     nixd
     nodejs_24
