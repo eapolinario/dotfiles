@@ -63,7 +63,7 @@
             nixpkgs.overlays = [ llm-agents.overlays.default ];
             environment.systemPackages = with pkgs.llm-agents; [
               agentsview
-              claude-code-acp
+              claude-agent-acp
               copilot-cli
               pi
               rtk
