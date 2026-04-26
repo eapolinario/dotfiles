@@ -3,8 +3,9 @@
     "allow": [
       "Bash(nix search *)",
       "Bash(hyprctl *)",
-      "Bash(curl *)",
-      "Bash(nix eval *)"
+      "Bash(curl -fsSL *)",
+      "Bash(curl --head *)",
+      "Bash(nix eval --expr *)"
     ]
   }
 }

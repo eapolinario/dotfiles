@@ -17,7 +17,6 @@
     emacs30-pgtk
     foot
     ghostty
-    gnome-keyring
     maim
     seahorse
     vscode
