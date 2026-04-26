@@ -98,6 +98,10 @@ cd nixos && make switch
 on a machine without the key will silently skip authinfo stowing (macOS) or
 produce a broken symlink (NixOS) until the repo is unlocked.
 
+For detailed instructions on decrypting the =.authinfo= file, including
+installation steps, GPG key requirements, and security considerations for
+forking, see [[file:common/authinfo/README.md][common/authinfo/README.md]].
+
 * Security scanning
 
 #+begin_src sh
