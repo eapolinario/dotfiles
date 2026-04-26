@@ -206,6 +206,36 @@
     '';
   };
 
+  programs.starship = {
+    enable = true;
+    enableNushellIntegration = true;
+    settings = {
+      add_newline = false;
+      format = "$directory$git_branch$git_status\n$character";
+
+      character = {
+        error_symbol = "[x](bold red)";
+        success_symbol = "[>](bold cyan)";
+      };
+
+      directory = {
+        fish_style_pwd_dir_length = 1;
+        truncation_length = 3;
+        truncation_symbol = "../";
+      };
+
+      git_branch = {
+        format = "on [$branch]($style) ";
+        style = "bold cyan";
+      };
+
+      git_status = {
+        format = "([$all_status$ahead_behind]($style) )";
+        style = "cyan";
+      };
+    };
+  };
+
   services.gnome-keyring.enable = true;
 
   services.gpg-agent = {
