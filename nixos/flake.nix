@@ -27,6 +27,11 @@
     };
 
     llm-agents.url = "github:numtide/llm-agents.nix";
+
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, disko, home-manager, llm-agents, ... }@inputs:
@@ -60,7 +65,7 @@
             };
           }
           ({ pkgs, ... }: {
-            nixpkgs.overlays = [ llm-agents.overlays.default ];
+            nixpkgs.overlays = [ llm-agents.overlays.default inputs.emacs-overlay.overlays.default ];
             environment.systemPackages = with pkgs.llm-agents; [
               agentsview
               claude-agent-acp
