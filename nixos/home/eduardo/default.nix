@@ -14,7 +14,7 @@
     bitwarden-cli
     bitwarden-desktop
     chromium
-    emacs30-pgtk
+    # emacs is configured via programs.emacs below
     foot
     ghostty
     maim
@@ -30,7 +30,7 @@
     btop
     claude-code
     copilot-language-server
-    direnv
+    # direnv is configured via programs.direnv below
     fd
     firecracker
     gh
@@ -176,9 +176,16 @@
     '';
   };
 
+  programs.emacs = {
+    enable = true;
+    package = pkgs.emacs-unstable-pgtk;
+  };
+
   programs.nushell = {
     enable = true;
     extraConfig = ''
+      $env.EDITOR = "emacs"
+
       $env.config = ($env.config | upsert keybindings (
         ($env.config.keybindings? | default []) ++ [
           {
@@ -204,6 +211,12 @@
         ]
       ))
     '';
+  };
+
+  programs.direnv = {
+    enable = true;
+    enableNushellIntegration = true;
+    nix-direnv.enable = true;
   };
 
   programs.starship = {
