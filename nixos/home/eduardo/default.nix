@@ -1,4 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
+let
+  piShell = pkgs.writeShellScriptBin "pi-shell" (builtins.readFile ./nushell/pi-shell.sh);
+in
 {
   home.username = "eduardo";
   home.homeDirectory = "/home/eduardo";
@@ -50,6 +53,7 @@
     squashfsTools
     tree
     uv
+    piShell
   ];
 
   home.file.".config/hypr/hyprland.conf".source = config.lib.file.mkOutOfStoreSymlink
@@ -67,6 +71,10 @@
   xdg.configFile."ghostty/config".text = ''
     command = nu
   '';
+
+  # Experimental pi shell integration for Nushell.
+  xdg.configFile."nushell/pi-agent.nu".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/nushell/pi-agent.nu";
 
   programs.waybar = {
     enable = true;
@@ -184,6 +192,8 @@
   programs.nushell = {
     enable = true;
     extraConfig = ''
+      source ~/.config/nushell/pi-agent.nu
+
       $env.EDITOR = "emacs"
 
       $env.config = ($env.config | upsert keybindings (
