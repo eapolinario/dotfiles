@@ -25,7 +25,8 @@ in
     vscode
     wl-clipboard
     wlr-randr
-    wofi
+    elephant
+    walker
     wtype
 
     # Dev tools
@@ -70,107 +71,6 @@ in
 
   xdg.configFile."ghostty/config".text = ''
     command = nu
-  '';
-
-  xdg.configFile."wofi/config".text = ''
-    show=drun
-    prompt=Run
-    width=720
-    height=480
-    lines=10
-    columns=1
-    location=center
-    allow_images=true
-    allow_markup=true
-    image_size=32
-    insensitive=true
-    no_actions=true
-    hide_scroll=true
-    term=ghostty
-    matching=fuzzy
-    gtk_dark=true
-    key_expand=Tab
-    key_exit=Escape
-  '';
-
-  xdg.configFile."wofi/style.css".text = ''
-    * {
-      font-family: "FiraCode Nerd Font Mono", monospace;
-      font-size: 13px;
-    }
-
-    window {
-      background-color: rgba(30, 30, 46, 0.96);
-      border: 2px solid #cba6f7;
-      border-radius: 12px;
-      color: #cdd6f4;
-    }
-
-    #outer-box {
-      margin: 12px;
-      padding: 8px;
-    }
-
-    #input {
-      margin: 4px 4px 12px 4px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      background-color: #313244;
-      color: #cdd6f4;
-      caret-color: #cba6f7;
-    }
-
-    #input:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px #cba6f7;
-    }
-
-    #input image {
-      color: #cba6f7;
-    }
-
-    #scroll {
-      margin: 0 4px;
-    }
-
-    #inner-box {
-      background-color: transparent;
-    }
-
-    #img {
-      margin-right: 10px;
-      -gtk-icon-transform: scale(1.0);
-    }
-
-    #text {
-      color: #cdd6f4;
-    }
-
-    #entry {
-      padding: 8px 12px;
-      margin: 2px 0;
-      border-radius: 8px;
-      background-color: transparent;
-    }
-
-    #entry:hover {
-      background-color: #313244;
-    }
-
-    #entry:selected,
-    #entry:selected #text {
-      background-color: #45475a;
-      color: #f5e0dc;
-    }
-
-    #entry:selected {
-      box-shadow: inset 3px 0 0 0 #cba6f7;
-    }
-
-    #unselected {
-      color: #cdd6f4;
-    }
   '';
 
   # Experimental pi shell integration for Nushell.
