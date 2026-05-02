@@ -20,7 +20,7 @@ _require-host:
 _require-hosts:
 	@[ -n "$(HOSTS)" ] || { printf 'Error: HOSTS is unset — either pass HOSTS="h1 h2" or mark hosts with ci.eval = true in your flake.\n' >&2; exit 1; }
 
-.PHONY: switch deploy fmt gc flake-check eval-hosts build-host check print-default-host print-eval-hosts print-build-runner _require-host _require-hosts help
+.PHONY: switch deploy fmt gc update-lock flake-check eval-hosts build-host check print-default-host print-eval-hosts print-build-runner _require-host _require-hosts help
 
 ## switch: rebuild and switch the flake on this machine
 switch: _require-host
@@ -37,6 +37,10 @@ gc:
 ## fmt: format all nix files
 fmt:
 	$(NIX) fmt $(FLAKE_DIR)
+
+## update-lock: update flake.lock inputs
+update-lock:
+	$(NIX) flake update $(FLAKE_REF)
 
 ## flake-check: run nix flake checks for this flake
 flake-check:
