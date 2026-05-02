@@ -20,9 +20,10 @@
   programs.uwsm.enable = true;
 
   users.users.eduardo.shell = pkgs.nushell;
-  users.users.eduardo.extraGroups = [ "input" "uinput" "kvm" ];
+  users.users.eduardo.extraGroups = [ "input" "uinput" "kvm" "docker" ];
 
   virtualisation.libvirtd.enable = true;
+  virtualisation.docker.enable = true;
 
   # TODO: Remove once https://github.com/NixOS/nixpkgs/pull/496839 lands on nixos-unstable
   # Fix FHS path assumption in libvirt's upstream systemd unit
