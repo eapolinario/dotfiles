@@ -70,9 +70,8 @@ in
   home.file."org".source = config.lib.file.mkOutOfStoreSymlink
     "${config.home.homeDirectory}/repos/org-files/source_files";
 
-  xdg.configFile."ghostty/config".text = ''
-    command = nu
-  '';
+  xdg.configFile."ghostty/config".source = config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/ghostty/config";
 
   # Experimental pi shell integration for Nushell.
   xdg.configFile."nushell/pi-agent.nu".source = config.lib.file.mkOutOfStoreSymlink
