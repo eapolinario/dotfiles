@@ -1,15 +1,25 @@
-{ config, pkgs, lib, ... }:
 {
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "symbola"
-    "claude-code"
-    "copilot-language-server"
-    "opencode"
-    "vscode"
-  ];
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "symbola"
+      "claude-code"
+      "copilot-language-server"
+      "opencode"
+      "vscode"
+    ];
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     auto-optimise-store = true;
   };
 

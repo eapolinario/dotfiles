@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
   piShell = pkgs.writeShellScriptBin "pi-shell" (builtins.readFile ./nushell/pi-shell.sh);
 in
@@ -58,70 +64,80 @@ in
     piShell
   ];
 
-  home.file.".config/hypr/hyprland.conf".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/dotfiles/nixos/hypr/hyprland.conf";
+  home.file.".config/hypr/hyprland.conf".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nixos/hypr/hyprland.conf";
 
-  home.file.".config/doom".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/dotfiles/common/doom";
+  home.file.".config/doom".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/doom";
 
-  home.file.".authinfo".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
+  home.file.".authinfo".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
 
-  home.file."org".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/repos/org-files/source_files";
+  home.file."org".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/repos/org-files/source_files";
 
-  xdg.configFile."ghostty/config".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/ghostty/config";
+  xdg.configFile."ghostty/config".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/ghostty/config";
 
   # Experimental pi shell integration for Nushell.
-  xdg.configFile."nushell/pi-agent.nu".source = config.lib.file.mkOutOfStoreSymlink
-    "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/nushell/pi-agent.nu";
+  xdg.configFile."nushell/pi-agent.nu".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/nushell/pi-agent.nu";
 
   programs.waybar = {
     enable = true;
-    settings = [{
-      layer = "top";
-      position = "top";
-      height = 32;
-      modules-left = [ "hyprland/workspaces" "hyprland/window" ];
-      modules-center = [ "clock" ];
-      modules-right = [ "cpu" "memory" "network" "tray" ];
+    settings = [
+      {
+        layer = "top";
+        position = "top";
+        height = 32;
+        modules-left = [
+          "hyprland/workspaces"
+          "hyprland/window"
+        ];
+        modules-center = [ "clock" ];
+        modules-right = [
+          "cpu"
+          "memory"
+          "network"
+          "tray"
+        ];
 
-      "hyprland/workspaces" = {
-        format = "{id}";
-        on-click = "activate";
-      };
+        "hyprland/workspaces" = {
+          format = "{id}";
+          on-click = "activate";
+        };
 
-      "hyprland/window" = {
-        max-length = 60;
-      };
+        "hyprland/window" = {
+          max-length = 60;
+        };
 
-      clock = {
-        format = "{:%a %b %d  %H:%M}";
-        tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-      };
+        clock = {
+          format = "{:%a %b %d  %H:%M}";
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+        };
 
-      cpu = {
-        format = "CPU {usage}%";
-        interval = 2;
-      };
+        cpu = {
+          format = "CPU {usage}%";
+          interval = 2;
+        };
 
-      memory = {
-        format = "MEM {}%";
-        interval = 2;
-      };
+        memory = {
+          format = "MEM {}%";
+          interval = 2;
+        };
 
-      network = {
-        format-ethernet = "NET {ipaddr}";
-        format-wifi = "WIFI {signalStrength}%";
-        format-disconnected = "NET --";
-        tooltip-format = "{ifname}: {ipaddr}";
-      };
+        network = {
+          format-ethernet = "NET {ipaddr}";
+          format-wifi = "WIFI {signalStrength}%";
+          format-disconnected = "NET --";
+          tooltip-format = "{ifname}: {ipaddr}";
+        };
 
-      tray = {
-        spacing = 8;
-      };
-    }];
+        tray = {
+          spacing = 8;
+        };
+      }
+    ];
 
     style = ''
       * {
@@ -273,7 +289,19 @@ in
             "M-b" = "C-Left";
             "M-d" = "C-Delete";
             "M-BackSpace" = "C-BackSpace";
-            "C-k" = { launch = ["wtype" "-M" "shift" "-k" "End" "-m" "shift" "-k" "BackSpace"]; };
+            "C-k" = {
+              launch = [
+                "wtype"
+                "-M"
+                "shift"
+                "-k"
+                "End"
+                "-m"
+                "shift"
+                "-k"
+                "BackSpace"
+              ];
+            };
             "Super-n" = "C-n";
           };
         }

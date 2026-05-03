@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./disko.nix
@@ -20,7 +26,12 @@
   programs.uwsm.enable = true;
 
   users.users.eduardo.shell = pkgs.nushell;
-  users.users.eduardo.extraGroups = [ "input" "uinput" "kvm" "docker" ];
+  users.users.eduardo.extraGroups = [
+    "input"
+    "uinput"
+    "kvm"
+    "docker"
+  ];
 
   virtualisation.libvirtd.enable = true;
   virtualisation.docker.enable = true;
