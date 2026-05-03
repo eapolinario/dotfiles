@@ -1,0 +1,6 @@
+command = nu
+
+# Copy with Ctrl+C when there is a text selection; otherwise the key passes
+# through to the shell (so it still sends SIGINT). The `performable:` prefix
+# only consumes the keystroke if the action actually runs.
+keybind = performable:ctrl+c=copy_to_clipboard
