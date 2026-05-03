@@ -105,10 +105,14 @@
       ci_build_host_names = builtins.attrNames ci_build_hosts;
       default_build_host =
         if ci_build_host_names == [] then null else builtins.head ci_build_host_names;
+
+      host_systems = lib.unique (lib.mapAttrsToList (_: host: host.system) hosts);
     in
     {
       nixosConfigurations = nixos_configurations;
       checks = nixos_checks;
+      formatter = lib.genAttrs host_systems
+        (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
       lib = {
         hostMetadata = host_metadata;
         ciMetadata = {
