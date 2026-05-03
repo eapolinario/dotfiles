@@ -234,9 +234,9 @@ in
   programs.starship = {
     enable = true;
     enableNushellIntegration = true;
-    # Tokyo Night preset from https://starship.rs/presets/tokyo-night
+    # Gruvbox Rainbow preset from https://starship.rs/presets/gruvbox-rainbow
     # Imported verbatim so it stays in sync with upstream.
-    settings = builtins.fromTOML (builtins.readFile ./starship/tokyo-night.toml);
+    settings = builtins.fromTOML (builtins.readFile ./starship/gruvbox-rainbow.toml);
   };
 
   services.gnome-keyring.enable = true;
