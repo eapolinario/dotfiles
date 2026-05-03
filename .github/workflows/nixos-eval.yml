@@ -78,6 +78,9 @@ jobs:
           name: ${{ vars.CACHIX_CACHE_NAME }}
           skipPush: true
 
+      - name: Check formatting
+        run: make fmt-check
+
       - name: Run flake checks
         run: make check HOSTS="${{ needs.metadata.outputs.eval_hosts }}"
 
