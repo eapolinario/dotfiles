@@ -43,6 +43,7 @@ in
     go_1_25
     gopls
     graphviz
+    jq
     just
     libsecret
     neovim
@@ -234,28 +235,115 @@ in
     enable = true;
     enableNushellIntegration = true;
     settings = {
-      add_newline = false;
-      format = "$directory$git_branch$git_status\n$character";
+      add_newline = true;
+      # Two-line prompt: context info, then the prompt character.
+      format = lib.concatStrings [
+        "$username"
+        "$hostname"
+        "$directory"
+        "$git_branch"
+        "$git_commit"
+        "$git_state"
+        "$git_status"
+        "$nix_shell"
+        "$direnv"
+        "$cmd_duration"
+        "$line_break"
+        "$jobs"
+        "$status"
+        "$character"
+      ];
 
       character = {
-        error_symbol = "[x](bold red)";
-        success_symbol = "[>](bold cyan)";
+        error_symbol = "[✗](bold red)";
+        success_symbol = "[❯](bold cyan)";
+        vimcmd_symbol = "[❮](bold green)";
+      };
+
+      username = {
+        style_user = "bold yellow";
+        style_root = "bold red";
+        format = "[$user]($style)";
+        show_always = false;
+      };
+
+      hostname = {
+        ssh_only = true;
+        format = "[@$hostname](bold green) ";
       };
 
       directory = {
         fish_style_pwd_dir_length = 1;
         truncation_length = 3;
-        truncation_symbol = "../";
+        truncation_symbol = "…/";
+        read_only = " 🔒";
+        style = "bold blue";
       };
 
       git_branch = {
-        format = "on [$branch]($style) ";
-        style = "bold cyan";
+        symbol = "";
+        format = "on [$symbol$branch]($style) ";
+        style = "bold purple";
+      };
+
+      git_commit = {
+        only_detached = true;
+        format = "[\\($hash$tag\\)]($style) ";
+        style = "bold yellow";
+      };
+
+      git_state = {
+        format = "\\([$state( $progress_current/$progress_total)]($style)\\) ";
+        style = "bold red";
       };
 
       git_status = {
-        format = "([$all_status$ahead_behind]($style) )";
+        format = "([\\[$all_status$ahead_behind\\]]($style) )";
         style = "cyan";
+        conflicted = "=";
+        ahead = "⇡\${count}";
+        behind = "⇣\${count}";
+        diverged = "⇅";
+        untracked = "?";
+        stashed = "$";
+        modified = "!";
+        staged = "+";
+        renamed = "»";
+        deleted = "✘";
+      };
+
+      nix_shell = {
+        symbol = " ";
+        format = "via [$symbol$state( \\($name\\))]($style) ";
+        style = "bold blue";
+        impure_msg = "impure";
+        pure_msg = "pure";
+      };
+
+      direnv = {
+        disabled = false;
+        format = "[$symbol$loaded/$allowed]($style) ";
+        symbol = "📁 ";
+        style = "bold orange";
+      };
+
+      cmd_duration = {
+        min_time = 2000;
+        format = "took [$duration]($style) ";
+        style = "bold yellow";
+      };
+
+      status = {
+        disabled = false;
+        format = "[$symbol$status]($style) ";
+        symbol = "✗ ";
+        style = "bold red";
+      };
+
+      jobs = {
+        symbol = "⚙ ";
+        format = "[$symbol$number]($style) ";
+        style = "bold blue";
       };
     };
   };
