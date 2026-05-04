@@ -247,6 +247,11 @@ in
     nix-direnv.enable = true;
   };
 
+  programs.carapace = {
+    enable = true;
+    enableNushellIntegration = true;
+  };
+
   programs.starship = {
     enable = true;
     enableNushellIntegration = true;
