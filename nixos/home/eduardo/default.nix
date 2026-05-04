@@ -26,6 +26,7 @@ in
     # emacs is configured via programs.emacs below
     foot
     ghostty
+    imv
     maim
     seahorse
     vscode
