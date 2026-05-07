@@ -52,15 +52,19 @@ in
     graphviz
     jq
     just
+    lazygit
     libsecret
     neovim
     nixd
+    nixfmt
     nodejs_24
     opencode
+    pandoc
     (ripgrep.override { withPCRE2 = true; })
     sqlite
     squashfsTools
     tree
+    unzip
     uv
     piShell
   ];

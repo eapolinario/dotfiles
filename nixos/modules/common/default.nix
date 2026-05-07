@@ -27,11 +27,19 @@
     git
     curl
     wget
+    cacert
     clang
     cmake
     gnumake
     libtool
   ];
+
+  # Expose the system CA bundle to graphical sessions (Emacs, etc.).
+  # Without this, tools launched outside an interactive shell (e.g. curl via
+  # plz/org-web-tools from a GUI Emacs) fail TLS verification with curl error 60.
+  environment.sessionVariables = {
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+  };
 
   programs.nix-ld.enable = true;
 
