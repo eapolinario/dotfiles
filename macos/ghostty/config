@@ -1,0 +1,11 @@
+background-opacity = 0.5
+# Shift+Enter → CSI-u so tmux's `extended-keys` can forward it as a modified
+# Enter to inner TUIs (pi, etc.). The previous `\x1b\r` encoding bypassed
+# the kitty keyboard protocol and tmux delivered it as ESC+CR.
+keybind = shift+enter=text:\x1b[13;2u
+
+# Cmd+hjkl → send kitty keyboard protocol sequences for tmux pane navigation
+keybind = cmd+h=text:\x1b[104;9u
+keybind = cmd+j=text:\x1b[106;9u
+keybind = cmd+k=text:\x1b[107;9u
+keybind = cmd+l=text:\x1b[108;9u

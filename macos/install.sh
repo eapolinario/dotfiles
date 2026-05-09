@@ -31,6 +31,7 @@ mkdir -p "${CONFIG_HOME}/doom"
 stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
 for component in \
+		ghostty \
 		pip \
 		skhd \
 		tmux \
