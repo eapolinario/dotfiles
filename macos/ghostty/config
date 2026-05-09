@@ -1,4 +1,4 @@
-background-opacity = 0.7
+background-opacity = 0.5
 keybind = shift+enter=text:\x1b\r
 
 # Cmd+hjkl → send kitty keyboard protocol sequences for tmux pane navigation
