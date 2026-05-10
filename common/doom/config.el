@@ -238,3 +238,14 @@
 ;;                                         ; The grammar is called tlaplus, but the mode is called tla
 ;;   (setq treesit-load-name-override-list '((tla "libtree-sitter-tlaplus" "tree_sitter_tlaplus")))
 ;;   )
+
+;; eat: real PTY terminal emulator in pure elisp.
+;; Coexists with the :term vterm module; use eat when you want shell integration
+;; inside eshell or when vterm's compiled module is unavailable.
+(use-package! eat
+  :commands (eat eat-other-window eat-project)
+  ;; Give eshell a real PTY (htop, lazygit, nvim, etc. work inside eshell).
+  :hook (eshell-load . eat-eshell-mode)
+  :config
+  (setq eat-kill-buffer-on-exit t
+        eat-enable-mouse t))

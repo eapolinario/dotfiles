@@ -105,6 +105,15 @@
 (package! acp)
 (package! agent-shell)
 
+;; eat - Emulate A Terminal (pure-elisp terminal emulator)
+(package! eat
+  :recipe (:host codeberg :repo "akib/emacs-eat"
+           :files ("*.el" ("term" "term/*.el") "*.texi"
+                   "*.ti" ("terminfo/e" "terminfo/e/*")
+                   ("terminfo/65" "terminfo/65/*")
+                   ("integration" "integration/*")
+                   (:exclude ".dir-locals.el" "*-tests.el"))))
+
 ;; TODO: Trying to make the two tla mode work
 ;;
 ;; (package! tla-mode

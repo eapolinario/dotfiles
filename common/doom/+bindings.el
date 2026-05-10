@@ -158,4 +158,11 @@ any directory proferred by `consult-dir'."
       "C-;"   #'embark-dwim
       "C-h B" #'embark-bindings)
 
+;; eat terminal: SPC o e launches it in the current window,
+;; SPC o E pops it open in another window.
+(map! :leader
+      :prefix ("o" . "open")
+      :desc "Eat terminal"               "e" #'eat
+      :desc "Eat terminal (other window)" "E" #'eat-other-window)
+
 ;;; +bindings.el ends here
