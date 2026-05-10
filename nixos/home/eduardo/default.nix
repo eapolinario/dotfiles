@@ -15,6 +15,10 @@ let
   sharedSkills = [
     "nix-scaffold"
     "acquire-codebase-knowledge"
+    "grill-me"
+    "grill-with-docs"
+    "diagnose"
+    "prototype"
   ];
   mkSkillLinks =
     agentDir:
