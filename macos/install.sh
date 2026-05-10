@@ -23,9 +23,20 @@ echo "$CONFIG_HOME"
 # stow'd files #
 ################
 
-# Special-case zsh and authinfo because they do not follow the XDG spec
+# Special-case zsh, authinfo, and pi because they do not follow the XDG spec
 stow -d "$SCRIPT_DIR" -vt ~ zsh
 stow -d "$SCRIPT_DIR/../common" -vt ~ authinfo
+
+# pi keeps auth.json and sessions/ alongside settings.json under ~/.pi/agent.
+# Pre-create the dir and use --no-folding so stow only symlinks settings.json
+# instead of replacing the whole agent/ directory with a symlink.
+mkdir -p ~/.pi/agent
+stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding pi
+
+# claude: settings.json + hooks live alongside plugin cache and other state.
+# --no-folding so stow symlinks individual files, not the whole .claude dir.
+mkdir -p ~/.claude/hooks
+stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding claude
 
 mkdir -p "${CONFIG_HOME}/doom"
 stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
