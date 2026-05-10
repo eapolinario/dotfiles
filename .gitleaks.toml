@@ -1,7 +1,12 @@
 title = "Dotfiles gitleaks config"
 
-[allowlist]
-  description = "Ignore git-crypt managed authinfo"
-  regexes = [
-    '''authinfo/\\.authinfo$'''
-  ]
+# Extends the default gitleaks rule set; this file only adds path allowlisting
+# for files that are encrypted at rest and therefore safe to skip.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ignore git-crypt managed authinfo (encrypted at rest)"
+paths = [
+  '''(^|/)common/authinfo/\.authinfo$'''
+]
