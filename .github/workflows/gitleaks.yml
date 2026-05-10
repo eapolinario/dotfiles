@@ -4,10 +4,15 @@ on:
   push:
     branches:
       - main
+  pull_request:
+  schedule:
+    # Weekly full-tree sweep so new rules in upstream gitleaks pick up old commits.
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
 
 jobs:
   run-gitleaks:
-    name: Scan with gitleaks
+    name: Scan with gitleaks (diff mode)
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -19,3 +24,23 @@ jobs:
         env:
           GITLEAKS_CONFIG: .gitleaks.toml
           GITLEAKS_NOTIFY_USER_LIST: "@eapolinario"
+
+  full-tree-scan:
+    # gitleaks-action's diff mode can miss leaks introduced via large file
+    # additions (which is how the historical .zsh_history leak slipped past
+    # CI). Run an explicit `gitleaks dir` over the working tree as a second
+    # line of defense.
+    name: Scan with gitleaks (full tree)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install gitleaks
+        run: |
+          set -euo pipefail
+          version=8.30.1
+          curl -fsSL "https://github.com/gitleaks/gitleaks/releases/download/v${version}/gitleaks_${version}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+      - name: Run gitleaks dir scan
+        run: gitleaks dir . --config .gitleaks.toml --no-banner --redact --exit-code 1
