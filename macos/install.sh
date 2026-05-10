@@ -33,6 +33,11 @@ stow -d "$SCRIPT_DIR/../common" -vt ~ authinfo
 mkdir -p ~/.pi/agent
 stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding pi
 
+# claude: settings.json + hooks live alongside plugin cache and other state.
+# --no-folding so stow symlinks individual files, not the whole .claude dir.
+mkdir -p ~/.claude/hooks
+stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding claude
+
 mkdir -p "${CONFIG_HOME}/doom"
 stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
