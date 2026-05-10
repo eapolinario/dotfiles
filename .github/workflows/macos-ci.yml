@@ -83,3 +83,26 @@ jobs:
         # surface the report for visibility, never gate the workflow on it.
         if: always()
         run: brew bundle check --file=Brewfile --no-upgrade --verbose || true
+
+  install-dry-run:
+    name: install.sh --dry-run
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Install stow
+        # macos-latest doesn't ship GNU stow; the dry-run path invokes
+        # `stow --simulate`, so the binary must be present even though
+        # we make no filesystem changes.
+        run: brew install stow
+
+      - name: Run install.sh --dry-run
+        # Exercises argument parsing, every stow target's path resolution,
+        # the Brewfile parse, the yabai plist glob, the zsh plugin loop,
+        # and the fzf/doom/oh-my-zsh blocks — all without mutating the
+        # runner. The brew bundle step is replaced with
+        # `brew bundle list --all` by the script.
+        run: bash macos/install.sh --dry-run
