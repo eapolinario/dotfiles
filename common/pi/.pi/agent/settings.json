@@ -2,5 +2,9 @@
   "lastChangelogVersion": "0.74.0",
   "defaultProvider": "github-copilot",
   "defaultModel": "claude-opus-4.7",
-  "defaultThinkingLevel": "medium"
+  "defaultThinkingLevel": "medium",
+  "skills": [
+    "~/.claude/skills",
+    "~/.claude/plugins/marketplaces/caveman/skills"
+  ]
 }
