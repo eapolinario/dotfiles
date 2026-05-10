@@ -7,6 +7,26 @@
 }:
 let
   piShell = pkgs.writeShellScriptBin "pi-shell" (builtins.readFile ./nushell/pi-shell.sh);
+
+  # Skills shared across coding agents (Claude Code, GitHub Copilot CLI).
+  # Canonical source: dotfiles/common/skills/<name>. Each agent gets a symlink
+  # under its own skills/ dir so writes to other state (sessions, plugins, ...)
+  # in the same parent dir keep working.
+  sharedSkills = [
+    "nix-scaffold"
+    "acquire-codebase-knowledge"
+  ];
+  mkSkillLinks =
+    agentDir:
+    lib.listToAttrs (
+      map (name: {
+        name = "${agentDir}/skills/${name}";
+        value = {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/skills/${name}";
+          force = true;
+        };
+      }) sharedSkills
+    );
 in
 {
   home.username = "eduardo";
@@ -116,6 +136,16 @@ in
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/pi/.pi/agent/prompts/caveman.md";
     force = true;
   };
+
+  # Symlink each shared skill into ~/.claude/skills and ~/.copilot/skills.
+  # Keeps siblings (claude plugins/, copilot sessions/, ...) writable. Wrapped
+  # in `imports` so the dynamic attrset merges with the literal `home.file.X`
+  # entries above instead of triggering a duplicate-attribute error.
+  imports = [
+    {
+      home.file = mkSkillLinks ".claude" // mkSkillLinks ".copilot";
+    }
+  ];
 
   home.file."org".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/repos/org-files/source_files";
