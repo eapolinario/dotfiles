@@ -19,6 +19,7 @@ let
     "grill-with-docs"
     "diagnose"
     "prototype"
+    "caveman"
   ];
   mkSkillLinks =
     agentDir:
