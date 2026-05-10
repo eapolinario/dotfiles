@@ -1,0 +1,85 @@
+name: macOS Checks
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'macos/**'
+      - '.github/workflows/macos-ci.yml'
+  pull_request:
+    paths:
+      - 'macos/**'
+      - '.github/workflows/macos-ci.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  brewfile-validate:
+    name: Validate Brewfile
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: macos
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Summarise Brewfile entries
+        run: |
+          set -u
+          echo "Brewfile entries by directive:"
+          grep -E '^(tap|brew|cask|mas|vscode) ' Brewfile | awk '{print $1}' | sort | uniq -c
+
+      - name: Parse Brewfile (syntax check)
+        # `brew bundle list --all` runs Brewfile through brew's parser; any
+        # syntax error or unknown directive causes a non-zero exit.
+        run: brew bundle list --file=Brewfile --all > /dev/null
+
+      - name: Tap required taps
+        # Each tap must resolve to an existing repo, otherwise `brew tap` errors.
+        # This also primes the formula/cask searches in the next steps.
+        run: |
+          set -euo pipefail
+          while read -r t; do
+            echo "::group::tap $t"
+            brew tap "$t"
+            echo "::endgroup::"
+          done < <(brew bundle list --file=Brewfile --taps)
+
+      - name: Verify formulae resolve in Homebrew
+        run: |
+          set -euo pipefail
+          missing=0
+          while read -r f; do
+            if ! brew info --quiet "$f" > /dev/null 2>&1; then
+              echo "::error::missing formula: $f"
+              missing=$((missing + 1))
+            fi
+          done < <(brew bundle list --file=Brewfile --formula)
+          echo "checked formulae: $(brew bundle list --file=Brewfile --formula | wc -l | tr -d ' ')"
+          [ "$missing" -eq 0 ]
+
+      - name: Verify casks resolve in Homebrew
+        run: |
+          set -euo pipefail
+          missing=0
+          while read -r c; do
+            if ! brew info --quiet --cask "$c" > /dev/null 2>&1; then
+              echo "::error::missing cask: $c"
+              missing=$((missing + 1))
+            fi
+          done < <(brew bundle list --file=Brewfile --cask)
+          echo "checked casks: $(brew bundle list --file=Brewfile --cask | wc -l | tr -d ' ')"
+          [ "$missing" -eq 0 ]
+
+      - name: Run `brew bundle check` (informational)
+        # On a clean runner, `check` will report nothing installed yet — we just
+        # surface the report for visibility, never gate the workflow on it.
+        if: always()
+        run: brew bundle check --file=Brewfile --no-upgrade --verbose || true
