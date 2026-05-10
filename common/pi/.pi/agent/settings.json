@@ -13,5 +13,8 @@
   "skills": [
     "~/.claude/skills",
     "~/.claude/plugins/marketplaces/caveman/skills"
+  ],
+  "packages": [
+    "git:github.com/dbachelder/pi-btw"
   ]
 }
