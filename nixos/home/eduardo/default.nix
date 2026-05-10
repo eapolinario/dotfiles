@@ -290,6 +290,7 @@ in
     shellAliases = {
       gs = "git status";
       gp = "git pull";
+      gc = "git checkout";
       la = "ls -l -a";
     };
     extraConfig = ''
