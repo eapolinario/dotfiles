@@ -96,6 +96,10 @@
 ;; Highlight hex color codes
 (package! rainbow-mode)
 
+;; Justfile support
+(package! just-mode)
+(package! justl)
+
 ;; Experimenting with agent-shell
 (package! shell-maker)
 (package! acp)
