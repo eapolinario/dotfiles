@@ -32,10 +32,10 @@ jobs:
       build_runner: ${{ steps.metadata.outputs.build_runner }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3  # v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
@@ -66,17 +66,17 @@ jobs:
         working-directory: nixos
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3  # v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
       - name: Configure Cachix
         if: ${{ vars.CACHIX_CACHE_NAME != '' }}
-        uses: cachix/cachix-action@v17
+        uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71  # v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
@@ -105,17 +105,17 @@ jobs:
         working-directory: nixos
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3  # v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
       - name: Configure Cachix
         if: ${{ vars.CACHIX_CACHE_NAME != '' }}
-        uses: cachix/cachix-action@v17
+        uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71  # v17
         with:
           name: ${{ vars.CACHIX_CACHE_NAME }}
           authToken: ${{ env.CACHIX_AUTH_TOKEN }}
