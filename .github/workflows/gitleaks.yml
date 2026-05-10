@@ -29,7 +29,7 @@ jobs:
     # gitleaks-action's diff mode can miss leaks introduced via large file
     # additions (which is how the historical .zsh_history leak slipped past
     # CI). Run an explicit `gitleaks dir` over the working tree as a second
-    # line of defence.
+    # line of defense.
     name: Scan with gitleaks (full tree)
     runs-on: ubuntu-latest
     steps:
