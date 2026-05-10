@@ -287,6 +287,11 @@ in
 
   programs.nushell = {
     enable = true;
+    shellAliases = {
+      gs = "git status";
+      gp = "git pull";
+      la = "ls -l -a";
+    };
     extraConfig = ''
       source ~/.config/nushell/pi-agent.nu
 
