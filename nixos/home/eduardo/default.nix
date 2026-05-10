@@ -78,6 +78,45 @@ in
   home.file.".authinfo".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
 
+  # Claude Code config: enables the caveman plugin/marketplace and points the
+  # statusline at the wrapper hook. Symlink individual files so Claude Code can
+  # still write state (plugins/, projects/, .caveman-active, ...) into ~/.claude.
+  # The caveman skill itself is fetched at runtime by Claude Code from the
+  # marketplace declared in settings.json (no nix-side fetch needed).
+  # force = true: the apps write these files themselves on first launch, so
+  # they pre-exist as plain (non-symlink) files. Without force, home-manager
+  # activation aborts with an "existing file in the way" error. With force, it
+  # replaces them with the managed symlink. Tradeoff: the apps can no longer
+  # mutate these specific files (they live in the read-only nix store) — any
+  # change must be made in dotfiles/common/.
+  home.file.".claude/settings.json" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/claude/.claude/settings.json";
+    force = true;
+  };
+
+  home.file.".claude/hooks/caveman-statusline.sh" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/claude/.claude/hooks/caveman-statusline.sh";
+    force = true;
+  };
+
+  # pi agent: settings.json adds the caveman skill paths and the caveman-status
+  # extension mirrors the plugin state in pi's footer. Symlink individual files
+  # so pi can keep auth.json / sessions/ alongside under ~/.pi/agent.
+  home.file.".pi/agent/settings.json" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/pi/.pi/agent/settings.json";
+    force = true;
+  };
+
+  home.file.".pi/agent/extensions/caveman-status.ts" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/pi/.pi/agent/extensions/caveman-status.ts";
+    force = true;
+  };
+
+  home.file.".pi/agent/prompts/caveman.md" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/pi/.pi/agent/prompts/caveman.md";
+    force = true;
+  };
+
   home.file."org".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/repos/org-files/source_files";
 
