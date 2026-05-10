@@ -4,3 +4,7 @@
 tmp/
 
 doom/custom.el
+
+# Agent-shell session transcripts: local terminal-paste dumps with potentially
+# sensitive command output. Should never be committed.
+.agent-shell/
