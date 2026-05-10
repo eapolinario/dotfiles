@@ -3,6 +3,13 @@
   "defaultProvider": "github-copilot",
   "defaultModel": "claude-opus-4.7",
   "defaultThinkingLevel": "medium",
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "transport": "auto",
+  "enableInstallTelemetry": false,
+  "theme": "dark",
+  "hideThinkingBlock": false,
   "skills": [
     "~/.claude/skills",
     "~/.claude/plugins/marketplaces/caveman/skills"
