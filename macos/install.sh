@@ -4,16 +4,67 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Only run this script if both gpg *and* the private key are available
-if ! command -v gpg >/dev/null 2>&1; then
-	echo "GPG is not installed. Please install it (e.g., brew install gpg)."
-	exit 1
-fi
+DRY_RUN=0
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+	--dry-run | -n)
+		DRY_RUN=1
+		shift
+		;;
+	-h | --help)
+		cat <<'USAGE'
+Usage: install.sh [--dry-run]
 
-if ! gpg --list-keys 5C9B334784343A49 >/dev/null 2>&1; then
-	echo "GPG key with ID '5C9B334784343A49' is not available.  Please import it."
-	echo "For example: gpg --import path/to/your/keyfile"
-	exit 1
+  --dry-run, -n   Print actions instead of executing them. Skips the GPG
+                  gate, runs `stow --simulate` instead of `stow`, replaces
+                  `brew bundle` with `brew bundle list --all`, and skips
+                  launchctl / defaults write / network clone steps. Used
+                  by CI to validate the script end-to-end without mutating
+                  the runner.
+USAGE
+		exit 0
+		;;
+	*)
+		printf 'Unknown argument: %s\n' "$1" >&2
+		exit 2
+		;;
+	esac
+done
+
+# Run a command, or print what would have run in dry-run mode.
+run() {
+	if [[ $DRY_RUN -eq 1 ]]; then
+		printf '[dry-run] %s\n' "$*"
+	else
+		"$@"
+	fi
+}
+
+# Run a stow invocation; in dry-run mode, force `--simulate` so the real
+# binary still exercises path resolution and conflict detection without
+# touching the filesystem.
+run_stow() {
+	if [[ $DRY_RUN -eq 1 ]]; then
+		stow --simulate --verbose "$@"
+	else
+		stow "$@"
+	fi
+}
+
+# Only run this script if both gpg *and* the private key are available
+if [[ $DRY_RUN -eq 0 ]]; then
+	if ! command -v gpg >/dev/null 2>&1; then
+		echo "GPG is not installed. Please install it (e.g., brew install gpg)."
+		exit 1
+	fi
+
+	if ! gpg --list-keys 5C9B334784343A49 >/dev/null 2>&1; then
+		echo "GPG key with ID '5C9B334784343A49' is not available.  Please import it."
+		echo "For example: gpg --import path/to/your/keyfile"
+		exit 1
+	fi
+else
+	echo "[dry-run] skipping GPG availability and key checks"
 fi
 
 CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
@@ -24,31 +75,31 @@ echo "$CONFIG_HOME"
 ################
 
 # Special-case zsh, authinfo, and pi because they do not follow the XDG spec
-stow -d "$SCRIPT_DIR" -vt ~ zsh
-stow -d "$SCRIPT_DIR/../common" -vt ~ authinfo
+run_stow -d "$SCRIPT_DIR" -vt ~ zsh
+run_stow -d "$SCRIPT_DIR/../common" -vt ~ authinfo
 
 # pi keeps auth.json and sessions/ alongside settings.json under ~/.pi/agent.
 # Pre-create the dir and use --no-folding so stow only symlinks settings.json
 # instead of replacing the whole agent/ directory with a symlink.
 mkdir -p ~/.pi/agent
-stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding pi
+run_stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding pi
 
 # claude: settings.json + hooks live alongside plugin cache and other state.
 # --no-folding so stow symlinks individual files, not the whole .claude dir.
 mkdir -p ~/.claude/hooks
-stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding claude
+run_stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding claude
 
 mkdir -p "${CONFIG_HOME}/doom"
-stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
+run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
 for component in \
-		ghostty \
-		pip \
-		skhd \
-		tmux \
-		yabai; do
+	ghostty \
+	pip \
+	skhd \
+	tmux \
+	yabai; do
 	mkdir -p "${CONFIG_HOME}/${component}"
-	stow -d "$SCRIPT_DIR" -vt "${CONFIG_HOME}/${component}" "${component}"
+	run_stow -d "$SCRIPT_DIR" -vt "${CONFIG_HOME}/${component}" "${component}"
 done
 
 #######################
@@ -61,9 +112,9 @@ done
 
 # TODO: move this to XDG
 if [ ! -d ~/.tmux/plugins/tpm ]; then
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+	run git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 	# I stole this from https://github.com/tmux-plugins/tpm/issues/6
-	TMUX_PLUGIN_MANAGER_PATH=~/.tmux/plugins/ ~/.tmux/plugins/tpm/bin/install_plugins
+	run env TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/" ~/.tmux/plugins/tpm/bin/install_plugins
 	# Remember that tmux plugins have different requirements, e.g. tmux-jump requires ruby to be installed!
 	# TODO: figure out a way to specify (and install?) tmux-plugins requirements?
 fi
@@ -76,9 +127,19 @@ fi
 # Install Brewfile #
 ####################
 
-pushd macos
-brew bundle
-popd
+if [[ $DRY_RUN -eq 1 ]]; then
+	echo "[dry-run] would run: brew bundle (file=$SCRIPT_DIR/Brewfile)"
+	if command -v brew >/dev/null 2>&1; then
+		echo "[dry-run] running: brew bundle list --all --file=$SCRIPT_DIR/Brewfile"
+		brew bundle list --all --file="$SCRIPT_DIR/Brewfile" >/dev/null
+	else
+		echo "[dry-run]   (brew not available on this host; skipping list)"
+	fi
+else
+	pushd "$SCRIPT_DIR" >/dev/null
+	brew bundle
+	popd >/dev/null
+fi
 
 ###################
 # End of Brewfile #
@@ -91,10 +152,10 @@ popd
 # Use launchctl directly — yabai --restart-service has the service label hardcoded
 # and breaks when the tap changes (e.g. asmvik → koekeishiya). Glob for the plist
 # instead so this is resilient to future renames.
-yabai_plist=$(ls ~/Library/LaunchAgents/com.*.yabai.plist 2>/dev/null | head -1)
+yabai_plist=$(ls ~/Library/LaunchAgents/com.*.yabai.plist 2>/dev/null | head -1 || true)
 if [ -n "$yabai_plist" ]; then
-	launchctl unload "$yabai_plist" 2>/dev/null || true
-	launchctl load "$yabai_plist"
+	run launchctl unload "$yabai_plist" || true
+	run launchctl load "$yabai_plist"
 	echo "yabai service started from: $yabai_plist"
 else
 	echo "Warning: no yabai plist found in ~/Library/LaunchAgents — service not started."
@@ -109,8 +170,8 @@ fi
 ##############
 
 if [ ! -d "${CONFIG_HOME}/emacs" ]; then
-	git clone --depth=1 https://github.com/doomemacs/doomemacs "${CONFIG_HOME}/emacs"
-	DOOMDIR="${CONFIG_HOME}/doom" "${CONFIG_HOME}/emacs/bin/doom" install --no-config --no-env
+	run git clone --depth=1 https://github.com/doomemacs/doomemacs "${CONFIG_HOME}/emacs"
+	run env DOOMDIR="${CONFIG_HOME}/doom" "${CONFIG_HOME}/emacs/bin/doom" install --no-config --no-env
 fi
 
 #####################
@@ -121,40 +182,44 @@ fi
 # zsh area #
 ############
 if [ ! -d ~/.oh-my-zsh ]; then
-	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended --keep-zshrc"
+	if [[ $DRY_RUN -eq 1 ]]; then
+		echo "[dry-run] would run: oh-my-zsh installer (curl|sh)"
+	else
+		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended --keep-zshrc"
+	fi
 fi
 
 ZSH_CUSTOM=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
 
 plugin_definitions=(
-  "zsh-autosuggestions"
-  "zsh-completions"
-  "zdharma-continuum fast-syntax-highlighting"
-  "chrissicool zsh-256color"
-  "Aloxaf fzf-tab"
+	"zsh-autosuggestions"
+	"zsh-completions"
+	"zdharma-continuum fast-syntax-highlighting"
+	"chrissicool zsh-256color"
+	"Aloxaf fzf-tab"
 )
 
 for entry in "${plugin_definitions[@]}"; do
-  user="zsh-users"
-  plugin=""
-  read -r first second <<< "$entry"
-  if [[ -n $second ]]; then
-    user="$first"
-    plugin="$second"
-  else
-    plugin="$first"
-  fi
-  target_dir="$ZSH_CUSTOM/plugins/$plugin"
-  if [ ! -d "$target_dir" ]; then
-    git clone "https://github.com/$user/$plugin" "$target_dir"
-  fi
+	user="zsh-users"
+	plugin=""
+	read -r first second <<<"$entry"
+	if [[ -n $second ]]; then
+		user="$first"
+		plugin="$second"
+	else
+		plugin="$first"
+	fi
+	target_dir="$ZSH_CUSTOM/plugins/$plugin"
+	if [ ! -d "$target_dir" ]; then
+		run git clone "https://github.com/$user/$plugin" "$target_dir"
+	fi
 done
 
 theme_user=romkatv
 theme_name=powerlevel10k
 theme_dir="$ZSH_CUSTOM/themes/$theme_name"
 if [ ! -d "$theme_dir" ]; then
-  git clone --depth=1 "https://github.com/$theme_user/$theme_name.git" "$theme_dir"
+	run git clone --depth=1 "https://github.com/$theme_user/$theme_name.git" "$theme_dir"
 fi
 
 ###################
@@ -164,12 +229,12 @@ fi
 ############################
 # Overwrite macos defaults #
 ############################
-defaults write com.apple.dock appswitcher-all-displays -bool true
-defaults write com.apple.dock autohide -bool true
-defaults write com.apple.screencapture location -string "$HOME/Desktop"
-defaults write com.apple.screencapture disable-shadow -bool true
-defaults write com.apple.screencapture type -string "png"
-defaults write com.apple.Finder AppleShowAllFiles -bool true
+run defaults write com.apple.dock appswitcher-all-displays -bool true
+run defaults write com.apple.dock autohide -bool true
+run defaults write com.apple.screencapture location -string "$HOME/Desktop"
+run defaults write com.apple.screencapture disable-shadow -bool true
+run defaults write com.apple.screencapture type -string "png"
+run defaults write com.apple.Finder AppleShowAllFiles -bool true
 
 ###################################
 # End of Overwrite macos defaults #
@@ -181,8 +246,8 @@ defaults write com.apple.Finder AppleShowAllFiles -bool true
 
 # fzf has been such an integral part of the toolset
 if [ ! -d ~/.fzf ]; then
-	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-	~/.fzf/install --key-bindings --completion --update-rc --no-bash --no-fish
+	run git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+	run ~/.fzf/install --key-bindings --completion --update-rc --no-bash --no-fish
 fi
 
 ###############
