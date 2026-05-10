@@ -4,8 +4,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'nixos/**'
+      - '.github/workflows/nixos-eval.yml'
   pull_request:
+    paths:
+      - 'nixos/**'
+      - '.github/workflows/nixos-eval.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   metadata:
@@ -81,6 +91,7 @@ jobs:
 
   build-arm64:
     name: Configured host toplevel build
+    if: github.event_name != 'pull_request'
     runs-on: ${{ needs.metadata.outputs.build_runner }}
     needs:
       - metadata
@@ -112,4 +123,4 @@ jobs:
           extraPullNames: nix-community
 
       - name: Build configured host toplevel
-        run: make build-host HOST="${{ needs.metadata.outputs.build_host }}" NIX="nix -L"
+        run: make build-host HOST="${{ needs.metadata.outputs.build_host }}" NIX="nix -L --cores 0"
