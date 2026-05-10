@@ -84,14 +84,17 @@ function readFlag(): CavemanState | null {
 }
 
 function parsePrompt(prompt: string): CavemanState | "noop" {
+	// `input` event gives us raw user text (no skill block, no template).
+	// Trim and treat the whole thing as the command. Single line expected.
 	const text = prompt.trim();
-	const lower = text.toLowerCase();
+	if (!text) return "noop";
+	const firstLine = text.split(/\r?\n/, 1)[0].trim();
 
-	if (/\b(stop caveman|normal mode)\b/i.test(text)) {
+	if (/^(stop caveman|normal mode)[.!]?$/i.test(firstLine)) {
 		return { active: false, level: "full" };
 	}
 
-	const slash = text.match(/^\/caveman(?:\s+(\S+))?\s*$/i);
+	const slash = firstLine.match(/^\/caveman(?:\s+(\S+))?\s*$/i);
 	if (slash) {
 		const arg = slash[1]?.toLowerCase();
 		const level: Level =
@@ -99,11 +102,10 @@ function parsePrompt(prompt: string): CavemanState | "noop" {
 		return { active: true, level };
 	}
 
-	const inlineLevel = lower.match(/\b(wenyan-ultra|wenyan-full|wenyan-lite|ultra|full|lite)\b/);
-
-	if (/\b(caveman mode|use caveman|talk like caveman|caveman style)\b/i.test(text)) {
-		const level = (inlineLevel?.[1] as Level | undefined) ?? "full";
-		return { active: true, level };
+	// Bare level word as shorthand (e.g. user types just `ultra`).
+	const bare = firstLine.toLowerCase();
+	if ((VALID_LEVELS as readonly string[]).includes(bare)) {
+		return { active: true, level: bare as Level };
 	}
 
 	return "noop";
@@ -197,17 +199,19 @@ export default function cavemanStatusExtension(pi: ExtensionAPI): void {
 		}
 	});
 
-	pi.on("before_agent_start", async (event, ctx) => {
+	pi.on("input", async (event, ctx) => {
 		lastCtx = ctx;
-
-		// Flag file is authoritative if present.
-		if (refreshFromFlag(true)) return;
-
-		const result = parsePrompt(event.prompt ?? "");
+		const result = parsePrompt(event.text ?? "");
 		if (result === "noop") return;
 		if (!result.active && !state.active) return;
 		setState(result, true);
 		writeFlag(result);
+	});
+
+	pi.on("before_agent_start", async (_event, ctx) => {
+		lastCtx = ctx;
+		// Pull updates from external writers (Claude Code plugin) if any.
+		refreshFromFlag(true);
 	});
 
 	pi.on("turn_start", async (_event, ctx) => {
