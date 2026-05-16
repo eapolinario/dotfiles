@@ -79,6 +79,7 @@ in
     just
     lazygit
     libsecret
+    lsof
     neovim
     nixd
     nixfmt
@@ -91,6 +92,7 @@ in
     tree
     unzip
     uv
+    zellij
     piShell
   ];
 
