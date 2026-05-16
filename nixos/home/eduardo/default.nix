@@ -102,6 +102,9 @@ in
   home.file.".config/doom".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/doom";
 
+  home.file.".config/nvim".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/nvim";
+
   home.file.".authinfo".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/common/authinfo/.authinfo";
 
