@@ -87,6 +87,7 @@
                 environment.systemPackages = with pkgs.llm-agents; [
                   agentsview
                   claude-agent-acp
+                  codex
                   copilot-cli
                   pi
                   rtk
