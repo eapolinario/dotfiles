@@ -39,7 +39,7 @@ in
   home.stateVersion = "24.11";
 
   home.sessionVariables = {
-    EDITOR = "emacs";
+    EDITOR = "nvim";
   };
 
   home.packages = with pkgs; [
@@ -301,7 +301,7 @@ in
     extraConfig = ''
       source ~/.config/nushell/pi-agent.nu
 
-      $env.EDITOR = "emacs"
+      $env.EDITOR = "nvim"
 
       $env.config = ($env.config | upsert keybindings (
         ($env.config.keybindings? | default []) ++ [
