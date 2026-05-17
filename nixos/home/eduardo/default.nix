@@ -14,6 +14,7 @@ let
   # in the same parent dir keep working.
   sharedSkills = [
     "nix-scaffold"
+    "nixos-apply"
     "acquire-codebase-knowledge"
     "grill-me"
     "grill-with-docs"
