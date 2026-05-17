@@ -13,14 +13,14 @@ let
   # under its own skills/ dir so writes to other state (sessions, plugins, ...)
   # in the same parent dir keep working.
   sharedSkills = [
-    "nix-scaffold"
-    "nixos-apply"
     "acquire-codebase-knowledge"
+    "caveman"
+    "diagnose"
     "grill-me"
     "grill-with-docs"
-    "diagnose"
+    "nix-scaffold"
+    "nixos-apply"
     "prototype"
-    "caveman"
   ];
   mkSkillLinks =
     agentDir:
