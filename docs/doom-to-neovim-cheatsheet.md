@@ -21,8 +21,10 @@ Assumptions:
 | Find config file | `SPC f p` / Doom config helpers | `<Space>fc` |
 | Recent files | `SPC f r` | `<Space>fr` |
 | Switch buffer | `SPC b b` | `<Space>,` or `<Space>fb` |
-| Search project text | `SPC /` or `SPC s p` | `<Space>/` or `<Space>sg` |
-| Search current directory | `SPC s d` / consult from cwd | `<Space>sG` |
+| Search project text | `SPC /` or `SPC s p` | `<Space>/` or `<Space>sg` (also `<Space>sp` alias) |
+| Search current directory | `SPC s d` / consult from cwd | `<Space>sd` (grep in current file's dir) or `<Space>sG` (grep cwd) |
+| Find files in current file's dir | `SPC .` | `<Space>.` or `<Space>fD` |
+| Search open buffers | `SPC s B` | `<Space>sB` |
 | Search current word | `SPC s s` / symbol search | `<Space>sw` |
 | Resume last search | consult history / minibuffer history | `<Space>sR` |
 | Search keybindings | `SPC h b b` or `C-h B` | `<Space>sk` |
@@ -139,7 +141,6 @@ stuck on the current visible page.
 | Enter zellij scroll mode from the Sidekick terminal | `<C-s>` |
 | Move one line in zellij scroll mode | `j` / `k` or Down / Up |
 | Move half a page in zellij scroll mode | `d` / `u` |
-| Move a full page in zellij scroll mode | PageDown / PageUp |
 | Search zellij scrollback | `s`, type search, `<Enter>`, then `n` / `p` |
 | Return to live CLI output from zellij scroll/search mode | `<C-c>` |
 | Enter Neovim terminal normal mode, visible page only | `<C-q>` |
@@ -154,8 +155,9 @@ stuck on the current visible page.
 | Open Sidekick file picker | `<C-f>` |
 | Insert a saved prompt or context | `<C-p>` |
 
-Inside the Sidekick pane, `<C-f>` and `<C-b>` are reserved for Sidekick's file
-and buffer pickers, so prefer `d`, `u`, PageDown, and PageUp for scrolling.
+`<C-f>` and `<C-b>` have different meanings depending on mode. In Sidekick
+terminal mode they are Sidekick file/buffer picker keys. After `<C-s>` enters
+zellij scroll mode, they page through zellij's scrollback.
 
 `<C-h/j/k/l>` are Sidekick window-navigation keys in terminal mode, not output
 scrolling keys. They only navigate when the CLI is in a non-floating layout and
@@ -166,7 +168,7 @@ Quick loop:
 
 1. `<C-.>` to focus Sidekick.
 2. `<C-s>` to enter zellij scroll mode.
-3. Use `j`, `k`, `u`, `d`, PageUp, PageDown, or `s` search.
+3. Use `j`, `k`, `u`, `d`, `<C-b>`, `<C-f>`, PageUp, PageDown, or `s` search.
 4. Press `<C-c>` to return to the live AI CLI output.
 
 ## Org Mode
@@ -186,6 +188,19 @@ Quick loop:
 | Act on current completion/item | `M-/` custom Embark act | Telescope picker actions with `<C-/>` or `?` |
 | Do what I mean | `C-;` custom Embark DWIM | Context-specific LazyVim mappings |
 | Show action bindings | `C-h B` custom Embark bindings | `<Space>sk`, or Telescope `?` inside picker |
+
+## Repo-Specific Overrides
+
+These are defined in `common/nvim/lua/plugins/telescope.lua`. They override or
+extend LazyVim's defaults to mirror Doom's search-from-here ergonomics.
+
+| Key | Behaviour | Notes |
+|-----|-----------|-------|
+| `<Space>sd` | Live grep in current file's directory | Overrides LazyVim's `Diagnostics`; use `<Space>xd` instead. |
+| `<Space>.` | Find files in current file's directory | Doom `SPC .` equivalent. |
+| `<Space>fD` | Find files in current file's directory | Alternate mnemonic for `<Space>.`. |
+| `<Space>sB` | Live grep across open buffers | Doom `SPC s B` equivalent. |
+| `<Space>sp` | Grep project root | Alias of LazyVim's `<Space>sg`. |
 
 ## Quick Translation Rules
 
