@@ -303,6 +303,9 @@ in
 
       $env.EDITOR = "nvim"
 
+      # Case-insensitive completion matching (files, commands, etc.).
+      $env.config.completions.case_sensitive = false
+
       $env.config = ($env.config | upsert keybindings (
         ($env.config.keybindings? | default []) ++ [
           {
