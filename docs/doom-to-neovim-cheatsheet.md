@@ -121,23 +121,53 @@ sessions with zellij when available.
 
 ### Sidekick Pane Navigation
 
-The Sidekick pane is a terminal buffer, so the key is to leave terminal insert
-mode before trying to scroll or search its output.
+The Sidekick pane has three useful navigation contexts:
+
+- **Terminal mode**: keys are sent to the AI CLI prompt.
+- **Zellij scroll mode**: keys move through zellij's scrollback, the same
+  history the mouse wheel can reach.
+- **Neovim terminal normal mode**: keys move through Neovim's visible terminal
+  buffer only.
+
+With this repo's zellij backend, use **zellij scroll mode** for real history
+navigation. `<C-q>` only enters Neovim terminal normal mode, so it can feel
+stuck on the current visible page.
 
 | Task | Key |
 |------|-----|
-| Enter terminal normal mode in the Sidekick pane | `<C-q>` |
-| Scroll output after entering terminal normal mode | `j`, `k`, `<C-d>`, `<C-u>` |
-| Jump in terminal output | `gg`, `G`, `/pattern` |
-| Return to typing in the AI CLI | `i` or `a` |
-| Hide the Sidekick terminal from normal mode | `q` or `<C-q>` |
+| Focus Sidekick from an editor window | `<C-.>` |
+| Enter zellij scroll mode from the Sidekick terminal | `<C-s>` |
+| Move one line in zellij scroll mode | `j` / `k` or Down / Up |
+| Move half a page in zellij scroll mode | `d` / `u` |
+| Move a full page in zellij scroll mode | PageDown / PageUp |
+| Search zellij scrollback | `s`, type search, `<Enter>`, then `n` / `p` |
+| Return to live CLI output from zellij scroll/search mode | `<C-c>` |
+| Enter Neovim terminal normal mode, visible page only | `<C-q>` |
+| Return to typing in the AI CLI from Neovim normal mode | `i` or `a` |
+| Send Enter to the CLI from Neovim normal mode | `<Enter>` |
+| Hide Sidekick from normal mode | `q` or `<C-q>` |
+| Hide Sidekick from terminal mode | `<C-.>` |
 | Return to previous window without hiding Sidekick | `<C-z>` |
-| Move from Sidekick split to the window on the left | `<C-h>` |
+| Move from a right-side Sidekick split back to the editor | `<C-h>` |
 | Move between Sidekick split windows when available | `<C-h/j/k/l>` |
+| Open Sidekick buffer picker | `<C-b>` |
+| Open Sidekick file picker | `<C-f>` |
+| Insert a saved prompt or context | `<C-p>` |
 
-Sidekick's split navigation keys only apply when the CLI is in a non-floating
-layout and there is another Neovim window in that direction. With the default
-right-side split, `<C-h>` is the common way back to the editing window.
+Inside the Sidekick pane, `<C-f>` and `<C-b>` are reserved for Sidekick's file
+and buffer pickers, so prefer `d`, `u`, PageDown, and PageUp for scrolling.
+
+`<C-h/j/k/l>` are Sidekick window-navigation keys in terminal mode, not output
+scrolling keys. They only navigate when the CLI is in a non-floating layout and
+there is another Neovim window in that direction. With the default right-side
+split, `<C-h>` is the common way back to the editing window.
+
+Quick loop:
+
+1. `<C-.>` to focus Sidekick.
+2. `<C-s>` to enter zellij scroll mode.
+3. Use `j`, `k`, `u`, `d`, PageUp, PageDown, or `s` search.
+4. Press `<C-c>` to return to the live AI CLI output.
 
 ## Org Mode
 
