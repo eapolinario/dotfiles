@@ -1,5 +1,8 @@
 -- LSP servers managed by Nix (home.packages), not Mason.
 -- Add a server here when you install its binary via nixpkgs.
+local flake = vim.fn.expand("~/dotfiles/nixos")
+local host = vim.loop.os_gethostname()
+
 return {
   {
     "neovim/nvim-lspconfig",
@@ -8,12 +11,26 @@ return {
         gopls = {
           mason = false,
         },
+        -- nil_ls comes from the lang.nix LazyVim extra; we use nixd instead.
+        nil_ls = { enabled = false },
         nixd = {
           mason = false,
           settings = {
             nixd = {
               nixpkgs = {
-                expr = "import <nixpkgs> { }",
+                expr = string.format('import (builtins.getFlake "%s").inputs.nixpkgs { }', flake),
+              },
+              options = {
+                nixos = {
+                  expr = string.format('(builtins.getFlake "%s").nixosConfigurations.%s.options', flake, host),
+                },
+                ["home-manager"] = {
+                  expr = string.format(
+                    '(builtins.getFlake "%s").nixosConfigurations.%s.options.home-manager.users.type.getSubOptions []',
+                    flake,
+                    host
+                  ),
+                },
               },
               formatting = {
                 command = { "nixfmt" },
@@ -27,7 +44,7 @@ return {
 
   -- Prevent mason-lspconfig from auto-installing servers we get from Nix.
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     opts = { ensure_installed = {} },
   },
 
@@ -36,5 +53,27 @@ return {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = { ensure_installed = {} },
+  },
+
+  -- lang.nix extra wires up statix via nvim-lint; we don't install it.
+  {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        nix = {},
+      },
+    },
+  },
+
+  -- lang.nix extra defaults to alejandra; prefer nixfmt (already in nixpkgs).
+  {
+    "stevearc/conform.nvim",
+    optional = true,
+    opts = {
+      formatters_by_ft = {
+        nix = { "nixfmt" },
+      },
+    },
   },
 }
