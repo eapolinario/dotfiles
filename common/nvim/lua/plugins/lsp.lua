@@ -11,6 +11,9 @@ return {
         gopls = {
           mason = false,
         },
+        marksman = {
+          mason = false,
+        },
         -- nil_ls comes from the lang.nix LazyVim extra; we use nixd instead.
         nil_ls = { enabled = false },
         nixd = {

@@ -81,6 +81,7 @@ in
     lazygit
     libsecret
     lsof
+    marksman
     neovim
     nixd
     nixfmt
