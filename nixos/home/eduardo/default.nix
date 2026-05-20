@@ -305,7 +305,8 @@ in
 
       $env.EDITOR = "nvim"
 
-      # Case-insensitive completion matching (files, commands, etc.).
+      # Fuzzy, case-insensitive completion matching (files, commands, etc.).
+      $env.config.completions.algorithm = "fuzzy"
       $env.config.completions.case_sensitive = false
 
       $env.config = ($env.config | upsert keybindings (
@@ -339,11 +340,6 @@ in
     enable = true;
     enableNushellIntegration = true;
     nix-direnv.enable = true;
-  };
-
-  programs.carapace = {
-    enable = true;
-    enableNushellIntegration = true;
   };
 
   programs.starship = {
