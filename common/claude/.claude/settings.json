@@ -12,11 +12,16 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"${HOME}/.claude/hooks/caveman-statusline.sh\""
+  },
   "enabledPlugins": {
     "commit-commands@claude-plugins-official": true,
     "greptile@claude-plugins-official": true,
     "learning-output-style@claude-plugins-official": true,
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "pyright-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -28,9 +33,5 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
-  "voiceEnabled": true,
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"${HOME}/.claude/hooks/caveman-statusline.sh\""
-  }
+  "voiceEnabled": true
 }
