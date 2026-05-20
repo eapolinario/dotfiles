@@ -44,7 +44,7 @@ fmt-check:
 
 ## update-lock: update flake.lock inputs
 update-lock:
-	$(NIX) flake update $(FLAKE_REF)
+	$(NIX) flake update
 
 ## flake-check: run nix flake checks for this flake
 flake-check:
