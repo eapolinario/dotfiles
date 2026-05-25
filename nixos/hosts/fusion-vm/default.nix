@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  lib,
   inputs,
   ...
 }:
@@ -29,20 +28,12 @@
   users.users.eduardo.extraGroups = [
     "input"
     "uinput"
-    "kvm"
     "docker"
   ];
 
-  virtualisation.libvirtd.enable = true;
+  # Nested virtualization isn't exposed by VMware Fusion on Apple Silicon,
+  # so libvirtd/KVM is intentionally not enabled on this guest.
   virtualisation.docker.enable = true;
-
-  # TODO: Remove once https://github.com/NixOS/nixpkgs/pull/496839 lands on nixos-unstable
-  # Fix FHS path assumption in libvirt's upstream systemd unit
-  # Empty string first clears the inherited ExecStart before setting the new one
-  systemd.services.virt-secret-init-encryption.serviceConfig.ExecStart = lib.mkForce [
-    ""
-    "${pkgs.bash}/bin/sh -c 'umask 0077 && (dd if=/dev/random status=none bs=32 count=1 | systemd-creds encrypt --name=secrets-encryption-key - /var/lib/libvirt/secrets/secrets-encryption-key)'"
-  ];
 
   hardware.uinput.enable = true;
 
