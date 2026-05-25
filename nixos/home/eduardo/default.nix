@@ -289,7 +289,9 @@ in
 
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs-unstable-pgtk;
+    # Prebuilt from cache.nixos.org (Emacs 30.2 at time of writing).
+    # Avoids source build from emacs-overlay's -unstable variant.
+    package = pkgs.emacs-pgtk;
   };
 
   programs.nushell = {

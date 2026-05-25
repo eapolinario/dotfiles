@@ -26,6 +26,7 @@ $docker_context\
 $conda\
 $pixi\
 [](fg:color_bg3 bg:color_bg1)\
+$cmd_duration\
 $time\
 [ ](fg:color_bg1)\
 $line_break$character"""
@@ -71,6 +72,12 @@ Debian = "󰣚"
 Redhat = "󱄛"
 RedHatEnterprise = "󱄛"
 Pop = ""
+
+[cmd_duration]
+min_time = 0
+show_milliseconds = false
+format = '[ ⏱ $duration ]($style)'
+style = "bg:color_bg1 fg:color_fg0"
 
 [username]
 show_always = true
