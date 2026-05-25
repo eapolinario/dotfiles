@@ -7,6 +7,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     opts = {
+      codelens = { enabled = true },
       servers = {
         gopls = {
           mason = false,
