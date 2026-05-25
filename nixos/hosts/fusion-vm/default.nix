@@ -33,7 +33,10 @@
 
   # Nested virtualization isn't exposed by VMware Fusion on Apple Silicon,
   # so libvirtd/KVM is intentionally not enabled on this guest.
-  virtualisation.docker.enable = true;
+  virtualisation = {
+    docker.enable = true;
+    vmware.guest.enable = true; # VMware guest tools (better graphics, clipboard, drag-and-drop)
+  };
 
   hardware.uinput.enable = true;
 
@@ -58,8 +61,6 @@
   # Required for Wayland/Hyprland
   hardware.graphics.enable = true;
 
-  # VMware guest tools (better graphics, clipboard, drag-and-drop)
-  virtualisation.vmware.guest.enable = true;
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
