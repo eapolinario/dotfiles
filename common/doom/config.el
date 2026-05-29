@@ -224,6 +224,13 @@
          :api-key (lambda () (auth-source-pick-first-password :host "api.openai.com"))))
   )
 
+;; Tabulated buffer manager for agent-shell
+(use-package! agent-shell-manager
+  :after agent-shell
+  :commands (agent-shell-manager-toggle)
+  :config
+  (setq agent-shell-manager-side 'bottom))
+
 ;; TODO: Trying to make the two tla mode work
 ;;
 ;; (use-package! tla-mode

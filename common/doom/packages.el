@@ -104,6 +104,8 @@
 (package! shell-maker)
 (package! acp)
 (package! agent-shell)
+(package! agent-shell-manager
+  :recipe (:host github :repo "jethrokuan/agent-shell-manager"))
 
 ;; eat - Emulate A Terminal (pure-elisp terminal emulator)
 (package! eat
