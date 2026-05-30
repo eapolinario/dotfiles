@@ -47,7 +47,6 @@ in
     # Desktop apps
     adwaita-icon-theme
     bitwarden-cli
-    bitwarden-desktop
     chromium
     # emacs is configured via programs.emacs below
     foot
