@@ -1,7 +1,8 @@
--- Use Catppuccin as the LazyVim colorscheme.
--- LazyVim already ships a catppuccin plugin spec with a curated set of
--- integrations (snacks, flash, neotree, telescope, ...). We only override
--- the bits we care about so those integrations are preserved.
+-- Use Nordic as the LazyVim colorscheme.
+-- Catppuccin is kept around as an alternative; LazyVim already ships a
+-- catppuccin plugin spec with a curated set of integrations (snacks, flash,
+-- neotree, telescope, ...) and we only override the bits we care about so
+-- those integrations are preserved.
 return {
   {
     "catppuccin/nvim",
@@ -13,9 +14,18 @@ return {
   },
 
   {
+    "AlexvZyl/nordic.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function(_, opts)
+      require("nordic").setup(opts)
+    end,
+  },
+
+  {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin-mocha",
+      colorscheme = "nordic",
     },
   },
 }
