@@ -83,6 +83,7 @@ in
     lsof
     marksman
     neovim
+    nix-output-monitor
     nixd
     nixfmt
     nodejs_24
@@ -369,6 +370,15 @@ in
   };
 
   programs.fzf.enable = true;
+
+  # `nh` is a friendlier wrapper around `nixos-rebuild` / `home-manager` that
+  # shows per-derivation progress (via nom, when available) and a post-build
+  # diff (via nvd). The Makefile `switch` target prefers it when present.
+  # `flake` exports NH_FLAKE so bare `nh os switch` works from anywhere.
+  programs.nh = {
+    enable = true;
+    flake = "${config.home.homeDirectory}/dotfiles/nixos";
+  };
 
   programs.zoxide = {
     enable = true;

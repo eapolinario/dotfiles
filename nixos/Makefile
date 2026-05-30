@@ -23,8 +23,15 @@ _require-hosts:
 .PHONY: switch deploy fmt fmt-check gc update-lock flake-check eval-hosts build-host check print-default-host print-eval-hosts print-build-runner _require-host _require-hosts help
 
 ## switch: rebuild and switch the flake on this machine
+## Prefers `nh os switch` (richer progress via `nom`, post-build diff via `nvd`)
+## when available; falls back to plain `sudo nixos-rebuild switch` so the first
+## switch that installs nh/nom can still bootstrap them.
 switch: _require-host
-	sudo nixos-rebuild switch --flake .#$(HOST)
+	@if command -v nh >/dev/null 2>&1; then \
+		nh os switch $(FLAKE_REF) -H $(HOST); \
+	else \
+		sudo nixos-rebuild switch --flake $(FLAKE_REF)#$(HOST); \
+	fi
 
 ## deploy: full nixos-anywhere install (first-time, wipes disk)
 deploy: _require-host
