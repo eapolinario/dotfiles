@@ -1,4 +1,16 @@
 <!-- rtk-instructions v2 -->
+# Dotfiles Repo Conventions
+
+## OS-Scoped Questions
+
+When answering any question about this repo (what changed, what needs updating, what files matter), only consider the subdirectory matching the current OS. Ignore all other OS directories — they are irrelevant.
+
+| Directory | OS |
+|-----------|-----|
+| `omarchy/` | Linux / Hyprland (omarchy stack) |
+| `nixos/` | NixOS |
+| `macos/` | macOS |
+
 # RTK (Rust Token Killer) - Token-Optimized Commands
 
 ## Golden Rule
