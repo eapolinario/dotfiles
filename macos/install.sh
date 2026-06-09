@@ -231,10 +231,26 @@ fi
 ############################
 run defaults write com.apple.dock appswitcher-all-displays -bool true
 run defaults write com.apple.dock autohide -bool true
+# Kill the Spaces / Mission Control switch animation (yabai cannot control this;
+# window_animation_duration only affects yabai-managed window moves/resizes).
+# The Dock keys cover Mission Control / app-exposé; the universalaccess key is
+# what actually disables the Ctrl+arrow Space-to-Space slide on modern macOS
+# (verified on macOS 26 / Tahoe). reduceMotion only takes effect after a
+# logout/login.
+run defaults write com.apple.dock expose-animation-duration -float 0
+run defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
+run defaults write com.apple.universalaccess reduceMotion -bool true
+# Disable standard window open/close/zoom animations globally. Does not remove
+# the cross-fade WindowServer uses on Space switches with Reduce Motion on
+# (that fade is baked in and not exposed via defaults), but it kills the
+# unrelated window fades that become more noticeable once Reduce Motion is on.
+run defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 run defaults write com.apple.screencapture location -string "$HOME/Desktop"
 run defaults write com.apple.screencapture disable-shadow -bool true
 run defaults write com.apple.screencapture type -string "png"
 run defaults write com.apple.Finder AppleShowAllFiles -bool true
+# Dock defaults above require a Dock restart to take effect.
+run killall Dock
 
 ###################################
 # End of Overwrite macos defaults #
