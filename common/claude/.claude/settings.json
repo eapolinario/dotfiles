@@ -18,7 +18,6 @@
   },
   "enabledPlugins": {
     "commit-commands@claude-plugins-official": true,
-    "greptile@claude-plugins-official": true,
     "learning-output-style@claude-plugins-official": true,
     "caveman@caveman": true,
     "pyright-lsp@claude-plugins-official": true
