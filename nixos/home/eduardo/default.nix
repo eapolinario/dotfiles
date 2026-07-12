@@ -169,6 +169,10 @@ in
   xdg.configFile."nushell/pi-agent.nu".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/nushell/pi-agent.nu";
 
+  # GitHub Copilot CLI integration for Nushell (forces a POSIX shell).
+  xdg.configFile."nushell/copilot.nu".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nixos/home/eduardo/nushell/copilot.nu";
+
   programs.waybar = {
     enable = true;
     settings = [
@@ -289,9 +293,11 @@ in
 
   programs.emacs = {
     enable = true;
-    # Prebuilt from cache.nixos.org (Emacs 30.2 at time of writing).
-    # Avoids source build from emacs-overlay's -unstable variant.
-    package = pkgs.emacs-pgtk;
+    # From emacs-overlay: latest tagged/pre-release Emacs with pure-GTK
+    # (Wayland-native) support. Prebuilt artifacts come from the
+    # nix-community cache configured in modules/common (nix.settings), so
+    # this downloads rather than building from source.
+    package = pkgs.emacs-unstable-pgtk;
   };
 
   programs.nushell = {
@@ -304,6 +310,7 @@ in
     };
     extraConfig = ''
       source ~/.config/nushell/pi-agent.nu
+      source ~/.config/nushell/copilot.nu
 
       $env.EDITOR = "nvim"
 
