@@ -21,12 +21,17 @@
       "flakes"
     ];
     auto-optimise-store = true;
-    # nix-community binary cache. Serves prebuilt emacs-overlay artifacts
-    # (emacs-unstable-pgtk, etc.) so they download instead of building from
-    # source. extra-* appends to the default cache.nixos.org substituter.
-    extra-substituters = [ "https://nix-community.cachix.org" ];
+    # Third-party binary caches for overlays; extra-* appends to the
+    # default cache.nixos.org substituter.
+    extra-substituters = [
+      # emacs-overlay artifacts (emacs-unstable-pgtk, etc.).
+      "https://nix-community.cachix.org"
+      # llm-agents.nix artifacts (codex, rtk, sidecar, etc.).
+      "https://cache.numtide.com"
+    ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
   };
 
