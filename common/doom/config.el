@@ -188,7 +188,7 @@
   :after just-mode
   :commands (justl justl-exec-recipe-in-dir)
   :bind (:map just-mode-map
-         ("C-c C-c" . justl-exec-recipe-in-dir)))
+              ("C-c C-c" . justl-exec-recipe-in-dir)))
 
 (use-package! rainbow-mode
   :defer 5
@@ -210,6 +210,18 @@
 ;; agent-shell experiment
 (require 'acp)
 (require 'agent-shell)
+
+(use-package! agent-shell
+  :config
+  ;; Evil state-specific RET behavior: insert mode = newline, normal mode = send
+  (evil-define-key 'insert agent-shell-mode-map (kbd "RET") #'newline)
+  (evil-define-key 'normal agent-shell-mode-map (kbd "RET") #'comint-send-input)
+
+  ;; Configure *agent-shell-diff* buffers to start in Emacs state
+  (add-hook 'diff-mode-hook
+	    (lambda ()
+	      (when (string-match-p "\\*agent-shell-diff\\*" (buffer-name))
+		(evil-emacs-state)))))
 
 (after! agent-shell
   (setq agent-shell-enable-logging t)
