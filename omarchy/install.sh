@@ -197,6 +197,21 @@ stow_waybar_config() {
 }
 
 
+stow_ghostty_config() {
+  if [[ ! -d "$SCRIPT_DIR/ghostty" ]]; then
+    return
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local ghostty_dir="$config_home/ghostty"
+
+  mkdir -p "$ghostty_dir"
+  remove_target_if_identical "$ghostty_dir/config" "$SCRIPT_DIR/ghostty/.config/ghostty/config"
+
+  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" ghostty
+}
+
+
 stow_omarchy_config() {
   if [[ ! -d "$SCRIPT_DIR/omarchy" ]]; then
     return
@@ -339,6 +354,7 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_waybar_config
+  stow_ghostty_config
   stow_omarchy_config
   stow_xcompose_config
   stow_starship_config
