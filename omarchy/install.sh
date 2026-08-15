@@ -203,24 +203,6 @@ stow_ghostty_config() {
 }
 
 
-stow_hyprwhspr_config() {
-  if [[ ! -f "$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr/config.json" ]]; then
-    printf 'hyprwhspr configuration file not found in %s.\n' "$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr" >&2
-    exit 1
-  fi
-
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  local hyprwhspr_dir="$config_home/hyprwhspr"
-  local config_source="$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr/config.json"
-  local config_target="$hyprwhspr_dir/config.json"
-
-  mkdir -p "$hyprwhspr_dir"
-  remove_target_if_identical "$config_target" "$config_source"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hyprwhspr
-}
-
-
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -286,7 +268,6 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_ghostty_config
-  stow_hyprwhspr_config
   stow_uwsm_config
   enable_downloads_clean_service
   enable_grasp_service

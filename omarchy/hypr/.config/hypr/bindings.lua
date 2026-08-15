@@ -36,10 +36,3 @@ o.bind("SUPER + SHIFT + S", "Swap workspace", home .. "/.config/hypr/scripts/swa
 
 -- Omarchy 4 moved btop to SUPER + CTRL + T; keep it reachable here too.
 o.bind("SUPER + SHIFT + T", "Activity", { tui = "btop" })
-
--- Push-to-talk dictation. Omarchy 4 ships voxtype bindings on SUPER + CTRL + X
--- and F9, which stay inert while voxtype is not installed.
-local hyprwhspr = "/usr/lib/hyprwhspr/config/hyprland/hyprwhspr-tray.sh"
-if o.cmd_present(hyprwhspr) then
-  o.bind("SUPER + ALT + D", "Speech-to-text", hyprwhspr .. " record")
-end
