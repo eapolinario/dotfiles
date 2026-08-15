@@ -1,0 +1,12 @@
+# Personal session environment. Changes require a relaunch of Hyprland.
+#
+# uwsm sources env.d directories in increasing priority, so this file lands
+# after /usr/share/uwsm/env.d/10-omarchy and overrides Omarchy's defaults.
+# TERMINAL is not set here: Omarchy already exports xdg-terminal-exec.
+
+# Omarchy defaults EDITOR to "omarchy-launch-editor --inline", which only runs
+# a known terminal editor in the foreground. Emacs falls through to that
+# script's catch-all branch and is launched detached via uwsm-app, so git would
+# see the editor exit immediately and abort the commit. Naming emacs directly
+# keeps $EDITOR blocking.
+export EDITOR=emacs

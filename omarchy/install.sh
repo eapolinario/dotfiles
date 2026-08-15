@@ -170,20 +170,19 @@ stow_hypr_configs() {
 
 
 stow_uwsm_config() {
-  # Omarchy 4 (quattro) ships as a system package and points
-  # ~/.local/share/omarchy at the root-owned /usr/share/omarchy, so the old
-  # ~/.local/share/omarchy/config/uwsm/default override is no longer writable
-  # (or read). Only ~/.config/uwsm/default remains a user-owned override.
-  local config_source="$SCRIPT_DIR/uwsm/.config/uwsm/default"
+  # Omarchy 4 (quattro) treats ~/.config/uwsm/default as a compatibility shim
+  # for older installs and prefers drop-ins in ~/.config/uwsm/env.d, which uwsm
+  # sources after the system ones in /usr/share/uwsm/env.d.
+  local config_source="$SCRIPT_DIR/uwsm/.config/uwsm/env.d/50-personal"
 
   if [[ ! -f "$config_source" ]]; then
-    printf 'UWSM default file not found in %s.\n' "$SCRIPT_DIR/uwsm/.config/uwsm" >&2
+    printf 'UWSM env.d drop-in not found in %s.\n' "$SCRIPT_DIR/uwsm/.config/uwsm/env.d" >&2
     exit 1
   fi
 
   local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  mkdir -p "$config_home/uwsm"
-  remove_target_if_identical "$config_home/uwsm/default" "$config_source"
+  mkdir -p "$config_home/uwsm/env.d"
+  remove_target_if_identical "$config_home/uwsm/env.d/50-personal" "$config_source"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" uwsm
 }

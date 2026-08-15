@@ -27,7 +27,7 @@ first and these files override them afterwards.
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
 - =hyprwhspr/= — [[https://github.com/hyprwhspr/hyprwhspr][hyprwhspr]] speech-to-text configuration
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
-- =uwsm/= — session environment variables (=TERMINAL=, =EDITOR=) for Hyprland
+- =uwsm/= — session environment (=EDITOR=) as a =uwsm/env.d= drop-in
 
 Deliberately untracked, because Omarchy rewrites them in place and would
 replace a stowed symlink with a regular file:
