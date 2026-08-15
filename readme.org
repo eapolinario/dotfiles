@@ -25,10 +25,12 @@ first and these files override them afterwards.
 - =install.sh= — stows all packages below and enables user systemd services
 - =ghostty/= — terminal config; colors follow the active Omarchy theme
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
-- =nvim/= — only the LazyVim files that diverge from the =omarchy-nvim= package
-  (currently just =lazyvim.json=, the enabled LazyVim extras). Omarchy's own nvim
-  files stay package-managed so they keep picking up upstream fixes; stowed with
-  =--no-folding= so they survive alongside the symlinks
+- =nvim/= — only the LazyVim files that diverge from the =omarchy-nvim= package:
+  =lazyvim.json= (the enabled LazyVim extras) and
+  =lua/plugins/gitsigns-blame.lua= (inline current-line git blame, toggled with
+  =<leader>uB=). Omarchy's own nvim files stay package-managed so they keep
+  picking up upstream fixes; stowed with =--no-folding= so they survive
+  alongside the symlinks
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
 
 Deliberately untracked, because Omarchy rewrites them in place and would
