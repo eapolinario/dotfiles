@@ -222,22 +222,6 @@ stow_hyprwhspr_config() {
 }
 
 
-stow_nushell_config() {
-  if [[ ! -f "$SCRIPT_DIR/nushell/.config/nushell/config.nu" ]]; then
-    printf 'Nushell configuration file not found in %s.\n' "$SCRIPT_DIR/nushell/.config/nushell" >&2
-    exit 1
-  fi
-
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  local nushell_dir="$config_home/nushell"
-
-  mkdir -p "$nushell_dir"
-  remove_target_if_identical "$nushell_dir/config.nu" "$SCRIPT_DIR/nushell/.config/nushell/config.nu"
-  remove_target_if_identical "$nushell_dir/env.nu" "$SCRIPT_DIR/nushell/.config/nushell/env.nu"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" nushell
-}
-
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -304,7 +288,6 @@ main() {
   stow_hypr_configs
   stow_ghostty_config
   stow_hyprwhspr_config
-  stow_nushell_config
   stow_uwsm_config
   enable_downloads_clean_service
   enable_grasp_service

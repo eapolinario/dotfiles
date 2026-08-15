@@ -26,7 +26,6 @@ first and these files override them afterwards.
 - =ghostty/= — terminal config; colors follow the active Omarchy theme
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
 - =hyprwhspr/= — [[https://github.com/hyprwhspr/hyprwhspr][hyprwhspr]] speech-to-text configuration
-- =nushell/= — Nushell config and environment (=config.nu=, =env.nu=)
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
 - =uwsm/= — session environment variables (=TERMINAL=, =EDITOR=) for Hyprland
 
