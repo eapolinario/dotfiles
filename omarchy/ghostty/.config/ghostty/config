@@ -59,7 +59,16 @@ window-decoration = false
 # (opacity = "0.985 0.96" in default/hypr/windows.lua), and setting both dims twice.
 
 # Terminal settings
-term = xterm-256color
+# Keep Ghostty's own terminfo (xterm-ghostty) so Neovim and friends get styled
+# underlines (Smulx), colored underlines (Setulc), and a declared truecolor
+# capability -- none of which xterm-256color advertises.
+#
+# Remote hosts rarely ship that terminfo, so shell integration handles ssh:
+# ssh-terminfo installs xterm-ghostty on the host, and ssh-env falls back to
+# xterm-256color via environment variables when that install fails. Listing
+# only these two flips them without disturbing the other defaults
+# (cursor, no-sudo, title, path).
+shell-integration-features = ssh-env,ssh-terminfo
 
 # Keybindings
 keybind = f11=toggle_fullscreen
