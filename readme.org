@@ -18,9 +18,12 @@ dotfiles/
 
 Configurations for an [[https://github.com/basecamp/omarchy][omarchy]]-based Arch Linux desktop running Hyprland.
 
+Targets Omarchy 4 ("quattro"), which ships as a system package under
+=/usr/share/omarchy= and configures Hyprland in Lua. Omarchy's defaults load
+first and these files override them afterwards.
+
 - =install.sh= — stows all packages below and enables user systemd services
-- =hypr/= — Hyprland config: keybindings, input, monitors, animations, scripts
-- =waybar/= — status bar layout and styling
+- =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
 - =starship/= — shell prompt
 - =nushell/= — Nushell config and environment (=config.nu=, =env.nu=)
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
@@ -28,6 +31,15 @@ Configurations for an [[https://github.com/basecamp/omarchy][omarchy]]-based Arc
 - =xcompose/= — custom compose key sequences
 - =eca/= — [[https://github.com/nicholasgasior/eca][eca]] configuration
 - =hyprwhspr/= — [[https://github.com/hyprwhspr/hyprwhspr][hyprwhspr]] window switcher configuration
+
+Deliberately untracked, because Omarchy rewrites them in place and would
+replace a stowed symlink with a regular file:
+
+- =~/.config/hypr/monitors.lua= — rewritten by =omarchy-hyprland-monitor-scaling= (=sed -i=)
+- =~/.config/omarchy/shell.json= — bar, panel, and idle config, rewritten by =omarchy bar= (=mv=)
+
+The status bar is no longer Waybar; Omarchy 4 renders it from Quickshell and
+configures it through =~/.config/omarchy/shell.json=.
 
 ** macos/
 

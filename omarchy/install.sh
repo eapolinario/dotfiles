@@ -115,6 +115,35 @@ stow_systemd_configs() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" systemd
 }
 
+# Omarchy 4 (quattro) reads Hyprland config from Lua, not the old *.conf files.
+# The pre-quattro symlinks are left dangling by the upgrade, so clear them out
+# before stowing the Lua replacements.
+readonly -a LEGACY_HYPR_CONFS=(
+  input.conf
+  bindings.conf
+  looknfeel.conf
+  monitors.conf
+)
+
+remove_legacy_hypr_confs() {
+  local hypr_dir="$1"
+  local name target
+
+  for name in "${LEGACY_HYPR_CONFS[@]}"; do
+    target="$hypr_dir/$name"
+
+    # Only reclaim symlinks this repo owns; a real file is the user's own config.
+    if [[ -L "$target" && "$(readlink -f "$target")" == "$SCRIPT_DIR"/* ]]; then
+      if [[ "$DRY_RUN" == true ]]; then
+        printf '[DRY RUN] would remove stale symlink %s (quattro moved this to Lua).\n' "$target"
+      else
+        rm "$target"
+        printf 'Removed stale symlink %s (quattro moved this to Lua).\n' "$target"
+      fi
+    fi
+  done
+}
+
 stow_hypr_configs() {
   if [[ ! -d "$SCRIPT_DIR/hypr" ]]; then
     printf 'Hypr configuration directory not found in %s.\n' "$SCRIPT_DIR" >&2
@@ -123,21 +152,17 @@ stow_hypr_configs() {
 
   local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
   local hypr_dir="$config_home/hypr"
-  local input_source="$SCRIPT_DIR/hypr/.config/hypr/input.conf"
-  local bindings_source="$SCRIPT_DIR/hypr/.config/hypr/bindings.conf"
-  local input_target="$hypr_dir/input.conf"
-  local bindings_target="$hypr_dir/bindings.conf"
 
   mkdir -p "$hypr_dir"
   mkdir -p "$hypr_dir/scripts"
 
-  remove_target_if_identical "$input_target" "$input_source"
-  remove_target_if_identical "$bindings_target" "$bindings_source"
-  remove_target_if_identical "$hypr_dir/monitors.conf" "$SCRIPT_DIR/hypr/.config/hypr/monitors.conf"
-  remove_target_if_identical "$hypr_dir/looknfeel.conf" "$SCRIPT_DIR/hypr/.config/hypr/looknfeel.conf"
-  remove_target_if_identical "$hypr_dir/scripts/laptop-display-auto.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/laptop-display-auto.sh"
-  remove_target_if_identical "$hypr_dir/scripts/power-profile-default.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/power-profile-default.sh"
-  remove_target_if_identical "$hypr_dir/scripts/omarchy-battery-limit.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/omarchy-battery-limit.sh"
+  remove_legacy_hypr_confs "$hypr_dir"
+
+  # monitors.lua is deliberately not tracked: omarchy-hyprland-monitor-scaling
+  # rewrites it with sed -i, which would replace a stowed symlink with a file.
+  remove_target_if_identical "$hypr_dir/input.lua" "$SCRIPT_DIR/hypr/.config/hypr/input.lua"
+  remove_target_if_identical "$hypr_dir/bindings.lua" "$SCRIPT_DIR/hypr/.config/hypr/bindings.lua"
+  remove_target_if_identical "$hypr_dir/looknfeel.lua" "$SCRIPT_DIR/hypr/.config/hypr/looknfeel.lua"
   remove_target_if_identical "$hypr_dir/scripts/swap-workspace.sh" "$SCRIPT_DIR/hypr/.config/hypr/scripts/swap-workspace.sh"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hypr
@@ -162,38 +187,22 @@ stow_starship_config() {
 
 
 stow_uwsm_config() {
-  local uwsm_dir="$HOME/.local/share/omarchy/config/uwsm"
-  local config_source="$SCRIPT_DIR/uwsm/.local/share/omarchy/config/uwsm/default"
-  local config_target="$uwsm_dir/default"
+  # Omarchy 4 (quattro) ships as a system package and points
+  # ~/.local/share/omarchy at the root-owned /usr/share/omarchy, so the old
+  # ~/.local/share/omarchy/config/uwsm/default override is no longer writable
+  # (or read). Only ~/.config/uwsm/default remains a user-owned override.
+  local config_source="$SCRIPT_DIR/uwsm/.config/uwsm/default"
 
   if [[ ! -f "$config_source" ]]; then
-    printf 'UWSM default file not found in %s.\n' "$SCRIPT_DIR/uwsm/.local/share/omarchy/config/uwsm" >&2
+    printf 'UWSM default file not found in %s.\n' "$SCRIPT_DIR/uwsm/.config/uwsm" >&2
     exit 1
   fi
 
   local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  mkdir -p "$uwsm_dir"
   mkdir -p "$config_home/uwsm"
-  remove_target_if_identical "$config_target" "$config_source"
-  remove_target_if_identical "$config_home/uwsm/default" "$SCRIPT_DIR/uwsm/.config/uwsm/default"
+  remove_target_if_identical "$config_home/uwsm/default" "$config_source"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" uwsm
-}
-
-
-stow_waybar_config() {
-  if [[ ! -d "$SCRIPT_DIR/waybar" ]]; then
-    return
-  fi
-
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  local waybar_dir="$config_home/waybar"
-
-  mkdir -p "$waybar_dir"
-  remove_target_if_identical "$waybar_dir/config.jsonc" "$SCRIPT_DIR/waybar/.config/waybar/config.jsonc"
-  remove_target_if_identical "$waybar_dir/style.css" "$SCRIPT_DIR/waybar/.config/waybar/style.css"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" waybar
 }
 
 
@@ -353,7 +362,6 @@ main() {
   stow_authinfo
   stow_systemd_configs
   stow_hypr_configs
-  stow_waybar_config
   stow_ghostty_config
   stow_omarchy_config
   stow_xcompose_config

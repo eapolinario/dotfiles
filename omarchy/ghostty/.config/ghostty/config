@@ -60,8 +60,10 @@ term = xterm-256color
 keybind = f11=toggle_fullscreen
 keybind = shift+insert=paste_from_clipboard
 keybind = control+insert=copy_to_clipboard
-# Send Shift+Enter as CSI-u so TUIs can distinguish it from Enter.
-keybind = shift+enter=csi:13;2u
+# Terminals send a plain CR for both Enter and Shift+Enter, so the modifier is
+# lost. Send Shift+Enter as M-RET (ESC + CR) instead, which Emacs and readline
+# understand natively without needing CSI-u support.
+keybind = shift+enter=text:\x1b\r
 # Legacy encoding sends Alt+Shift+Enter the same as Alt+Enter; send CSI-u so tmux can match M-S-Enter.
 keybind = alt+shift+enter=csi:13;4u
 keybind = super+control+shift+alt+arrow_down=resize_split:down,100
@@ -95,7 +97,6 @@ palette = 15=#acb0d0
 
 # Selection color
 selection-background = 7aa2f7
-keybind = shift+enter=text:\x1b\r
 
 # Split management (vim-style)
 keybind = ctrl+shift+/=new_split:right
