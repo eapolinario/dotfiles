@@ -43,7 +43,10 @@
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       (smooth-scroll +interpolate)     ; So smooth you won't believe it's not butter
+       smooth-scroll     ; So smooth you won't believe it's not butter
+       ;; NOTE: +interpolate is omitted on purpose: it loads good-scroll, which
+       ;;   animates scroll-up/scroll-down (page up/down). ultra-scroll still
+       ;;   handles smooth mouse/trackpad scrolling.
        ;;tabs              ; a tab bar for Emacs
        ;;treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
