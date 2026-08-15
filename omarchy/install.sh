@@ -169,23 +169,6 @@ stow_hypr_configs() {
 }
 
 
-stow_starship_config() {
-  if [[ ! -f "$SCRIPT_DIR/starship/.config/starship.toml" ]]; then
-    printf 'Starship configuration file not found in %s.\n' "$SCRIPT_DIR/starship/.config" >&2
-    exit 1
-  fi
-
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  local config_target="$config_home/starship.toml"
-  local config_source="$SCRIPT_DIR/starship/.config/starship.toml"
-
-  mkdir -p "$config_home"
-  remove_target_if_identical "$config_target" "$config_source"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" starship
-}
-
-
 stow_uwsm_config() {
   # Omarchy 4 (quattro) ships as a system package and points
   # ~/.local/share/omarchy at the root-owned /usr/share/omarchy, so the old
@@ -221,20 +204,6 @@ stow_ghostty_config() {
 }
 
 
-stow_omarchy_config() {
-  if [[ ! -d "$SCRIPT_DIR/omarchy" ]]; then
-    return
-  fi
-
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-
-  mkdir -p "$config_home/omarchy/extensions"
-  remove_target_if_identical "$config_home/omarchy/extensions/menu.sh" "$SCRIPT_DIR/omarchy/.config/omarchy/extensions/menu.sh"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" omarchy
-}
-
-
 stow_xcompose_config() {
   if [[ ! -f "$SCRIPT_DIR/xcompose/.XCompose" ]]; then
     return
@@ -243,24 +212,6 @@ stow_xcompose_config() {
   remove_target_if_identical "$HOME/.XCompose" "$SCRIPT_DIR/xcompose/.XCompose"
 
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" xcompose
-}
-
-
-stow_eca_config() {
-  if [[ ! -f "$SCRIPT_DIR/eca/.config/eca/config.json" ]]; then
-    printf 'ECA configuration file not found in %s.\n' "$SCRIPT_DIR/eca/.config/eca" >&2
-    exit 1
-  fi
-
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  local eca_dir="$config_home/eca"
-  local config_source="$SCRIPT_DIR/eca/.config/eca/config.json"
-  local config_target="$eca_dir/config.json"
-
-  mkdir -p "$eca_dir"
-  remove_target_if_identical "$config_target" "$config_source"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" eca
 }
 
 
@@ -363,10 +314,7 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_ghostty_config
-  stow_omarchy_config
   stow_xcompose_config
-  stow_starship_config
-  stow_eca_config
   stow_hyprwhspr_config
   stow_nushell_config
   stow_uwsm_config

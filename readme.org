@@ -23,20 +23,23 @@ Targets Omarchy 4 ("quattro"), which ships as a system package under
 first and these files override them afterwards.
 
 - =install.sh= — stows all packages below and enables user systemd services
+- =ghostty/= — terminal config; colors follow the active Omarchy theme
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
-- =starship/= — shell prompt
+- =hyprwhspr/= — [[https://github.com/hyprwhspr/hyprwhspr][hyprwhspr]] speech-to-text configuration
 - =nushell/= — Nushell config and environment (=config.nu=, =env.nu=)
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
 - =uwsm/= — session environment variables (=TERMINAL=, =EDITOR=) for Hyprland
 - =xcompose/= — custom compose key sequences
-- =eca/= — [[https://github.com/nicholasgasior/eca][eca]] configuration
-- =hyprwhspr/= — [[https://github.com/hyprwhspr/hyprwhspr][hyprwhspr]] window switcher configuration
 
 Deliberately untracked, because Omarchy rewrites them in place and would
 replace a stowed symlink with a regular file:
 
 - =~/.config/hypr/monitors.lua= — rewritten by =omarchy-hyprland-monitor-scaling= (=sed -i=)
 - =~/.config/omarchy/shell.json= — bar, panel, and idle config, rewritten by =omarchy bar= (=mv=)
+
+Also untracked on purpose: =~/.config/starship.toml= is Omarchy's shipped
+prompt. Starship has no include mechanism, so tracking it would mean vendoring
+the whole upstream file to carry a local tweak.
 
 The status bar is no longer Waybar; Omarchy 4 renders it from Quickshell and
 configures it through =~/.config/omarchy/shell.json=.

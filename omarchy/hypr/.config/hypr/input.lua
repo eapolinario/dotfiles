@@ -10,10 +10,15 @@
 -- Compose key at all, so ~/.XCompose never fired. Naming both explicitly keeps
 -- Control on Caps and gives ~/.XCompose a working Multi_key.
 -- Other homes for Compose: compose:menu, compose:rctrl, compose:rwin.
+--
+-- shift:both_capslock_cancel is kept from Omarchy's default: with Caps Lock
+-- remapped to Control, pressing both Shifts is the only way left to reach an
+-- actual Caps Lock. The _cancel variant releases it on the next lone Shift, so
+-- an accidental trigger clears itself.
 hl.config({
   input = {
     kb_layout = "us",
-    kb_options = "ctrl:nocaps,compose:ralt",
+    kb_options = "ctrl:nocaps,compose:ralt,shift:both_capslock_cancel",
 
     repeat_rate = 40,
     repeat_delay = 600,
