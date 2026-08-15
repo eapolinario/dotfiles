@@ -184,6 +184,48 @@ stow_ghostty_config() {
 }
 
 
+# Omarchy seeds ~/.config/nvim from the omarchy-nvim package (via /etc/skel) and
+# never clobbers it afterwards, so only files that genuinely diverge from the
+# package are tracked here. Omarchy's own files (theme hot-reload, transparency,
+# remote clipboard, ...) are deliberately left package-managed so they keep
+# picking up upstream fixes. Two paths must never be tracked:
+#   - lua/plugins/theme.lua: omarchy-nvim-setup recreates it on every run as a
+#     relative symlink into ~/.local/state/omarchy. Stowing it would resolve the
+#     link from this repo instead of $HOME and break theme switching.
+#   - lazy-lock.json: lazy.nvim rewrites it on every update.
+# --no-folding keeps lua/plugins a real directory so Omarchy's theme.lua symlink
+# and the untracked package files survive alongside the stowed ones.
+stow_nvim() {
+  if [[ ! -d "$SCRIPT_DIR/nvim" ]]; then
+    return
+  fi
+
+  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local nvim_dir="$config_home/nvim"
+  local source_root="$SCRIPT_DIR/nvim/.config/nvim"
+  local rel
+
+  mkdir -p "$nvim_dir"
+
+  # .gitignore is skipped: stow's default ignore list never links it, so
+  # removing the target would delete it with nothing to replace it.
+  while IFS= read -r rel; do
+    remove_target_if_identical "$nvim_dir/$rel" "$source_root/$rel"
+  done < <(cd "$source_root" && find . -type f ! -name .gitignore -printf '%P\n')
+
+  local -a stow_cmd=(stow "${STOW_FLAGS[@]}" --no-folding -d "$SCRIPT_DIR" -vt "$HOME" nvim)
+
+  if [[ "$DRY_RUN" == true ]]; then
+    # Reclaimable files are still on disk during a simulation, so stow reports
+    # them as conflicts. Anything that would be a real conflict already exited
+    # above, so surface the plan without aborting the rest of the preview.
+    "${stow_cmd[@]}" || true
+  else
+    "${stow_cmd[@]}"
+  fi
+}
+
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -249,6 +291,7 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_ghostty_config
+  stow_nvim
   enable_downloads_clean_service
   enable_grasp_service
 
