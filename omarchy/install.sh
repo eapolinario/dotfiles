@@ -204,17 +204,6 @@ stow_ghostty_config() {
 }
 
 
-stow_xcompose_config() {
-  if [[ ! -f "$SCRIPT_DIR/xcompose/.XCompose" ]]; then
-    return
-  fi
-
-  remove_target_if_identical "$HOME/.XCompose" "$SCRIPT_DIR/xcompose/.XCompose"
-
-  stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" xcompose
-}
-
-
 stow_hyprwhspr_config() {
   if [[ ! -f "$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr/config.json" ]]; then
     printf 'hyprwhspr configuration file not found in %s.\n' "$SCRIPT_DIR/hyprwhspr/.config/hyprwhspr" >&2
@@ -314,7 +303,6 @@ main() {
   stow_systemd_configs
   stow_hypr_configs
   stow_ghostty_config
-  stow_xcompose_config
   stow_hyprwhspr_config
   stow_nushell_config
   stow_uwsm_config
