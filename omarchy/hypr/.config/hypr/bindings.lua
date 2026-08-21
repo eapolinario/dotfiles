@@ -20,7 +20,7 @@ o.bind("SUPER + SHIFT + E", "Emacs", { launch = "emacs" })
 
 -- Was: Calendar (https://app.hey.com/calendar/weeks/)
 hl.unbind("SUPER + SHIFT + C")
-o.bind("SUPER + SHIFT + C", "Claude", { webapp = "https://claude.ai" })
+o.bind("SUPER + SHIFT + C", "ChatGPT", { webapp = "https://chatgpt.com/" })
 
 -- Was: Omawrite
 hl.unbind("SUPER + SHIFT + W")

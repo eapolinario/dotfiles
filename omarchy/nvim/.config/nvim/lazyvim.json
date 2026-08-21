@@ -2,7 +2,10 @@
   "extras": [
     "lazyvim.plugins.extras.ai.sidekick",
     "lazyvim.plugins.extras.editor.neo-tree",
-    "lazyvim.plugins.extras.editor.overseer"
+    "lazyvim.plugins.extras.editor.overseer",
+    "lazyvim.plugins.extras.lang.markdown",
+    "lazyvim.plugins.extras.lang.nix",
+    "lazyvim.plugins.extras.lang.zig"
   ],
   "install_version": 8,
   "news": {
