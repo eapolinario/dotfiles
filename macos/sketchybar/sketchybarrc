@@ -18,14 +18,18 @@ source "${CONFIG_DIR}/colors.sh"
 #######
 
 # sticky=on keeps the bar visible on every space, including fullscreen apps.
-# The built-in display has a notch, and a 32pt bar sits entirely inside the
-# notch band there, so it needs to be taller to clear it. notch_display_height
-# applies only to notched screens, leaving external displays at `height`.
+#
+# height is 38 on *every* display, even though only the notched built-in screen
+# needs that much to clear the notch. sketchybar can vary height per display
+# (notch_display_height), but yabai's external_bar cannot: it only takes
+# main/all/off, so the space it reserves is one number for all displays. A
+# shorter bar on the external monitor therefore left a gap between the bar and
+# the windows below it. Keeping one height keeps the two in sync.
+#
 # notch_width is the region items route around; 200 is the documented default,
-# set explicitly so the intent is obvious.
+# set explicitly so the intent is obvious if a center item is ever added.
 sketchybar --bar \
-	height=32 \
-	notch_display_height=38 \
+	height=38 \
 	notch_width=200 \
 	position=top \
 	sticky=on \
