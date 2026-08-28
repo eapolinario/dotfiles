@@ -2,6 +2,10 @@
 # Catppuccin Mocha palette, sourced by sketchybarrc and the plugins.
 # Kept in sync with the border colors set in macos/yabai/yabairc so the bar and
 # the active-window border read as one theme.
+#
+# This file only defines constants for its callers, so every variable is unused
+# from shellcheck's point of view when the file is linted on its own.
+# shellcheck disable=SC2034
 
 readonly BAR_COLOR=0xff1e1e2e     # base
 readonly ITEM_BG_COLOR=0xff313244 # surface0
