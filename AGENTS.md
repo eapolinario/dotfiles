@@ -59,7 +59,8 @@ Keep changes small, focused, and repo-specific. Prefer the documented install/ch
 - Do not overwrite user files blindly; keep installer behavior idempotent.
 - Avoid `sudo` inside scripts; validate dependencies with `require_cmd` and fail with a non-zero exit code.
 - Add `--dry-run` support when introducing filesystem-changing script behavior.
-- Keep component-specific changes under their own trees, e.g. `omarchy/hypr/.config/hypr`, `omarchy/systemd/.config/systemd`, `macos/yabai`, `macos/skhd`, `common/doom`.
+- Keep component-specific changes under their own trees, e.g. `omarchy/hypr/.config/hypr`, `omarchy/systemd/.config/systemd`, `macos/yabai`, `macos/skhd`, `common/doom`, `common/copilot/.copilot`.
+- `common/copilot/.copilot/copilot-instructions.md` is the *global* agent instruction file, loaded in every repository on this machine. Keep it short and machine-wide; anything repo-specific belongs in that repo's own `AGENTS.md`.
 - Comment non-obvious Hyprland, systemd, starship, skhd, and yabai settings.
 
 ## Code style

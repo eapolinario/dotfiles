@@ -226,6 +226,34 @@ stow_nvim() {
 }
 
 
+# ~/.copilot holds live agent state (config.json, settings.json, logs/,
+# session-store.db) plus hand-made skill symlinks into ~/repos. --no-folding is
+# mandatory: without it stow would replace ~/.copilot or ~/.copilot/skills with
+# a single symlink into this repo and strand that state.
+stow_copilot() {
+  if [[ ! -d "$SCRIPT_DIR/../common/copilot" ]]; then
+    printf 'Copilot configuration directory not found in %s.\n' "$SCRIPT_DIR/../common" >&2
+    exit 1
+  fi
+
+  local copilot_dir="$HOME/.copilot"
+
+  mkdir -p "$copilot_dir/skills"
+
+  remove_target_if_identical "$copilot_dir/copilot-instructions.md" \
+    "$SCRIPT_DIR/../common/copilot/.copilot/copilot-instructions.md"
+
+  local -a stow_cmd=(stow "${STOW_FLAGS[@]}" --no-folding -d "$SCRIPT_DIR/../common" -vt "$HOME" copilot)
+
+  if [[ "$DRY_RUN" == true ]]; then
+    # Reclaimable files are still on disk during a simulation, so stow reports
+    # them as conflicts. Real conflicts already exited above.
+    "${stow_cmd[@]}" || true
+  else
+    "${stow_cmd[@]}"
+  fi
+}
+
 enable_downloads_clean_service() {
   if [[ "$DRY_RUN" == true ]]; then
     run_user_systemctl daemon-reload
@@ -292,6 +320,7 @@ main() {
   stow_hypr_configs
   stow_ghostty_config
   stow_nvim
+  stow_copilot
   enable_downloads_clean_service
   enable_grasp_service
 

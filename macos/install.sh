@@ -89,6 +89,12 @@ run_stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding pi
 mkdir -p ~/.claude/hooks
 run_stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding claude
 
+# copilot: global instructions + skills live alongside session state
+# (config.json, logs/, session-store.db) and hand-made skill symlinks.
+# --no-folding so stow never swaps ~/.copilot or its skills dir for a symlink.
+mkdir -p ~/.copilot/skills
+run_stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding copilot
+
 mkdir -p "${CONFIG_HOME}/doom"
 run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 

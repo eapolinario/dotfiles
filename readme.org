@@ -87,6 +87,14 @@ Shared configs used on both omarchy and macOS (and referenced from NixOS).
   keybindings, org templates)
 - =authinfo/= — encrypted =.authinfo= (git-crypted); stowed on macOS, referenced
   as an out-of-store symlink on NixOS
+- =skills/= — agent skills shared by Claude Code and Copilot CLI; =claude/= and
+  =copilot/= symlink into it rather than duplicating
+- =copilot/= — Copilot CLI: =copilot-instructions.md= (global agent instructions
+  applied in every repository) plus skill symlinks. Stowed with =--no-folding=
+  so =~/.copilot= keeps its live state (=config.json=, =logs/=,
+  =session-store.db=) and hand-made skill symlinks
+- =claude/= — Claude Code =settings.json=, hooks, and the same skill symlinks;
+  also stowed with =--no-folding=
 
 * Installation
 
