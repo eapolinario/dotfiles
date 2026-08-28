@@ -18,8 +18,15 @@ source "${CONFIG_DIR}/colors.sh"
 #######
 
 # sticky=on keeps the bar visible on every space, including fullscreen apps.
+# The built-in display has a notch, and a 32pt bar sits entirely inside the
+# notch band there, so it needs to be taller to clear it. notch_display_height
+# applies only to notched screens, leaving external displays at `height`.
+# notch_width is the region items route around; 200 is the documented default,
+# set explicitly so the intent is obvious.
 sketchybar --bar \
 	height=32 \
+	notch_display_height=38 \
+	notch_width=200 \
 	position=top \
 	sticky=on \
 	padding_left=8 \
