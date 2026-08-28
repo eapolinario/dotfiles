@@ -70,6 +70,7 @@ brew "wget"
 brew "zoxide"
 brew "d12frosted/emacs-plus/emacs-plus@30", args: ["with-compress-install", "with-imagemagick", "with-xwidgets"]
 brew "felixkratz/formulae/borders"
+brew "felixkratz/formulae/sketchybar"
 brew "koekeishiya/formulae/skhd"
 brew "koekeishiya/formulae/yabai"
 brew "mas-cli/tap/mas"

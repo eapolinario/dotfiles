@@ -95,6 +95,7 @@ run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 for component in \
 	ghostty \
 	pip \
+	sketchybar \
 	skhd \
 	tmux \
 	yabai; do
@@ -164,6 +165,24 @@ fi
 ######################
 # end yabai service  #
 ######################
+
+######################
+# sketchybar service #
+######################
+
+# `brew services restart` starts the agent if it is not running yet, so this is
+# idempotent. sketchybar draws the focused-space indicator that macOS does not
+# provide; yabai's external_bar setting reserves the room it occupies.
+if command -v sketchybar >/dev/null 2>&1; then
+	run brew services restart felixkratz/formulae/sketchybar
+	echo "sketchybar service started."
+else
+	echo "Warning: sketchybar is not installed — status bar not started."
+fi
+
+#############################
+# end of sketchybar service #
+#############################
 
 ##############
 # Doom Emacs #
