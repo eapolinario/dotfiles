@@ -65,6 +65,7 @@ Configurations for macOS.
 - =tmux/= — tmux config and a CPU/memory status script
 - =skhd/= — hotkey daemon bindings
 - =yabai/= — tiling window manager rules
+- =sketchybar/= — status bar; highlights the focused mission control space
 - =pip/= — pip configuration
 
 ** nixos/

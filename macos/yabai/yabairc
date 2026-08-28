@@ -34,6 +34,13 @@ yabai -m config \
 	mouse_action2 resize \
 	mouse_drop_action swap
 
+# Reserve room at the top for sketchybar so managed windows are not drawn
+# underneath it. This takes a single value for every display (main/all/off,
+# with no per-display form), which is why the sketchybar height is kept
+# uniform at 38 rather than varying per display -- any mismatch shows up as a
+# gap between the bar and the windows below it.
+yabai -m config external_bar all:38:0
+
 # Do not manage these apps
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
