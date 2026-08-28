@@ -250,6 +250,11 @@ fi
 ############################
 run defaults write com.apple.dock appswitcher-all-displays -bool true
 run defaults write com.apple.dock autohide -bool true
+# Auto-hide the macOS menu bar so sketchybar owns the top of the screen instead
+# of stacking below a second bar. macOS has no way to remove the menu bar
+# outright; this is the "Always" option under Control Center > Menu Bar, and it
+# still reveals on hover at the top edge.
+run defaults write NSGlobalDomain _HIHideMenuBar -bool true
 # Kill the Spaces / Mission Control switch animation (yabai cannot control this;
 # window_animation_duration only affects yabai-managed window moves/resizes).
 # The Dock keys cover Mission Control / app-exposé; the universalaccess key is
@@ -268,8 +273,10 @@ run defaults write com.apple.screencapture location -string "$HOME/Desktop"
 run defaults write com.apple.screencapture disable-shadow -bool true
 run defaults write com.apple.screencapture type -string "png"
 run defaults write com.apple.Finder AppleShowAllFiles -bool true
-# Dock defaults above require a Dock restart to take effect.
+# Dock defaults above require a Dock restart to take effect; _HIHideMenuBar
+# needs SystemUIServer restarted (a logout/login also works).
 run killall Dock
+run killall SystemUIServer
 
 ###################################
 # End of Overwrite macos defaults #
