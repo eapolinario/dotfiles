@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# sketchybar sources this file at startup and on `sketchybar --reload`.
+# Its purpose here is a visual indicator of the focused mission control space,
+# which macOS itself does not provide anywhere in the menu bar.
+
+CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly CONFIG_DIR
+readonly PLUGIN_DIR="${CONFIG_DIR}/plugins"
+
+# shellcheck source=./colors.sh
+source "${CONFIG_DIR}/colors.sh"
+
+#######
+# Bar #
+#######
+
+# sticky=on keeps the bar visible on every space, including fullscreen apps.
+sketchybar --bar \
+	height=32 \
+	position=top \
+	sticky=on \
+	padding_left=8 \
+	padding_right=8 \
+	color="$BAR_COLOR" \
+	shadow=off
+
+sketchybar --default \
+	icon.font="$BAR_FONT:Bold:14.0" \
+	icon.color="$ICON_COLOR" \
+	icon.padding_left=8 \
+	icon.padding_right=8 \
+	label.font="$BAR_FONT:Semibold:13.0" \
+	label.color="$LABEL_COLOR" \
+	label.padding_left=4 \
+	label.padding_right=8 \
+	padding_left=2 \
+	padding_right=2 \
+	background.corner_radius=5 \
+	background.height=22
+
+##########
+# Spaces #
+##########
+
+# Enumerate the mission control spaces yabai reports so the indicator matches
+# reality rather than a hardcoded count. This only *queries* yabai, which works
+# with SIP enabled; creating spaces would need the scripting addition.
+# Spaces added or removed via Mission Control need a `sketchybar --reload`.
+space_indices=()
+if command -v yabai >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+	while read -r index; do
+		[[ -n $index ]] && space_indices+=("$index")
+	done < <(yabai -m query --spaces 2>/dev/null | jq -r '.[].index' 2>/dev/null || true)
+fi
+
+# Fall back to a reasonable default when yabai has not started yet, so the bar
+# still comes up with something usable instead of no spaces at all.
+if [[ ${#space_indices[@]} -eq 0 ]]; then
+	space_indices=(1 2 3 4)
+fi
+
+for index in "${space_indices[@]}"; do
+	sketchybar --add space "space.${index}" left \
+		--set "space.${index}" \
+		space="$index" \
+		icon="$index" \
+		icon.highlight_color="$ACCENT_COLOR" \
+		background.color="$ITEM_BG_COLOR" \
+		background.drawing=off \
+		label.drawing=off \
+		script="${PLUGIN_DIR}/space.sh" \
+		--subscribe "space.${index}" mouse.clicked
+done
+
+sketchybar --add item spaces_watcher left \
+	--set spaces_watcher \
+	drawing=off \
+	script="${PLUGIN_DIR}/spaces_watcher.sh" \
+	--subscribe spaces_watcher space_change display_change
+
+#########
+# Items #
+#########
+
+sketchybar --add item front_app left \
+	--set front_app \
+	icon.drawing=off \
+	label.font="$BAR_FONT:Bold:13.0" \
+	script="${PLUGIN_DIR}/front_app.sh" \
+	--subscribe front_app front_app_switched
+
+sketchybar --add item clock right \
+	--set clock \
+	icon.drawing=off \
+	update_freq=30 \
+	script="${PLUGIN_DIR}/clock.sh"
+
+sketchybar --update
