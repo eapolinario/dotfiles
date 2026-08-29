@@ -74,8 +74,8 @@ jobs:
               echo "::error::missing cask: $c"
               missing=$((missing + 1))
             fi
-          done < <(brew bundle list --file=Brewfile --cask)
-          echo "checked casks: $(brew bundle list --file=Brewfile --cask | wc -l | tr -d ' ')"
+          done < <(sed -nE 's/^cask "([^"]+)".*/\1/p' Brewfile)
+          echo "checked casks: $(grep -c '^cask "' Brewfile)"
           [ "$missing" -eq 0 ]
 
       - name: Run `brew bundle check` (informational)
