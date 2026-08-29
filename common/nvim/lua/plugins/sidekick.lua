@@ -1,13 +1,15 @@
 -- folke/sidekick.nvim is enabled via the LazyVim sidekick extra (see lazyvim.json).
--- Opt into the zellij mux backend so AI CLI sessions (Claude, Copilot, ...) persist
--- across Neovim restarts. zellij and lsof come from nixos/home/eduardo/default.nix.
+-- Persist AI CLI sessions across Neovim restarts, preferring zellij on NixOS
+-- and falling back to tmux, which is installed on macOS.
+local backend = vim.fn.executable("zellij") == 1 and "zellij" or "tmux"
+
 return {
   {
     "folke/sidekick.nvim",
     opts = {
       cli = {
         mux = {
-          backend = "zellij",
+          backend = backend,
           enabled = true,
         },
       },

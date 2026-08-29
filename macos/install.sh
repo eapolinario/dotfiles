@@ -98,6 +98,9 @@ run_stow -d "$SCRIPT_DIR/../common" -vt ~ --no-folding copilot
 mkdir -p "${CONFIG_HOME}/doom"
 run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
+mkdir -p "${CONFIG_HOME}/nvim"
+run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/nvim" nvim
+
 for component in \
 	aerospace \
 	ghostty \
