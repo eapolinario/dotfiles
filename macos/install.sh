@@ -157,14 +157,10 @@ fi
 
 # AeroSpace owns the global window-management shortcuts. Stop the old services
 # first so skhd cannot intercept AeroSpace bindings.
-shopt -s nullglob
-legacy_window_manager_plists=(
-	"$HOME"/Library/LaunchAgents/com.*.skhd.plist
-	"$HOME"/Library/LaunchAgents/com.*.yabai.plist
-)
-shopt -u nullglob
-
-for plist in "${legacy_window_manager_plists[@]}"; do
+for plist in \
+	"$HOME"/Library/LaunchAgents/com.*.skhd.plist \
+	"$HOME"/Library/LaunchAgents/com.*.yabai.plist; do
+	[[ -e $plist || -L $plist ]] || continue
 	run launchctl unload "$plist" || true
 done
 
