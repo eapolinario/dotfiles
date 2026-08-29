@@ -99,12 +99,11 @@ mkdir -p "${CONFIG_HOME}/doom"
 run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
 for component in \
+	aerospace \
 	ghostty \
 	pip \
 	sketchybar \
-	skhd \
-	tmux \
-	yabai; do
+	tmux; do
 	mkdir -p "${CONFIG_HOME}/${component}"
 	run_stow -d "$SCRIPT_DIR" -vt "${CONFIG_HOME}/${component}" "${component}"
 done
@@ -152,25 +151,38 @@ fi
 # End of Brewfile #
 ###################
 
-#################
-# yabai service #
-#################
+############################
+# Window manager migration #
+############################
 
-# Use launchctl directly — yabai --restart-service has the service label hardcoded
-# and breaks when the tap changes (e.g. asmvik → koekeishiya). Glob for the plist
-# instead so this is resilient to future renames.
-yabai_plist=$(ls ~/Library/LaunchAgents/com.*.yabai.plist 2>/dev/null | head -1 || true)
-if [ -n "$yabai_plist" ]; then
-	run launchctl unload "$yabai_plist" || true
-	run launchctl load "$yabai_plist"
-	echo "yabai service started from: $yabai_plist"
-else
-	echo "Warning: no yabai plist found in ~/Library/LaunchAgents — service not started."
-fi
+# AeroSpace owns the global window-management shortcuts. Stop the old services
+# first so skhd cannot intercept AeroSpace bindings.
+for plist in \
+	"$HOME"/Library/LaunchAgents/com.*.skhd.plist \
+	"$HOME"/Library/LaunchAgents/com.*.yabai.plist; do
+	[[ -e $plist || -L $plist ]] || continue
+	run launchctl unload "$plist" || true
+done
 
-######################
-# end yabai service  #
-######################
+for legacy_config in \
+	"${CONFIG_HOME}/skhd/skhdrc" \
+	"${CONFIG_HOME}/yabai/yabairc"; do
+	if [[ -L $legacy_config ]]; then
+		run rm "$legacy_config"
+	fi
+done
+
+for formula in skhd yabai; do
+	if brew list --formula "$formula" >/dev/null 2>&1; then
+		run brew uninstall --formula "$formula"
+	fi
+done
+
+run open -a AeroSpace
+
+################################
+# End window manager migration #
+################################
 
 ######################
 # sketchybar service #
@@ -178,7 +190,7 @@ fi
 
 # `brew services restart` starts the agent if it is not running yet, so this is
 # idempotent. sketchybar draws the focused-space indicator that macOS does not
-# provide; yabai's external_bar setting reserves the room it occupies.
+# provide; AeroSpace's top gap reserves the room it occupies.
 if command -v sketchybar >/dev/null 2>&1; then
 	run brew services restart felixkratz/formulae/sketchybar
 	echo "sketchybar service started."
@@ -256,31 +268,20 @@ fi
 ############################
 run defaults write com.apple.dock appswitcher-all-displays -bool true
 run defaults write com.apple.dock autohide -bool true
-# Auto-hide the macOS menu bar so sketchybar owns the top of the screen instead
-# of stacking below a second bar. macOS has no way to remove the menu bar
-# outright; this is the "Always" option under Control Center > Menu Bar, and it
-# still reveals on hover at the top edge.
+# Auto-hide the macOS menu bar so SketchyBar owns the top row.
 run defaults write NSGlobalDomain _HIHideMenuBar -bool true
-# Kill the Spaces / Mission Control switch animation (yabai cannot control this;
-# window_animation_duration only affects yabai-managed window moves/resizes).
-# The Dock keys cover Mission Control / app-exposé; the universalaccess key is
-# what actually disables the Ctrl+arrow Space-to-Space slide on modern macOS
-# (verified on macOS 26 / Tahoe). reduceMotion only takes effect after a
-# logout/login.
+# Keep native Spaces animations disabled for the occasional macOS Space or
+# Mission Control use outside AeroSpace. reduceMotion requires a logout/login.
 run defaults write com.apple.dock expose-animation-duration -float 0
 run defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
 run defaults write com.apple.universalaccess reduceMotion -bool true
-# Disable standard window open/close/zoom animations globally. Does not remove
-# the cross-fade WindowServer uses on Space switches with Reduce Motion on
-# (that fade is baked in and not exposed via defaults), but it kills the
-# unrelated window fades that become more noticeable once Reduce Motion is on.
+# Disable standard window open/close/zoom animations globally.
 run defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 run defaults write com.apple.screencapture location -string "$HOME/Desktop"
 run defaults write com.apple.screencapture disable-shadow -bool true
 run defaults write com.apple.screencapture type -string "png"
 run defaults write com.apple.Finder AppleShowAllFiles -bool true
-# Dock defaults above require a Dock restart to take effect; _HIHideMenuBar
-# needs SystemUIServer restarted (a logout/login also works).
+# The Dock and menu bar defaults require their respective processes to restart.
 run killall Dock
 run killall SystemUIServer
 

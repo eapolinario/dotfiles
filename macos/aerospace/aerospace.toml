@@ -1,0 +1,136 @@
+config-version = 2
+
+start-at-login = true
+auto-reload-config = true
+
+after-startup-command = ["exec-and-forget sketchybar"]
+exec-on-workspace-change = [
+  "/bin/bash",
+  "-c",
+  "sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE",
+]
+
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+default-root-container-layout = "tiles"
+default-root-container-orientation = "auto"
+
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+
+focus-follows-mouse.enabled = true
+on-focus-changed = [
+  "move-mouse window-lazy-center",
+  "exec-and-forget sketchybar --trigger aerospace_focus_change",
+]
+
+# macOS already excludes the top bar region from AeroSpace's usable frame.
+gaps.inner.horizontal = 6
+gaps.inner.vertical = 6
+gaps.outer.left = 12
+gaps.outer.bottom = 12
+gaps.outer.top = 6
+gaps.outer.right = 12
+
+on-window-detected = [
+  { if = "test %{app-bundle-id} = com.apple.systempreferences", run = "layout floating" },
+  { if = "test %{app-bundle-id} = com.apple.calculator", run = "layout floating" },
+  { if = "test %{app-bundle-id} = com.apple.ActivityMonitor", run = "layout floating" },
+  { if = "test %{app-name} ~= '^Stats$'", run = "layout floating" },
+  { if = "test %{app-bundle-id} = com.runningwithcrayons.Alfred && test %{window-title} ~= preferences", run = "layout floating" },
+]
+
+[workspace-to-monitor-force-assignment]
+1 = "main"
+2 = "main"
+3 = "main"
+4 = "main"
+5 = "main"
+6 = ["secondary", "main"]
+7 = ["secondary", "main"]
+8 = ["secondary", "main"]
+9 = ["secondary", "main"]
+10 = ["secondary", "main"]
+
+[mode.main.binding]
+  alt-t = [
+    "layout floating tiling",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+  ]
+
+  cmd-shift-left = "focus left"
+  cmd-shift-down = "focus down"
+  cmd-shift-up = "focus up"
+  cmd-shift-right = "focus right"
+
+  alt-cmd-shift-left = "move-node-to-monitor --focus-follows-window left"
+  alt-cmd-shift-right = "move-node-to-monitor --focus-follows-window right"
+
+  alt-1 = "workspace 1"
+  alt-2 = "workspace 2"
+  alt-3 = "workspace 3"
+  alt-4 = "workspace 4"
+  alt-5 = "workspace 5"
+  alt-6 = "workspace 6"
+  alt-7 = "workspace 7"
+  alt-8 = "workspace 8"
+  alt-9 = "workspace 9"
+  alt-0 = "workspace 10"
+
+  alt-shift-1 = "move-node-to-workspace --focus-follows-window 1"
+  alt-shift-2 = "move-node-to-workspace --focus-follows-window 2"
+  alt-shift-3 = "move-node-to-workspace --focus-follows-window 3"
+  alt-shift-4 = "move-node-to-workspace --focus-follows-window 4"
+  alt-shift-5 = "move-node-to-workspace --focus-follows-window 5"
+  alt-shift-6 = "move-node-to-workspace --focus-follows-window 6"
+  alt-shift-7 = "move-node-to-workspace --focus-follows-window 7"
+  alt-shift-8 = "move-node-to-workspace --focus-follows-window 8"
+  alt-shift-9 = "move-node-to-workspace --focus-follows-window 9"
+  alt-shift-0 = "move-node-to-workspace --focus-follows-window 10"
+
+  alt-tab = "workspace-back-and-forth"
+
+  alt-minus = "resize smart -50"
+  alt-equal = "resize smart +50"
+
+  alt-slash = [
+    "layout tiles horizontal vertical",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+  ]
+  alt-comma = [
+    "layout accordion horizontal vertical",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+  ]
+
+  alt-shift-semicolon = "mode service"
+
+[mode.service.binding]
+  esc = ["reload-config", "mode main"]
+  r = ["flatten-workspace-tree", "mode main"]
+  f = [
+    "layout floating tiling",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+    "mode main",
+  ]
+  backspace = ["close-all-windows-but-current", "mode main"]
+
+  alt-shift-left = [
+    "join-with left",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+    "mode main",
+  ]
+  alt-shift-down = [
+    "join-with down",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+    "mode main",
+  ]
+  alt-shift-up = [
+    "join-with up",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+    "mode main",
+  ]
+  alt-shift-right = [
+    "join-with right",
+    "exec-and-forget sketchybar --trigger aerospace_layout_change",
+    "mode main",
+  ]

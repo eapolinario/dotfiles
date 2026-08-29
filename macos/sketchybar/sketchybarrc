@@ -3,9 +3,6 @@
 set -euo pipefail
 
 # sketchybar sources this file at startup and on `sketchybar --reload`.
-# Its purpose here is a visual indicator of the focused mission control space,
-# which macOS itself does not provide anywhere in the menu bar.
-
 CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly CONFIG_DIR
 readonly PLUGIN_DIR="${CONFIG_DIR}/plugins"
@@ -18,14 +15,7 @@ source "${CONFIG_DIR}/colors.sh"
 #######
 
 # sticky=on keeps the bar visible on every space, including fullscreen apps.
-#
-# height is 38 on *every* display, even though only the notched built-in screen
-# needs that much to clear the notch. sketchybar can vary height per display
-# (notch_display_height), but yabai's external_bar cannot: it only takes
-# main/all/off, so the space it reserves is one number for all displays. A
-# shorter bar on the external monitor therefore left a gap between the bar and
-# the windows below it. Keeping one height keeps the two in sync.
-#
+# AeroSpace reserves this same height with gaps.outer.top.
 # notch_width is the region items route around; 200 is the documented default,
 # set explicitly so the intent is obvious if a center item is ever added.
 sketchybar --bar \
@@ -56,41 +46,29 @@ sketchybar --default \
 # Spaces #
 ##########
 
-# Enumerate the mission control spaces yabai reports so the indicator matches
-# reality rather than a hardcoded count. This only *queries* yabai, which works
-# with SIP enabled; creating spaces would need the scripting addition.
-# Spaces added or removed via Mission Control need a `sketchybar --reload`.
-space_indices=()
-if command -v yabai >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-	while read -r index; do
-		[[ -n $index ]] && space_indices+=("$index")
-	done < <(yabai -m query --spaces 2>/dev/null | jq -r '.[].index' 2>/dev/null || true)
-fi
+sketchybar --add event aerospace_workspace_change
+sketchybar --add event aerospace_focus_change
+sketchybar --add event aerospace_layout_change
 
-# Fall back to a reasonable default when yabai has not started yet, so the bar
-# still comes up with something usable instead of no spaces at all.
-if [[ ${#space_indices[@]} -eq 0 ]]; then
-	space_indices=(1 2 3 4)
-fi
+while IFS="|" read -r workspace display; do
+	[[ -n $workspace ]] || continue
 
-for index in "${space_indices[@]}"; do
-	sketchybar --add space "space.${index}" left \
-		--set "space.${index}" \
-		space="$index" \
-		icon="$index" \
+	sketchybar --add item "space.${workspace}" left \
+		--set "space.${workspace}" \
+		display="$display" \
+		icon="$workspace" \
 		icon.highlight_color="$ACCENT_COLOR" \
 		background.color="$ITEM_BG_COLOR" \
 		background.drawing=off \
 		label.drawing=off \
-		script="${PLUGIN_DIR}/space.sh" \
-		--subscribe "space.${index}" mouse.clicked
-done
-
-sketchybar --add item spaces_watcher left \
-	--set spaces_watcher \
-	drawing=off \
-	script="${PLUGIN_DIR}/spaces_watcher.sh" \
-	--subscribe spaces_watcher space_change display_change
+		click_script="aerospace workspace ${workspace}" \
+		script="${PLUGIN_DIR}/aerospace.sh ${workspace}" \
+		--subscribe "space.${workspace}" \
+		aerospace_workspace_change aerospace_focus_change
+done < <(
+	aerospace list-workspaces --all \
+		--format "%{workspace}|%{monitor-appkit-nsscreen-screens-id}"
+)
 
 #########
 # Items #
@@ -103,10 +81,41 @@ sketchybar --add item front_app left \
 	script="${PLUGIN_DIR}/front_app.sh" \
 	--subscribe front_app front_app_switched
 
+sketchybar --add item layout right \
+	--set layout \
+	icon="TILE" \
+	icon.color="$ACCENT_COLOR" \
+	label="?" \
+	background.color="$ITEM_BG_COLOR" \
+	background.drawing=on \
+	script="${PLUGIN_DIR}/layout.sh" \
+	--subscribe layout aerospace_focus_change aerospace_layout_change
+
+sketchybar --add item battery right \
+	--set battery \
+	icon="BAT" \
+	background.color="$ITEM_BG_COLOR" \
+	background.drawing=on \
+	update_freq=120 \
+	script="${PLUGIN_DIR}/battery.sh" \
+	--subscribe battery power_source_change system_woke
+
+sketchybar --add item system_stats right \
+	--set system_stats \
+	icon="SYS" \
+	background.color="$ITEM_BG_COLOR" \
+	background.drawing=on \
+	update_freq=30 \
+	script="${PLUGIN_DIR}/system_stats.sh"
+
 sketchybar --add item clock right \
 	--set clock \
 	icon.drawing=off \
 	update_freq=30 \
 	script="${PLUGIN_DIR}/clock.sh"
 
+focused_workspace="$(aerospace list-workspaces --focused)"
 sketchybar --update
+sketchybar --trigger aerospace_workspace_change \
+	FOCUSED_WORKSPACE="$focused_workspace"
+sketchybar --trigger aerospace_layout_change
