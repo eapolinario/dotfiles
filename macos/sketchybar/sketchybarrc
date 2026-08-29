@@ -48,11 +48,12 @@ sketchybar --default \
 
 sketchybar --add event aerospace_workspace_change
 
-while read -r workspace; do
+while IFS="|" read -r workspace display; do
 	[[ -n $workspace ]] || continue
 
 	sketchybar --add item "space.${workspace}" left \
 		--set "space.${workspace}" \
+		display="$display" \
 		icon="$workspace" \
 		icon.highlight_color="$ACCENT_COLOR" \
 		background.color="$ITEM_BG_COLOR" \
@@ -61,7 +62,10 @@ while read -r workspace; do
 		click_script="aerospace workspace ${workspace}" \
 		script="${PLUGIN_DIR}/aerospace.sh ${workspace}" \
 		--subscribe "space.${workspace}" aerospace_workspace_change
-done < <(aerospace list-workspaces --all)
+done < <(
+	aerospace list-workspaces --all \
+		--format "%{workspace}|%{monitor-appkit-nsscreen-screens-id}"
+)
 
 #########
 # Items #
