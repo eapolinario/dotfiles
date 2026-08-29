@@ -1,4 +1,8 @@
 background-opacity = 0.5
+# Let tmux use the full terminal surface; yabai provides spacing between apps.
+window-padding-x = 0
+window-padding-y = 0
+
 # Shift+Enter → CSI-u so tmux's `extended-keys` can forward it as a modified
 # Enter to inner TUIs (pi, etc.). The previous `\x1b\r` encoding bypassed
 # the kitty keyboard protocol and tmux delivered it as ESC+CR.

@@ -1,3 +1,22 @@
+if vim.fn.has("mac") == 1 then
+  return {
+    {
+      "neovim/nvim-lspconfig",
+      opts = {
+        codelens = { enabled = true },
+        servers = {
+          -- Homebrew provides gopls; Mason manages the remaining servers.
+          gopls = {
+            mason = false,
+          },
+          nil_ls = { enabled = false },
+          nixd = { enabled = false },
+        },
+      },
+    },
+  }
+end
+
 -- LSP servers managed by Nix (home.packages), not Mason.
 -- Add a server here when you install its binary via nixpkgs.
 local flake = vim.fn.expand("~/dotfiles/nixos")
