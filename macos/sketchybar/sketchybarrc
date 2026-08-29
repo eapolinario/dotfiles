@@ -48,6 +48,7 @@ sketchybar --default \
 
 sketchybar --add event aerospace_workspace_change
 sketchybar --add event aerospace_focus_change
+sketchybar --add event aerospace_layout_change
 
 while IFS="|" read -r workspace display; do
 	[[ -n $workspace ]] || continue
@@ -80,6 +81,33 @@ sketchybar --add item front_app left \
 	script="${PLUGIN_DIR}/front_app.sh" \
 	--subscribe front_app front_app_switched
 
+sketchybar --add item layout right \
+	--set layout \
+	icon="TILE" \
+	icon.color="$ACCENT_COLOR" \
+	label="?" \
+	background.color="$ITEM_BG_COLOR" \
+	background.drawing=on \
+	script="${PLUGIN_DIR}/layout.sh" \
+	--subscribe layout aerospace_focus_change aerospace_layout_change
+
+sketchybar --add item battery right \
+	--set battery \
+	icon="BAT" \
+	background.color="$ITEM_BG_COLOR" \
+	background.drawing=on \
+	update_freq=120 \
+	script="${PLUGIN_DIR}/battery.sh" \
+	--subscribe battery power_source_change system_woke
+
+sketchybar --add item system_stats right \
+	--set system_stats \
+	icon="SYS" \
+	background.color="$ITEM_BG_COLOR" \
+	background.drawing=on \
+	update_freq=30 \
+	script="${PLUGIN_DIR}/system_stats.sh"
+
 sketchybar --add item clock right \
 	--set clock \
 	icon.drawing=off \
@@ -90,3 +118,4 @@ focused_workspace="$(aerospace list-workspaces --focused)"
 sketchybar --update
 sketchybar --trigger aerospace_workspace_change \
 	FOCUSED_WORKSPACE="$focused_workspace"
+sketchybar --trigger aerospace_layout_change
