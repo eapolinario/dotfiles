@@ -102,6 +102,7 @@ for component in \
 	aerospace \
 	ghostty \
 	pip \
+	sketchybar \
 	tmux; do
 	mkdir -p "${CONFIG_HOME}/${component}"
 	run_stow -d "$SCRIPT_DIR" -vt "${CONFIG_HOME}/${component}" "${component}"
@@ -271,22 +272,10 @@ fi
 ############################
 run defaults write com.apple.dock appswitcher-all-displays -bool true
 run defaults write com.apple.dock autohide -bool true
-<<<<<<< HEAD
-# Auto-hide the macOS menu bar so sketchybar owns the top of the screen instead
-# of stacking below a second bar. macOS has no way to remove the menu bar
-# outright; this is the "Always" option under Control Center > Menu Bar, and it
-# still reveals on hover at the top edge.
+# Auto-hide the macOS menu bar so SketchyBar owns the top row.
 run defaults write NSGlobalDomain _HIHideMenuBar -bool true
-# Kill the Spaces / Mission Control switch animation (yabai cannot control this;
-# window_animation_duration only affects yabai-managed window moves/resizes).
-# The Dock keys cover Mission Control / app-exposé; the universalaccess key is
-# what actually disables the Ctrl+arrow Space-to-Space slide on modern macOS
-# (verified on macOS 26 / Tahoe). reduceMotion only takes effect after a
-# logout/login.
-=======
 # Keep native Spaces animations disabled for the occasional macOS Space or
 # Mission Control use outside AeroSpace. reduceMotion requires a logout/login.
->>>>>>> a128369 (Replace yabai with AeroSpace)
 run defaults write com.apple.dock expose-animation-duration -float 0
 run defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
 run defaults write com.apple.universalaccess reduceMotion -bool true
@@ -296,8 +285,7 @@ run defaults write com.apple.screencapture location -string "$HOME/Desktop"
 run defaults write com.apple.screencapture disable-shadow -bool true
 run defaults write com.apple.screencapture type -string "png"
 run defaults write com.apple.Finder AppleShowAllFiles -bool true
-# Dock defaults above require a Dock restart to take effect; _HIHideMenuBar
-# needs SystemUIServer restarted (a logout/login also works).
+# The Dock and menu bar defaults require their respective processes to restart.
 run killall Dock
 run killall SystemUIServer
 
