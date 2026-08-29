@@ -19,7 +19,10 @@ default-root-container-orientation = "auto"
 persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
 focus-follows-mouse.enabled = true
-on-focus-changed = ["move-mouse window-lazy-center"]
+on-focus-changed = [
+  "move-mouse window-lazy-center",
+  "exec-and-forget sketchybar --trigger aerospace_focus_change",
+]
 
 # Keep tiled windows below the 38px SketchyBar and preserve the yabai spacing.
 gaps.inner.horizontal = 6

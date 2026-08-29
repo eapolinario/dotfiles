@@ -47,6 +47,7 @@ sketchybar --default \
 ##########
 
 sketchybar --add event aerospace_workspace_change
+sketchybar --add event aerospace_focus_change
 
 while IFS="|" read -r workspace display; do
 	[[ -n $workspace ]] || continue
@@ -61,7 +62,8 @@ while IFS="|" read -r workspace display; do
 		label.drawing=off \
 		click_script="aerospace workspace ${workspace}" \
 		script="${PLUGIN_DIR}/aerospace.sh ${workspace}" \
-		--subscribe "space.${workspace}" aerospace_workspace_change
+		--subscribe "space.${workspace}" \
+		aerospace_workspace_change aerospace_focus_change
 done < <(
 	aerospace list-workspaces --all \
 		--format "%{workspace}|%{monitor-appkit-nsscreen-screens-id}"
