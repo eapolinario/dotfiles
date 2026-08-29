@@ -99,12 +99,10 @@ mkdir -p "${CONFIG_HOME}/doom"
 run_stow -d "$SCRIPT_DIR/../common" -vt "${CONFIG_HOME}/doom" doom
 
 for component in \
+	aerospace \
 	ghostty \
 	pip \
-	sketchybar \
-	skhd \
-	tmux \
-	yabai; do
+	tmux; do
 	mkdir -p "${CONFIG_HOME}/${component}"
 	run_stow -d "$SCRIPT_DIR" -vt "${CONFIG_HOME}/${component}" "${component}"
 done
@@ -152,25 +150,42 @@ fi
 # End of Brewfile #
 ###################
 
-#################
-# yabai service #
-#################
+############################
+# Window manager migration #
+############################
 
-# Use launchctl directly — yabai --restart-service has the service label hardcoded
-# and breaks when the tap changes (e.g. asmvik → koekeishiya). Glob for the plist
-# instead so this is resilient to future renames.
-yabai_plist=$(ls ~/Library/LaunchAgents/com.*.yabai.plist 2>/dev/null | head -1 || true)
-if [ -n "$yabai_plist" ]; then
-	run launchctl unload "$yabai_plist" || true
-	run launchctl load "$yabai_plist"
-	echo "yabai service started from: $yabai_plist"
-else
-	echo "Warning: no yabai plist found in ~/Library/LaunchAgents — service not started."
-fi
+# AeroSpace owns the global window-management shortcuts. Stop the old services
+# first so skhd cannot intercept AeroSpace bindings.
+shopt -s nullglob
+legacy_window_manager_plists=(
+	"$HOME"/Library/LaunchAgents/com.*.skhd.plist
+	"$HOME"/Library/LaunchAgents/com.*.yabai.plist
+)
+shopt -u nullglob
 
-######################
-# end yabai service  #
-######################
+for plist in "${legacy_window_manager_plists[@]}"; do
+	run launchctl unload "$plist" || true
+done
+
+for legacy_config in \
+	"${CONFIG_HOME}/skhd/skhdrc" \
+	"${CONFIG_HOME}/yabai/yabairc"; do
+	if [[ -L $legacy_config ]]; then
+		run rm "$legacy_config"
+	fi
+done
+
+for formula in skhd yabai; do
+	if brew list --formula "$formula" >/dev/null 2>&1; then
+		run brew uninstall --formula "$formula"
+	fi
+done
+
+run open -a AeroSpace
+
+################################
+# End window manager migration #
+################################
 
 ######################
 # sketchybar service #
@@ -256,6 +271,7 @@ fi
 ############################
 run defaults write com.apple.dock appswitcher-all-displays -bool true
 run defaults write com.apple.dock autohide -bool true
+<<<<<<< HEAD
 # Auto-hide the macOS menu bar so sketchybar owns the top of the screen instead
 # of stacking below a second bar. macOS has no way to remove the menu bar
 # outright; this is the "Always" option under Control Center > Menu Bar, and it
@@ -267,13 +283,14 @@ run defaults write NSGlobalDomain _HIHideMenuBar -bool true
 # what actually disables the Ctrl+arrow Space-to-Space slide on modern macOS
 # (verified on macOS 26 / Tahoe). reduceMotion only takes effect after a
 # logout/login.
+=======
+# Keep native Spaces animations disabled for the occasional macOS Space or
+# Mission Control use outside AeroSpace. reduceMotion requires a logout/login.
+>>>>>>> a128369 (Replace yabai with AeroSpace)
 run defaults write com.apple.dock expose-animation-duration -float 0
 run defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
 run defaults write com.apple.universalaccess reduceMotion -bool true
-# Disable standard window open/close/zoom animations globally. Does not remove
-# the cross-fade WindowServer uses on Space switches with Reduce Motion on
-# (that fade is baked in and not exposed via defaults), but it kills the
-# unrelated window fades that become more noticeable once Reduce Motion is on.
+# Disable standard window open/close/zoom animations globally.
 run defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 run defaults write com.apple.screencapture location -string "$HOME/Desktop"
 run defaults write com.apple.screencapture disable-shadow -bool true
