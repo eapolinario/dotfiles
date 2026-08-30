@@ -40,7 +40,6 @@
     curl
     wget
     cacert
-    clang
     cmake
     gnumake
     libtool
