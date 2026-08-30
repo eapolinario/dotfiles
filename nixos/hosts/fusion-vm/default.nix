@@ -66,5 +66,10 @@
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
   };
 
+  # The graphical-desktop NixOS module enables services.speechd by default,
+  # which pulls in speech-dispatcher + mbrola voices + espeak-ng (~1 GiB of
+  # closure). Disable it since we don't use screen-reader text-to-speech.
+  services.speechd.enable = false;
+
   system.stateVersion = "24.11";
 }

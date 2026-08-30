@@ -54,7 +54,6 @@ in
     imv
     maim
     seahorse
-    vscode
     wl-clipboard
     wlr-randr
     elephant
