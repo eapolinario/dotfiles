@@ -293,11 +293,13 @@ in
 
   programs.emacs = {
     enable = true;
-    # From emacs-overlay: latest tagged/pre-release Emacs with pure-GTK
-    # (Wayland-native) support. Prebuilt artifacts come from the
-    # nix-community cache configured in modules/common (nix.settings), so
-    # this downloads rather than building from source.
-    package = pkgs.emacs-unstable-pgtk;
+    # Use emacs-overlay's prebuilt package output (latest tagged/pre-release
+    # Emacs with pure-GTK / Wayland-native support). Consuming it via
+    # `emacs-overlay.packages` (rather than applying the overlay onto our
+    # nixpkgs) builds it against emacs-overlay's own pinned nixpkgs, which
+    # matches the nix-community cache -> this downloads instead of building
+    # Emacs from source on every nixpkgs bump.
+    package = inputs.emacs-overlay.packages.${pkgs.stdenv.hostPlatform.system}.emacs-unstable-pgtk;
   };
 
   programs.nushell = {

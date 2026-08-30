@@ -30,7 +30,6 @@
 
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -82,7 +81,6 @@
               {
                 nixpkgs.overlays = [
                   llm-agents.overlays.shared-nixpkgs
-                  inputs.emacs-overlay.overlays.default
                 ];
                 environment.systemPackages = with pkgs.llm-agents; [
                   copilot-cli
