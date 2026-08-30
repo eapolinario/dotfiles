@@ -81,13 +81,10 @@
               { pkgs, ... }:
               {
                 nixpkgs.overlays = [
-                  llm-agents.overlays.default
+                  llm-agents.overlays.shared-nixpkgs
                   inputs.emacs-overlay.overlays.default
                 ];
                 environment.systemPackages = with pkgs.llm-agents; [
-                  agentsview
-                  claude-agent-acp
-                  codex
                   copilot-cli
                   pi
                   rtk
