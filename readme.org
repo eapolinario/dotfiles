@@ -25,12 +25,12 @@ first and these files override them afterwards.
 - =install.sh= — stows all packages below and enables user systemd services
 - =ghostty/= — terminal config; colors follow the active Omarchy theme
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
-- =nvim/= — only the LazyVim files that diverge from the =omarchy-nvim= package:
-  =lazyvim.json= (the enabled LazyVim extras) and
-  =lua/plugins/gitsigns-blame.lua= (inline current-line git blame, toggled with
-  =<leader>uB=). Omarchy's own nvim files stay package-managed so they keep
-  picking up upstream fixes; stowed with =--no-folding= so they survive
-  alongside the symlinks
+- Neovim uses =common/nvim/=, stowed as individual files with =--no-folding=.
+  Omarchy's generated theme, local lockfile, transparency and clipboard support
+  remain in the live config alongside the shared links. FFF keeps the primary
+  search keys; Telescope supplies the shared Doom-style directory searches.
+  The installer backs up replaced files and migrates the former =omarchy/nvim/=
+  symlinks. See [[file:common/nvim/README.md][the shared Neovim configuration]].
 - =systemd/= — user services (downloads cleanup, grasp browser extension relay)
 
 Deliberately untracked, because Omarchy rewrites them in place and would
@@ -86,6 +86,8 @@ Shared configs used on both omarchy and macOS (and referenced from NixOS).
 
 - =doom/= — [[https://github.com/doomemacs/doomemacs][Doom Emacs]] configuration (=init.el=, =config.el=, =packages.el=,
   keybindings, org templates)
+- =nvim/= — shared LazyVim configuration, extras and keybindings; platform
+  branches preserve Omarchy integration and keep Nix-managed tooling NixOS-only
 - =authinfo/= — encrypted =.authinfo= (git-crypted); stowed on macOS, referenced
   as an out-of-store symlink on NixOS
 - =skills/= — agent skills shared by Claude Code and Copilot CLI; =claude/= and
@@ -109,6 +111,18 @@ make install-omarchy
 
 Requires =stow= and =systemctl=. Pass =--dry-run= to preview changes without
 touching the filesystem.
+
+To install or migrate only Neovim, without changing services or other dotfiles:
+
+#+begin_src sh
+./omarchy/install.sh --nvim-only --dry-run
+./omarchy/install.sh --nvim-only
+#+end_src
+
+On Omarchy, keep =~/.config/nvim= and its plugin directories real, not directory
+symlinks. An explicit Omarchy Neovim refresh replaces the config; rerun the
+targeted installer afterwards. Shared files need their own review of upstream
+changes, rather than assuming package updates merge those changes automatically.
 
 ** macOS
 
