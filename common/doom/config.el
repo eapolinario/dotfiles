@@ -161,17 +161,6 @@
 (use-package! ast-grep
   :ensure t)
 
-;; Justfile support
-(use-package! just-mode
-  :mode (("\\.[Jj]ustfile\\'" . just-mode)
-         ("[Jj]ustfile\\'" . just-mode)))
-
-(use-package! justl
-  :after just-mode
-  :commands (justl justl-exec-recipe-in-dir)
-  :bind (:map just-mode-map
-              ("C-c C-c" . justl-exec-recipe-in-dir)))
-
 (use-package! rainbow-mode
   :defer 5
   :hook ((css-mode
