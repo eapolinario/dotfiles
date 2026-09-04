@@ -1,3 +1,7 @@
+if not require("config.platform").nixos then
+  return {}
+end
+
 -- Tools installed via Nix (home.packages or per-project flake) should NOT
 -- also be installed by Mason. Strip them from any `ensure_installed` lists
 -- that LazyVim extras inject.
