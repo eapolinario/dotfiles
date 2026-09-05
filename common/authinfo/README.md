@@ -22,6 +22,9 @@ sudo apt-get install git-crypt
 
 # On Fedora
 sudo dnf install git-crypt
+
+# On Arch / Omarchy
+sudo pacman -S git-crypt
 ```
 
 ### Unlocking the repository
@@ -43,7 +46,24 @@ To see which files are encrypted:
 git-crypt status
 ```
 
-Files marked as "encrypted" need to be unlocked before you can read their contents.
+This reports which paths are covered by git-crypt's encryption filters; an
+"encrypted" label is not, by itself, proof that the working copy is still locked.
+
+### Omarchy installer policy
+
+The Omarchy installer checks only the fixed git-crypt header, without printing
+credentials. A missing, unreadable, or locked authinfo file is skipped with a
+warning, leaving an existing `~/.authinfo` untouched. To require credentials:
+
+```sh
+./omarchy/install.sh --only authinfo --require-secrets --dry-run
+./omarchy/install.sh --only authinfo --require-secrets
+```
+
+Unlock separately and rerun if needed; the installer never decrypts the
+repository or obtains keys. Replacing an existing regular authinfo file
+preserves it in a private `~/.authinfo.backup.*` directory. Treat those backups
+as sensitive local files, not repository content.
 
 ### Adding new collaborators
 

@@ -38,8 +38,7 @@ case "${0##*/}" in
     esac
     ;;
   jq)
-    jq_calls=0
-    read -r jq_calls <"$SWAP_TEST_STATE/jq-calls" || true
+    read -r jq_calls <"$SWAP_TEST_STATE/jq-calls"
     jq_calls=$((jq_calls + 1))
     printf '%s\n' "$jq_calls" >"$SWAP_TEST_STATE/jq-calls"
     if [[ "${SWAP_TEST_JQ_FAILURE_AT:-}" == "$jq_calls" ]]; then

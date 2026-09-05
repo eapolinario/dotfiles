@@ -48,7 +48,10 @@ From the repository root:
 ```
 
 The targeted command does not install other dotfiles or touch systemd services.
-The full Omarchy installer also calls this migration.
+The full Omarchy installer also calls this migration, after preflighting all
+selected components. Service activation is opt-in. See the
+[Omarchy operations guide](../../omarchy/README.md) for file rollback and
+the `RESTORE.tsv` included with new backups.
 
 Start from Omarchy's seeded Neovim configuration; if its support files are
 missing, run `omarchy-nvim-setup` first. Installation backs up replaced regular
@@ -78,3 +81,5 @@ bash omarchy/tests/nvim-install.sh
 
 These exercise platform branches and migration in temporary directories,
 without starting the normal Neovim configuration or changing live dotfiles.
+`make check-omarchy` includes these suites and the full installer coverage;
+the Omarchy CI workflow runs that same target.

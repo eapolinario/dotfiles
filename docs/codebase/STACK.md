@@ -6,7 +6,7 @@
 
 | Area | Value | Evidence |
 |------|-------|----------|
-| Primary language | Mixed repository: Nix for NixOS configuration, Bash for installers/helpers, and Emacs Lisp for shared Doom Emacs config | `nixos/flake.nix`, `omarchy/install.sh`, `macos/install.sh`, `common/doom/config.el` |
+| Primary language | Nix, Bash, Emacs Lisp, Lua for Omarchy/Neovim, and TypeScript for pi extensions | `nixos/flake.nix`, `omarchy/install.sh`, `common/doom/config.el`, `common/nvim/lua/`, `common/pi/.pi/agent/extensions/` |
 | Runtime + version | Multi-runtime repo: NixOS flake input tracks `nixos-unstable`; NixOS configs set `system.stateVersion = "24.11"`; shell entrypoints use `/usr/bin/env bash` | `nixos/flake.nix`, `nixos/hosts/fusion-vm/default.nix`, `omarchy/install.sh`, `macos/install.sh`, `nixos/deploy.sh` |
 | Package manager | Nix flakes for NixOS, Homebrew Bundle for macOS, and GNU Stow for file deployment on macOS/Omarchy | `nixos/flake.nix`, `macos/Brewfile`, `macos/install.sh`, `omarchy/install.sh` |
 | Module/build system | Nix flake outputs plus Makefile targets; stow-managed directory trees mirror target paths under `$HOME` / `$XDG_CONFIG_HOME` | `nixos/flake.nix`, `nixos/Makefile`, `Makefile`, `omarchy/install.sh`, `macos/install.sh` |
@@ -41,6 +41,8 @@ List only high-impact production dependencies (frameworks, data, transport, auth
 ```bash
 make install-omarchy
 ./omarchy/install.sh --dry-run
+./omarchy/install.sh --doctor
+make check-omarchy
 make install-macos
 make gitleaks
 cd nixos && make check
@@ -50,7 +52,8 @@ cd nixos && make check
 
 - Config sources: `readme.org`, `AGENTS.md`, `omarchy/install.sh`, `macos/install.sh`, `nixos/flake.nix`, `nixos/Makefile`, `nixos/home/eduardo/default.nix`, `common/doom/config.el`, `common/authinfo/README.md`
 - Required env vars: `HOME`, `XDG_CONFIG_HOME` (fallback-aware in installers), `XDG_STATE_HOME` (for `pi-shell` state), `TARGET` for `cd nixos && make deploy`, `[TODO any additional host-local env not committed]`
-- Deployment/runtime constraints: Omarchy installer requires Linux, `stow`, and `systemctl`; macOS installer requires `gpg`, the configured private key, and `brew`; NixOS workflows require Nix flakes and host metadata from `nixos/flake.nix`
+- Omarchy installer constraints: Linux, Bash, GNU Stow/coreutils/findutils; systemd is needed for explicit service activation, not ordinary linking. Runtime prerequisites and opt-in cleanup are documented in `omarchy/README.md`.
+- Other platform constraints: macOS installer requires `gpg`, the configured private key, and `brew`; NixOS workflows require Nix flakes and host metadata from `nixos/flake.nix`
 
 ### 6) Evidence
 

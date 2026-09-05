@@ -8,7 +8,7 @@ List only meaningful top-level directories and files.
 
 | Path | Purpose | Evidence |
 |------|---------|----------|
-| `omarchy/` | Arch Linux / Omarchy / Hyprland dotfiles and Linux installer | `readme.org`, `omarchy/install.sh` |
+| `omarchy/` | Arch/Omarchy config, component installer, operations guide, isolated regression suites | `omarchy/README.md`, `omarchy/install.sh`, `omarchy/tests/` |
 | `macos/` | macOS dotfiles, Brewfile, and installer | `readme.org`, `macos/install.sh`, `macos/Brewfile` |
 | `nixos/` | Flake-based NixOS system, hosts, modules, and Home Manager config | `readme.org`, `nixos/flake.nix`, `nixos/Makefile` |
 | `common/` | Shared configuration, especially Doom Emacs and encrypted authinfo | `readme.org`, `common/authinfo/README.md`, `common/doom/config.el` |

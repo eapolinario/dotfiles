@@ -22,6 +22,8 @@ Keep changes small, focused, and repo-specific. Prefer the documented install/ch
 - Install omarchy: `make install-omarchy`
 - Omarchy dry-run: `./omarchy/install.sh --dry-run`
 - Omarchy help: `./omarchy/install.sh --help`
+- Omarchy diagnostics (read-only): `./omarchy/install.sh --doctor`
+- Omarchy regression/lint entrypoint: `make check-omarchy`
 - Install macOS config: `make install-macos`
 - Secret scan: `make gitleaks`
 - Regenerate gitleaks baseline only after review: `make gitleaks-baseline-regen`
@@ -49,6 +51,8 @@ Keep changes small, focused, and repo-specific. Prefer the documented install/ch
 ## Validation by change area
 - Shell scripts (`*.sh`): run `bash -n`, `shellcheck`, and `shfmt -d` on touched files.
 - `omarchy/` installer or stow-managed config: run `./omarchy/install.sh --dry-run`.
+- `omarchy/` behavior or shared editor/agent config: run `make check-omarchy`;
+  its installer suites use fixture homes, not the live machine.
 - `macos/install.sh` or `macos/Brewfile`: run `brew bundle check` from `macos/` when on macOS.
 - `nixos/*.nix`, `nixos/modules`, `nixos/hosts`, `nixos/home`: run `cd nixos && make fmt && make check`.
 - Secrets-related files (`common/authinfo`, `.gitleaks.toml`, `gitleaks.baseline`): run `make gitleaks`.

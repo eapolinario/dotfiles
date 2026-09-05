@@ -7,9 +7,9 @@
 | Item | Rule | Example | Evidence |
 |------|------|---------|----------|
 | Files | Lowercase platform directories; conventional filenames such as `install.sh`, `default.nix`, `disko.nix`, and dotfiles under stow packages | `omarchy/install.sh`, `nixos/hosts/fusion-vm/default.nix`, `macos/zsh/.zshrc` | `AGENTS.md`, repo file layout |
-| Functions/methods | Shell uses `lower_snake_case`; custom Emacs Lisp functions use the `ea/` prefix with kebab-like names | `ensure_linux`, `remove_target_if_identical`, `ea/org-archive-done-tasks` | `AGENTS.md`, `omarchy/install.sh`, `common/doom/+bindings.el` |
-| Types/interfaces | [TODO] No user-defined typed language interfaces/classes were identified in the files reviewed | [TODO] | `nixos/flake.nix`, `omarchy/install.sh`, `common/doom/config.el` |
-| Constants/env vars | Uppercase snake case for shell constants and environment names | `SCRIPT_DIR`, `DRY_RUN`, `PI_SHELL_STATE_DIR`, `XDG_CONFIG_HOME` | `AGENTS.md`, `omarchy/install.sh`, `nixos/home/eduardo/nushell/pi-shell.sh` |
+| Functions/methods | Shell uses `lower_snake_case`; custom Emacs Lisp uses prefixed kebab-case names | `preflight`, `ea/org-archive-done-tasks`, `my-org-download-set-image-dir` | `AGENTS.md`, `omarchy/install.sh`, `common/doom/+bindings.el`, `common/doom/+org.el` |
+| Types/interfaces | pi extensions use TypeScript interfaces and literal unions | `CavemanState`, `Level` | `common/pi/.pi/agent/extensions/caveman-status.ts` |
+| Constants/env vars | Uppercase snake case for readonly constants/environment names; lowercase for mutable shell state | `SCRIPT_DIR`, `DEFAULT_COMPONENTS`, `dry_run`, `XDG_CONFIG_HOME` | `AGENTS.md`, `omarchy/install.sh` |
 
 ### 2) Formatting and Linting
 
@@ -28,13 +28,13 @@
 
 - Error strategy by layer: Shell scripts generally fail fast with `set -euo pipefail`, validate required commands with `require_cmd`, and print actionable error text to stderr before exiting; the Omarchy installer adds dry-run-aware messaging
 - Logging style and required context fields: Plain command/status output via `printf` or `echo`; no structured logging format or required context schema was identified
-- Sensitive-data redaction rules: No explicit runtime logging redaction policy was found; repo-level protection is handled by `git-crypt` for `common/authinfo/.authinfo` and `gitleaks` scanning
+- Sensitive-data handling: the Omarchy installer reads only the git-crypt header when checking locked authinfo, never logs credential contents, and never unlocks the repo. Protection at rest/history is handled by git-crypt and gitleaks scanning.
 
 ### 5) Testing Conventions
 
-- Test file naming/location rule: [TODO] No dedicated `test/`, `tests/`, `spec/`, or `*.bats` files were found; validation is command-oriented instead
-- Mocking strategy norm: [TODO] No test harness or mocking layer was identified
-- Coverage expectation: [TODO] No coverage tooling or threshold was identified
+- Test layout: standalone Bash, Lua, and Emacs Lisp suites live directly under `omarchy/tests/`; the Makefile discovers them by extension.
+- Isolation: fixture homes and synthetic credentials; mock service/desktop commands; real Stow; headless Neovim without user configuration; built-in Emacs ERT without a Doom bootstrap.
+- Coverage expectation: add a regression for changed behavior; no numeric coverage threshold is configured. `make check-omarchy` is shared by local development and Linux CI.
 
 ### 6) Evidence
 

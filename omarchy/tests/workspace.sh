@@ -4,7 +4,8 @@ set -euo pipefail
 test_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 cd "$test_dir"
 
-for tool in jq nvim; do
+nvim_binary="${NVIM:-nvim}"
+for tool in jq "$nvim_binary"; do
   command -v "$tool" >/dev/null || {
     printf 'Missing test dependency: %s\n' "$tool" >&2
     exit 1
@@ -207,4 +208,4 @@ run_case 'move failure stops further dispatches' 1 'Unable to move window 0x101 
   "$(expected_dispatches 2 2 0x101)"
 
 printf 'Passed %s workspace regression cases.\n' "$case_count"
-nvim --headless -u NONE -i NONE -n -l "$test_dir/fixtures/bindings.lua"
+"$nvim_binary" --headless -u NONE -i NONE -n -l "$test_dir/fixtures/bindings.lua"
