@@ -20,11 +20,12 @@ cleanup_options=false
 selection=
 config_home=
 transaction_active=false
+links_started=false
 declare -a components=() services=()
 declare -a package_dirs=() package_names=() package_targets=() package_ignores=()
 declare -a plan_kinds=() plan_sources=() plan_targets=() plan_components=() plan_relatives=()
 declare -a plan_states=() plan_backups=() created_dirs=() temporary_files=()
-declare -A seen_targets=() backup_prefixes=() backup_dirs=()
+declare -A seen_targets=() backup_prefixes=() backup_dirs=() component_roots=()
 
 usage() {
   printf '%s\n' \
@@ -244,13 +245,18 @@ run_doctor() {
   return "$doctor_status"
 }
 
+validate_cleanup_characters() {
+  [[ ! "$downloads_dir" =~ [[:cntrl:]] && "$downloads_dir" != *[\*\?\[\]\\]* ]] ||
+    fail 'Cleanup directory must not contain control characters, glob characters, or backslashes.'
+}
+
 validate_cleanup() {
   [[ "$downloads_age" =~ ^([0-9]{1,8}(s|min|h|d|w)|0)$ ]] ||
     fail 'Invalid retention; use an integer with s/min/h/d/w, or explicit 0.'
   [[ "$downloads_dir" == /* ]] || fail '--downloads-dir must be an absolute path.'
-  [[ ! "$downloads_dir" =~ [[:cntrl:]] && "$downloads_dir" != *[\*\?\[\]\\]* ]] ||
-    fail 'Cleanup directory must not contain control characters, glob characters, or backslashes.'
+  validate_cleanup_characters
   downloads_dir="$(realpath -m -- "$downloads_dir")"
+  validate_cleanup_characters
   [[ "$downloads_dir" != / ]] || fail 'Refusing cleanup of the filesystem root.'
   [[ "$(realpath -m -- "$HOME")/" != "$downloads_dir/"* ]] ||
     fail 'Refusing cleanup of HOME or one of its ancestors.'
@@ -288,6 +294,7 @@ add_package() {
   package_targets+=("$target")
   package_ignores+=("$ignore")
   backup_prefixes["$component"]="$target.backup"
+  component_roots["$component"]="$target"
   local -a files=()
   mapfile -d '' -t files < <(find "$source_root" -mindepth 1 \( -type f -o -type l \) -printf '%P\0' | sort -z)
   wait "$!" || fail "Could not enumerate $source_root."
@@ -350,7 +357,7 @@ build_plan() {
       downloads-cleanup)
         add_package downloads-cleanup "$SCRIPT_DIR/systemd/.config/systemd" user "$config_home/systemd/user" \
           '^grasp\.service$'
-        backup_prefixes[downloads - cleanup]="$config_home/dotfiles/downloads-cleanup.backup"
+        backup_prefixes["downloads-cleanup"]="$config_home/dotfiles/downloads-cleanup.backup"
         # A private file, outside user-tmpfiles.d, cannot be picked up by general cleanup.
         escaped="${downloads_dir//%/%%}"
         escaped="${escaped//\"/\\\"}"
@@ -364,31 +371,51 @@ build_plan() {
 }
 
 preflight() {
-  local i target parent source component resolved
+  local i target parent source source_parent component resolved fold_target fold_source
   for i in "${!plan_targets[@]}"; do
     target="${plan_targets[$i]}"
     component="${plan_components[$i]}"
     parent="${target%/*}"
+    source_parent="$(dirname "${plan_sources[$i]}")"
+    fold_target=
+    fold_source=
     while [[ "$parent" != / ]]; do
       if [[ -L "$parent" || (-e "$parent" && ! -d "$parent") ]]; then
-        if [[ "$component" == nvim ]]; then
+        if [[ -L "$parent" && "${plan_kinds[$i]}" == link &&
+          ("$component" == doom || "$component" == hypr || "$component" == ghostty) &&
+          "$parent" == "${component_roots[$component]}/"* &&
+          "$(realpath -m -- "$parent")" == "$(realpath -m -- "$source_parent")" ]]; then
+          # Keep only the outermost folded directory: never move files through
+          # a folded parent, which would modify the repository itself.
+          fold_target="$parent"
+          fold_source="$source_parent"
+        elif [[ "$component" == nvim ]]; then
           fail "Expected a real Neovim directory at $parent; no Neovim files were changed."
+        else
+          fail "Expected a real directory at $parent; no files changed."
         fi
-        fail "Expected a real directory at $parent; no files changed."
       fi
       parent="${parent%/*}"
       [[ -n "$parent" ]] || parent=/
+      source_parent="$(dirname "$source_parent")"
     done
-    if [[ "${plan_kinds[$i]}" == remove ]]; then
-      plan_states+=(remove)
+    if [[ -n "$fold_target" ]]; then
+      if [[ -z "${seen_targets[$fold_target]:-}" ]]; then
+        plan_entry unfold "$fold_source" "$fold_target" "$component" \
+          "${fold_target#"${component_roots[$component]}/"}"
+        plan_states[${#plan_targets[@]} - 1]=replace
+      fi
+      plan_states[$i]=create
+    elif [[ "${plan_kinds[$i]}" == remove ]]; then
+      plan_states[$i]=remove
     elif [[ -L "$target" ]]; then
       resolved="$(realpath -m -- "$target")"
       source="$(realpath -m -- "${plan_sources[$i]}")"
       if [[ "${plan_kinds[$i]}" != write && "$resolved" == "$source" ]]; then
-        plan_states+=(keep)
+        plan_states[$i]=keep
       elif [[ "$component" == nvim &&
         "$resolved" == "$SCRIPT_DIR/nvim/.config/nvim/${plan_relatives[$i]}" ]]; then
-        plan_states+=(replace)
+        plan_states[$i]=replace
       else
         [[ "$component" != nvim ]] || fail "Refusing to replace unrelated Neovim symlink $target -> $resolved."
         fail "Refusing to replace unrelated symlink $target -> $resolved."
@@ -397,14 +424,14 @@ preflight() {
       [[ -r "$target" ]] || fail "Cannot back up unreadable file: $target."
       if [[ "${plan_kinds[$i]}" == write ]] &&
         files_equal -- "$target" <(printf '%s\n' "${plan_sources[$i]}"); then
-        plan_states+=(keep)
+        plan_states[$i]=keep
       else
-        plan_states+=(replace)
+        plan_states[$i]=replace
       fi
     elif [[ -e "$target" ]]; then
       fail "Expected a file or managed symlink at $target; no files changed."
     else
-      plan_states+=(create)
+      plan_states[$i]=create
     fi
   done
   if [[ "$enable_services" == true ]]; then
@@ -468,8 +495,8 @@ backup_entry() {
   dir="${backup_dirs[$component]}"
   backup="$dir/${plan_relatives[$i]}"
   make_dir "$(dirname "$backup")"
-  mv -- "${plan_targets[$i]}" "$backup"
   plan_backups[$i]="$backup"
+  mv -- "${plan_targets[$i]}" "$backup"
   printf '%s\t%s\n' "${plan_targets[$i]}" "${plan_relatives[$i]}" >>"$dir/RESTORE.tsv"
 }
 
@@ -479,24 +506,20 @@ rollback() {
   if [[ "$transaction_active" == true && "$status" != 0 ]]; then
     printf 'Installation failed; restoring changed files from backups.\n' >&2
     for ((i = ${#plan_targets[@]} - 1; i >= 0; i--)); do
+      [[ "$links_started" == true ]] || break
       [[ "${plan_states[$i]}" != keep ]] || continue
       target="${plan_targets[$i]}"
-      if [[ -L "$target" && "${plan_kinds[$i]}" != write && "${plan_kinds[$i]}" != remove ]]; then
+      if [[ -L "$target" && ("${plan_kinds[$i]}" == link || "${plan_kinds[$i]}" == skill) ]]; then
         source="$(realpath -m -- "${plan_sources[$i]}")"
         if [[ "$(realpath -m -- "$target")" == "$source" ]]; then
           rm -- "$target" || failed=true
         fi
       elif [[ -f "$target" && ! -L "$target" && "${plan_kinds[$i]}" == write ]]; then
-        if files_equal -- "$target" <(printf '%s\n' "${plan_sources[$i]}"); then
+        if cmp -s -- "$target" <(printf '%s\n' "${plan_sources[$i]}"); then
           rm -- "$target" || failed=true
-        fi
-      fi
-      if [[ -n "${plan_backups[$i]}" ]]; then
-        if [[ -e "$target" || -L "$target" ]]; then
-          printf 'Restore blocked by changed path: %s (backup: %s)\n' "$target" "${plan_backups[$i]}" >&2
-          failed=true
         else
-          mv -- "${plan_backups[$i]}" "$target" || failed=true
+          printf 'Preserving changed/unreadable generated file during rollback: %s\n' "$target" >&2
+          failed=true
         fi
       fi
     done
@@ -507,6 +530,19 @@ rollback() {
       # Only remove empty directories created by this invocation, never a tree.
       if [[ -d "${created_dirs[$i]}" ]]; then
         rmdir --ignore-fail-on-non-empty -- "${created_dirs[$i]}" || failed=true
+      fi
+    done
+    # Restore directory symlinks only after removing their newly linked children
+    # and empty replacement directories.
+    for ((i = ${#plan_targets[@]} - 1; i >= 0; i--)); do
+      [[ -n "${plan_backups[$i]}" ]] || continue
+      [[ -e "${plan_backups[$i]}" || -L "${plan_backups[$i]}" ]] || continue
+      target="${plan_targets[$i]}"
+      if [[ -e "$target" || -L "$target" ]]; then
+        printf 'Restore blocked by changed path: %s (backup: %s)\n' "$target" "${plan_backups[$i]}" >&2
+        failed=true
+      else
+        mv -- "${plan_backups[$i]}" "$target" || failed=true
       fi
     done
     if [[ "$failed" == true ]]; then
@@ -528,6 +564,7 @@ apply_plan() {
       replace | remove) backup_entry "$i" ;;
     esac
   done
+  links_started=true
   # Track parent directories ourselves so even a partially failed Stow run can
   # be rolled back without leaving a fresh configuration tree behind.
   for i in "${!plan_targets[@]}"; do
@@ -564,6 +601,10 @@ apply_plan() {
         source="$(realpath -m -- "${plan_sources[$i]}")"
         [[ -L "$target" && "$(realpath -m -- "$target")" == "$source" ]] ||
           fail "Stow did not install $target; check custom Stow ignore rules."
+        ;;
+      unfold)
+        [[ -d "${plan_targets[$i]}" && ! -L "${plan_targets[$i]}" ]] ||
+          fail "Could not unfold ${plan_targets[$i]}."
         ;;
     esac
   done

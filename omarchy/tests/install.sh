@@ -147,6 +147,30 @@ if grep -q 'not-a-real-credential' "$TEST_DIR/install.log"; then
 fi
 printf '\0GITCRYPT\0fixture ciphertext\n' >"$fixture/common/authinfo/.authinfo"
 
+# Older Stow installations fold static subdirectories such as Doom templates.
+new_home folded
+mkdir -p "$XDG_CONFIG_HOME/doom"
+"$REAL_STOW" -d "$fixture/common" -t "$XDG_CONFIG_HOME/doom" doom
+[[ -L "$XDG_CONFIG_HOME/doom/org-templates" ]] || fail 'fixture did not reproduce legacy folding'
+source_before="$(snapshot "$fixture")"
+before="$(snapshot "$HOME")"
+succeeds --only doom --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'folded-directory preview changed HOME'
+succeeds --only doom
+[[ -d "$XDG_CONFIG_HOME/doom/org-templates" && ! -L "$XDG_CONFIG_HOME/doom/org-templates" ]] ||
+  fail 'legacy static directory was not unfolded'
+[[ -L "$XDG_CONFIG_HOME/doom/org-templates/todo.template" ]] || fail 'unfolded templates were not linked'
+[[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'unfolding changed the repository'
+new_home folded-failure
+mkdir -p "$XDG_CONFIG_HOME/doom"
+"$REAL_STOW" -d "$fixture/common" -t "$XDG_CONFIG_HOME/doom" doom
+before="$(snapshot "$XDG_CONFIG_HOME/doom")"
+export MOCK_FAIL_PACKAGE=doom
+fails 'Installation failed; restoring' --only doom
+unset MOCK_FAIL_PACKAGE
+[[ "$(snapshot "$XDG_CONFIG_HOME/doom")" == "$before" ]] || fail 'rollback did not restore directory folding'
+[[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'failed unfolding changed the repository'
+
 new_home cleanup
 mkdir -p "$HOME/Downloads \"quoted\" 100%"
 downloads="$HOME/Downloads \"quoted\" 100%"
@@ -157,6 +181,9 @@ fails 'Refusing cleanup' --only downloads-cleanup --downloads-dir "$HOME"
 fails 'Refusing cleanup' --only downloads-cleanup --downloads-dir /
 fails 'Refusing cleanup' --only downloads-cleanup --downloads-dir "$XDG_CONFIG_HOME/hypr"
 fails 'glob characters' --only downloads-cleanup --downloads-dir "$HOME/Down*"
+mkdir -p "$HOME/Downloads[12]"
+ln -s "$HOME/Downloads[12]" "$HOME/innocent-downloads"
+fails 'glob characters' --only downloads-cleanup --downloads-dir "$HOME/innocent-downloads"
 before="$(snapshot "$HOME")"
 succeeds --only downloads-cleanup --downloads-dir "$downloads" --dry-run
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'cleanup dry-run wrote files'
@@ -175,6 +202,8 @@ succeeds --only downloads-cleanup --downloads-dir "$downloads"
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'cleanup repeat created another backup'
 succeeds --only downloads-cleanup --downloads-dir "$downloads" --downloads-age 0
 grep -q -- ' - - - 0$' "$private_rule"
+cleanup_backup="$(find "$XDG_CONFIG_HOME/dotfiles" -maxdepth 1 -type d -name 'downloads-cleanup.backup.*')"
+[[ -d "$cleanup_backup" ]] || fail 'cleanup backup is not in its documented component directory'
 [[ -f "$downloads/keep" ]] || fail 'configuring zero retention performed cleanup'
 
 new_home manager
