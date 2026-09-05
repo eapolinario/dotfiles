@@ -151,6 +151,10 @@
 (after! git-commit
   (setq git-commit-summary-max-length 120))
 
+;; Enable ast-grep
+(use-package! ast-grep
+  :ensure t)
+
 (use-package! rainbow-mode
   :defer 5
   :hook ((css-mode
