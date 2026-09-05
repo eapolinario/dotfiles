@@ -111,6 +111,19 @@ for _, name in ipairs({ "omarchy", "nixos", "macos", "linux" }) do
     end,
   }
   local telescope = load_config("lua/plugins/telescope.lua")
+  local snacks = telescope[2]
+  equal("folke/snacks.nvim", snacks[1])
+  equal({ "<leader>.", false }, snacks.keys[1])
+  equal("<leader>bs", snacks.keys[2][1])
+  local scratch_calls = 0
+  _G.Snacks = {
+    scratch = function()
+      scratch_calls = scratch_calls + 1
+    end,
+  }
+  snacks.keys[2][2]()
+  equal(1, scratch_calls)
+
   local keys = telescope[1].keys(nil, vim.deepcopy(inherited_keys))
   local mappings = {}
   for _, key in ipairs(keys) do

@@ -96,4 +96,18 @@ return {
       })
     end,
   },
+  {
+    "folke/snacks.nvim",
+    keys = {
+      -- Telescope must own this key even before it lazy-loads.
+      { "<leader>.", false },
+      {
+        "<leader>bs",
+        function()
+          Snacks.scratch()
+        end,
+        desc = "Toggle Scratch Buffer",
+      },
+    },
+  },
 }
