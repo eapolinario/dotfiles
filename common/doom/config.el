@@ -128,7 +128,7 @@
   ;; (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
 
   ;; Configure providers
-  (gptel-make-gh-copilot "Copilot")
+  (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
   (gptel-make-openai "OpenAI"
     :stream t
     :key (auth-source-pick-first-password :host "api.openai.com"))
@@ -142,6 +142,10 @@
   ;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
   ;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
   (setq agent-shell-anthropic-claude-acp-command '("claude-code-acp")))
+
+(after! gptel-magit
+  (setq gptel-magit-model 'gpt-5-mini
+        gptel-magit-stream t))
 
 ;; Let me write longer commit messages
 (after! git-commit
