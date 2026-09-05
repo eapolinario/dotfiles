@@ -128,7 +128,7 @@
   ;; (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
 
   ;; Configure providers
-  (gptel-make-gh-copilot "Copilot")
+  (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
   (gptel-make-openai "OpenAI"
     :stream t
     :key (auth-source-pick-first-password :host "api.openai.com"))
@@ -139,19 +139,13 @@
     :stream t
     :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
 
-  (setq gptel-model 'claude-opus-4-6
-        gptel-backend (gptel-make-anthropic "Anthropic"
-                        :stream t
-                        :key (auth-source-pick-first-password :host "api.anthropic.com")))
-  )
+  ;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
+  ;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
+  (setq agent-shell-anthropic-claude-acp-command '("claude-code-acp")))
 
-;; Magit integration for gptel 
 (after! gptel-magit
-  (setq gptel-magit-model 'claude-sonnet-4-6))
-
-;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
-;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
-(setq agent-shell-anthropic-claude-acp-command '("claude-code-acp"))
+  (setq gptel-magit-model 'gpt-5-mini
+        gptel-magit-stream t))
 
 ;; Let me write longer commit messages
 (after! git-commit
@@ -242,21 +236,6 @@
   :commands (agent-shell-manager-toggle)
   :config
   (setq agent-shell-manager-side 'bottom))
-
-;; TODO: Trying to make the two tla mode work
-;;
-;; (use-package! tla-mode
-;;   :mode "\\.tla\\'"
-;;   :config
-;;   (add-hook 'tla-mode-hook #'prettify-symbols-mode))
-
-;; (use-package tla-ts-mode
-;;   :mode "\\.tla\\'"
-;;   :ensure t
-;;   :config
-;;                                         ; The grammar is called tlaplus, but the mode is called tla
-;;   (setq treesit-load-name-override-list '((tla "libtree-sitter-tlaplus" "tree_sitter_tlaplus")))
-;;   )
 
 ;; eat: real PTY terminal emulator in pure elisp.
 ;; Coexists with the :term vterm module; use eat when you want shell integration
