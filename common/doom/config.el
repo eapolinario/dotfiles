@@ -139,19 +139,9 @@
     :stream t
     :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
 
-  (setq gptel-model 'claude-opus-4-6
-        gptel-backend (gptel-make-anthropic "Anthropic"
-                        :stream t
-                        :key (auth-source-pick-first-password :host "api.anthropic.com")))
-  )
-
-;; Magit integration for gptel 
-(after! gptel-magit
-  (setq gptel-magit-model 'claude-sonnet-4-6))
-
-;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
-;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
-(setq agent-shell-anthropic-claude-acp-command '("claude-code-acp"))
+  ;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
+  ;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
+  (setq agent-shell-anthropic-claude-acp-command '("claude-code-acp")))
 
 ;; Let me write longer commit messages
 (after! git-commit
