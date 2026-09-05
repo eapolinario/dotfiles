@@ -1,0 +1,7 @@
+[
+  {"address": "0x101", "workspace": {"id": 1}},
+  {"address": "0x201", "workspace": {"id": 2}},
+  {"address": "0x9901", "workspace": {"id": 99}},
+  {"address": "0x102", "workspace": {"id": 1}},
+  {"address": "0x301", "workspace": {"id": 3}}
+]

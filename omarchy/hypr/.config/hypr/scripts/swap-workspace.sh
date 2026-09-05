@@ -8,28 +8,28 @@
 
 set -euo pipefail
 
-readonly SCRATCH_WORKSPACE=99
+fail() {
+  printf 'Swap workspace: %s\n' "$1" >&2
+  exit 1
+}
 
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
-    printf 'Missing dependency: %s\n' "$1" >&2
-    exit 1
+    fail "Missing dependency: $1"
   fi
 }
 
 focus_workspace() {
-  hyprctl dispatch "hl.dsp.focus({ workspace = \"$1\" })" >/dev/null
+  if ! hyprctl dispatch "hl.dsp.focus({ workspace = \"$1\" })" >/dev/null; then
+    fail "Unable to focus workspace $1."
+  fi
 }
 
-# Move every window on $1 to $2 without following them.
-move_workspace_windows() {
-  local from="$1" to="$2" address
-
-  while read -r address; do
-    [[ -n "$address" ]] || continue
-    hyprctl dispatch \
-      "hl.dsp.window.move({ workspace = \"$to\", follow = false, window = \"address:$address\" })" >/dev/null
-  done < <(hyprctl clients -j | jq -r --argjson from "$from" '.[] | select(.workspace.id == $from) | .address')
+move_window() {
+  if ! hyprctl dispatch \
+    "hl.dsp.window.move({ workspace = \"$1\", follow = false, window = \"address:$2\" })" >/dev/null; then
+    fail "Unable to move window $2 to workspace $1."
+  fi
 }
 
 main() {
@@ -37,24 +37,56 @@ main() {
   require_cmd jq
   require_cmd zenity
 
-  local current dest
-  current=$(hyprctl activeworkspace -j | jq -r '.id')
-  dest=$(zenity --entry --title="Swap Workspace" --text="Swap workspace $current with:")
+  local active current dest status clients moves workspace address
+  if ! active=$(hyprctl activeworkspace -j); then
+    fail 'Unable to query the active workspace.'
+  fi
+  if ! current=$(jq -ers '
+    if length != 1 then error("expected one active workspace") else .[0].id end
+    | select(type == "number" and . == floor and . > 0 and . <= 2147483647)
+  ' <<<"$active"); then
+    fail 'Unable to parse a positive active workspace ID.'
+  fi
 
-  [[ "$dest" =~ ^[0-9]+$ ]] || exit 1
-  [[ "$dest" != "$current" ]] || exit 0
+  if dest=$(zenity --entry --title="Swap Workspace" --text="Swap workspace $current with:"); then
+    # Strip leading zeroes before numeric comparisons, avoiding Bash's octal syntax.
+    [[ "$dest" =~ ^0*([1-9][0-9]*)$ ]] || fail 'Destination must be a positive workspace ID.'
+    dest="${BASH_REMATCH[1]}"
+    if ((${#dest} > 10)) || ((dest > 2147483647)); then
+      fail 'Destination workspace ID must not exceed 2147483647.'
+    fi
+  else
+    status=$?
+    ((status == 1)) && return 0
+    fail "Unable to prompt for a workspace (zenity exited $status)."
+  fi
+  [[ "$dest" != "$current" ]] || return 0
 
-  if [[ "$dest" == "$SCRATCH_WORKSPACE" || "$current" == "$SCRATCH_WORKSPACE" ]]; then
-    printf 'Workspace %s is used as scratch space for the swap.\n' "$SCRATCH_WORKSPACE" >&2
-    exit 1
+  if ! clients=$(hyprctl clients -j); then
+    fail 'Unable to query workspace windows.'
+  fi
+  # Plan both original window sets from one snapshot, before changing any workspace.
+  if ! moves=$(jq -rs --argjson current "$current" --argjson dest "$dest" '
+    if length != 1 or (.[0] | type) != "array"
+    then error("expected one clients array")
+    else .[0] end
+    | .[]
+    | select(.workspace.id == $current or .workspace.id == $dest)
+    | if (.address | if type == "string" then test("^0x[0-9a-fA-F]+$") else false end)
+      then [if .workspace.id == $current then $dest else $current end, .address] | @tsv
+      else error("invalid client address")
+      end
+  ' <<<"$clients"); then
+    fail 'Unable to parse workspace windows.'
   fi
 
   # Switch first so the bar marks the destination active before any moves.
   focus_workspace "$dest"
 
-  move_workspace_windows "$dest" "$SCRATCH_WORKSPACE"
-  move_workspace_windows "$current" "$dest"
-  move_workspace_windows "$SCRATCH_WORKSPACE" "$current"
+  while IFS=$'\t' read -r workspace address; do
+    [[ -n "$address" ]] || continue
+    move_window "$workspace" "$address"
+  done <<<"$moves"
 }
 
 main "$@"
