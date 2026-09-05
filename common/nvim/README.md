@@ -27,6 +27,10 @@ otherwise tmux.
 Telescope provides the Doom-style directory searches (`<leader>.`,
 `<leader>fD`, `<leader>sd`) and open-buffer grep (`<leader>sB`).
 
+Snacks scratch buffers use `<leader>bs` to toggle and `<leader>S` to select.
+Its default `<leader>.` binding is disabled so Telescope can own that key
+from startup, without needing to be loaded first.
+
 On Omarchy only, FFF retains `<leader><space>`, `<leader>ff`, `<leader>sg` and
 `<leader>sw`. Their Telescope bindings are removed explicitly, including visual
 mode word search. `<leader>sp` follows the same backend as `<leader>sg`.
