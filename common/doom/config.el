@@ -237,21 +237,6 @@
   :config
   (setq agent-shell-manager-side 'bottom))
 
-;; TODO: Trying to make the two tla mode work
-;;
-;; (use-package! tla-mode
-;;   :mode "\\.tla\\'"
-;;   :config
-;;   (add-hook 'tla-mode-hook #'prettify-symbols-mode))
-
-;; (use-package tla-ts-mode
-;;   :mode "\\.tla\\'"
-;;   :ensure t
-;;   :config
-;;                                         ; The grammar is called tlaplus, but the mode is called tla
-;;   (setq treesit-load-name-override-list '((tla "libtree-sitter-tlaplus" "tree_sitter_tlaplus")))
-;;   )
-
 ;; eat: real PTY terminal emulator in pure elisp.
 ;; Coexists with the :term vterm module; use eat when you want shell integration
 ;; inside eshell or when vterm's compiled module is unavailable.
