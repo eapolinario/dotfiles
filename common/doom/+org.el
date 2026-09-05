@@ -181,8 +181,32 @@
 ;; ;;
 ;; ;; Setup org-download
 (after! org-download
+  (defvar-local my-org-download--image-dir nil
+    "Last image directory automatically selected for this Org buffer.")
+
+  (defun my-org-download-set-image-dir ()
+    "Keep downloads beside the current Org file unless explicitly configured.
+Only update directories owned by this helper, preserving file- and
+directory-local settings when the buffer is first saved or saved as a new file."
+    (when (and (derived-mode-p 'org-mode)
+               buffer-file-name
+               (not (assq 'org-download-image-dir file-local-variables-alist))
+               (not (assq 'org-download-image-dir dir-local-variables-alist))
+               (or (not (local-variable-p 'org-download-image-dir))
+                   (and my-org-download--image-dir
+                        (equal org-download-image-dir my-org-download--image-dir))))
+      (setq-local org-download-image-dir
+                  (concat (file-name-sans-extension buffer-file-name) "-img")
+                  my-org-download--image-dir org-download-image-dir)))
+
+  (add-hook 'org-mode-hook #'my-org-download-set-image-dir)
+  (add-hook 'after-save-hook #'my-org-download-set-image-dir)
+  ;; org-download can be autoloaded after several Org files are already open.
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (my-org-download-set-image-dir)))
+
   (setq org-download-method 'directory)
-  (setq org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
   (setq org-download-image-org-width 600)
   (setq org-download-link-format "[[file:%s]]\n"
         org-download-abbreviate-filename-function #'file-relative-name)
