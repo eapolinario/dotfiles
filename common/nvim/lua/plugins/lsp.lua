@@ -1,4 +1,6 @@
-if vim.fn.has("mac") == 1 then
+local platform = require("config.platform")
+
+if platform.macos then
   return {
     {
       "neovim/nvim-lspconfig",
@@ -13,6 +15,15 @@ if vim.fn.has("mac") == 1 then
           nixd = { enabled = false },
         },
       },
+    },
+  }
+end
+
+if not platform.nixos then
+  return {
+    {
+      "neovim/nvim-lspconfig",
+      opts = { codelens = { enabled = true } },
     },
   }
 end

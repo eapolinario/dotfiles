@@ -1,3 +1,8 @@
+-- Omarchy's generated plugins/theme.lua owns its colorscheme and integrations.
+if require("config.platform").omarchy then
+  return {}
+end
+
 -- Use Nordic as the LazyVim colorscheme.
 -- Catppuccin is kept around as an alternative; LazyVim already ships a
 -- catppuccin plugin spec with a curated set of integrations (snacks, flash,

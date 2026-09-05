@@ -14,6 +14,7 @@ Usage: install.sh [OPTIONS]
 
 Options:
   -n, --dry-run   Pass --no/--simulate to stow (no filesystem changes)
+      --nvim-only Install only shared Neovim config; do not touch services
   -h, --help      Show this message and exit
 EOF
 }
@@ -168,7 +169,6 @@ stow_hypr_configs() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" hypr
 }
 
-
 stow_ghostty_config() {
   if [[ ! -d "$SCRIPT_DIR/ghostty" ]]; then
     return
@@ -183,48 +183,100 @@ stow_ghostty_config() {
   stow "${STOW_FLAGS[@]}" -d "$SCRIPT_DIR" -vt "$HOME" ghostty
 }
 
-
-# Omarchy seeds ~/.config/nvim from the omarchy-nvim package (via /etc/skel) and
-# never clobbers it afterwards, so only files that genuinely diverge from the
-# package are tracked here. Omarchy's own files (theme hot-reload, transparency,
-# remote clipboard, ...) are deliberately left package-managed so they keep
-# picking up upstream fixes. Two paths must never be tracked:
-#   - lua/plugins/theme.lua: omarchy-nvim-setup recreates it on every run as a
-#     relative symlink into ~/.local/state/omarchy. Stowing it would resolve the
-#     link from this repo instead of $HOME and break theme switching.
-#   - lazy-lock.json: lazy.nvim rewrites it on every update.
-# --no-folding keeps lua/plugins a real directory so Omarchy's theme.lua symlink
-# and the untracked package files survive alongside the stowed ones.
+# On Omarchy, share individual files rather than the config directory itself:
+# its generated relative theme link and packaged support files must stay local.
 stow_nvim() {
-  if [[ ! -d "$SCRIPT_DIR/nvim" ]]; then
+  local source_root
+  source_root="$(realpath "$SCRIPT_DIR/../common/nvim")"
+  if [[ ! -f "$source_root/init.lua" ]]; then
+    printf 'Shared Neovim configuration not found in %s.\n' "$source_root" >&2
+    exit 1
+  fi
+
+  local config_home legacy_root
+  config_home="$(realpath -m "${XDG_CONFIG_HOME:-$HOME/.config}")"
+  legacy_root="$(realpath -m "$SCRIPT_DIR/nvim/.config/nvim")"
+  local nvim_dir="$config_home/nvim"
+  local rel target parent resolved source_files backup_dir
+  local -a replace_files=()
+
+  if [[ -L "$nvim_dir" || (-e "$nvim_dir" && ! -d "$nvim_dir") ]]; then
+    printf 'Omarchy needs a real directory at %s; back up or migrate the existing path first.\n' "$nvim_dir" >&2
+    exit 1
+  fi
+
+  if [[ -d "${OMARCHY_PATH:-$HOME/.local/share/omarchy}" &&
+    ! -r "$nvim_dir/lua/config/remote_clipboard.lua" ]]; then
+    printf 'Omarchy Neovim support files are missing from %s. Run omarchy-nvim-setup first.\n' "$nvim_dir" >&2
+    exit 1
+  fi
+
+  # Match Stow's default documentation/dotfile exclusions, plus the two local
+  # runtime files explicitly excluded from this Omarchy installation below.
+  source_files="$(cd "$source_root" && find . \( -type f -o -type l \) \
+    ! -name .gitignore ! -name .stow-local-ignore \
+    ! -path './README*' ! -path './LICENSE*' ! -path './COPYING' \
+    ! -path './lazy-lock.json' ! -path './lua/plugins/theme.lua' -printf '%P\n')"
+
+  # Preflight every path before moving anything. Even a repo-owned directory
+  # symlink would put Omarchy's generated files inside the shared source tree.
+  while IFS= read -r rel; do
+    target="$nvim_dir/$rel"
+    parent="${target%/*}"
+    while [[ "$parent" != "$nvim_dir" ]]; do
+      if [[ -L "$parent" || (-e "$parent" && ! -d "$parent") ]]; then
+        printf 'Expected a real Neovim directory at %s; no Neovim files were changed.\n' "$parent" >&2
+        exit 1
+      fi
+      parent="${parent%/*}"
+    done
+
+    if [[ -L "$target" ]]; then
+      resolved="$(realpath -m "$target")"
+      if [[ "$resolved" == "$source_root/$rel" ]]; then
+        continue
+      elif [[ "$resolved" != "$legacy_root/$rel" ]]; then
+        printf 'Refusing to replace unrelated Neovim symlink %s -> %s.\n' "$target" "$resolved" >&2
+        exit 1
+      fi
+      replace_files+=("$rel")
+    elif [[ -f "$target" ]]; then
+      replace_files+=("$rel")
+    elif [[ -e "$target" ]]; then
+      printf 'Expected a file at %s; no Neovim files were changed.\n' "$target" >&2
+      exit 1
+    fi
+  done <<<"$source_files"
+
+  local -a stow_cmd=(
+    stow "${STOW_FLAGS[@]}" --no-folding
+    --ignore='^lazy-lock\.json$' --ignore='^lua/plugins/theme\.lua$'
+    -d "$SCRIPT_DIR/../common" -vt "$nvim_dir" nvim
+  )
+
+  if [[ "$DRY_RUN" == true ]]; then
+    for rel in "${replace_files[@]}"; do
+      printf '[DRY RUN] would back up %s before replacing it with a shared symlink.\n' "$nvim_dir/$rel"
+    done
+    # Stow cannot simulate past files that will be backed up but still exist.
+    printf '[DRY RUN] would create %s if needed and run:' "$nvim_dir"
+    printf ' %q' "${stow_cmd[@]}"
+    printf '\n'
     return
   fi
 
-  local config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-  local nvim_dir="$config_home/nvim"
-  local source_root="$SCRIPT_DIR/nvim/.config/nvim"
-  local rel
+  if ((${#replace_files[@]} > 0)); then
+    backup_dir="$(mktemp -d "$nvim_dir.backup.XXXXXXXX")"
+    printf 'Backing up replaced Neovim files to %s\n' "$backup_dir"
+    for rel in "${replace_files[@]}"; do
+      mkdir -p "$backup_dir/$(dirname "$rel")"
+      mv -- "$nvim_dir/$rel" "$backup_dir/$rel"
+    done
+  fi
 
   mkdir -p "$nvim_dir"
-
-  # .gitignore is skipped: stow's default ignore list never links it, so
-  # removing the target would delete it with nothing to replace it.
-  while IFS= read -r rel; do
-    remove_target_if_identical "$nvim_dir/$rel" "$source_root/$rel"
-  done < <(cd "$source_root" && find . -type f ! -name .gitignore -printf '%P\n')
-
-  local -a stow_cmd=(stow "${STOW_FLAGS[@]}" --no-folding -d "$SCRIPT_DIR" -vt "$HOME" nvim)
-
-  if [[ "$DRY_RUN" == true ]]; then
-    # Reclaimable files are still on disk during a simulation, so stow reports
-    # them as conflicts. Anything that would be a real conflict already exited
-    # above, so surface the plan without aborting the rest of the preview.
-    "${stow_cmd[@]}" || true
-  else
-    "${stow_cmd[@]}"
-  fi
+  "${stow_cmd[@]}"
 }
-
 
 # ~/.copilot holds live agent state (config.json, settings.json, logs/,
 # session-store.db) plus hand-made skill symlinks into ~/repos. --no-folding is
@@ -291,14 +343,18 @@ enable_grasp_service() {
 
 main() {
   ensure_linux
+  local nvim_only=false
 
-  while (( $# > 0 )); do
+  while (($# > 0)); do
     case "$1" in
-      -n|--dry-run)
+      -n | --dry-run)
         DRY_RUN=true
         STOW_FLAGS+=(-n)
         ;;
-      -h|--help)
+      --nvim-only)
+        nvim_only=true
+        ;;
+      -h | --help)
         usage
         exit 0
         ;;
@@ -312,6 +368,16 @@ main() {
   done
 
   require_cmd stow "Install it via your package manager"
+  if [[ "$nvim_only" == true ]]; then
+    stow_nvim
+    if [[ "$DRY_RUN" == true ]]; then
+      printf 'Neovim dry run complete; no files changed.\n'
+    else
+      printf 'Shared Neovim configuration installed; no services changed.\n'
+    fi
+    return
+  fi
+
   require_cmd systemctl "Required to manage user services"
 
   stow_doom

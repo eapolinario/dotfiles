@@ -1,15 +1,17 @@
 # Doom Emacs to Neovim Cheatsheet
 
 This compares the Doom Emacs bindings in `common/doom` with the LazyVim-based
-Neovim setup in `common/nvim`.
+Neovim setup in `common/nvim`, including its Omarchy installation.
 
 Assumptions:
 
 - Doom leader: `SPC`
 - LazyVim leader: `<Space>`
-- Neovim uses LazyVim's Telescope extra.
+- Neovim uses LazyVim's Telescope extra. On Omarchy, FFF handles the primary
+  file/project searches; directory and open-buffer searches still use Telescope.
 - Neovim uses LazyVim's Sidekick extra, with this repo opting into Sidekick's
-  zellij mux backend in `common/nvim/lua/plugins/sidekick.lua`.
+  zellij mux backend when available, otherwise tmux, in
+  `common/nvim/lua/plugins/sidekick.lua`.
 - Repo-specific Doom bindings are marked as custom.
 
 ## Search and Files
@@ -26,9 +28,13 @@ Assumptions:
 | Find files in current file's dir | `SPC .` | `<Space>.` or `<Space>fD` |
 | Search open buffers | `SPC s B` | `<Space>sB` |
 | Search current word | `SPC s s` / symbol search | `<Space>sw` |
-| Resume last search | consult history / minibuffer history | `<Space>sR` |
+| Resume last Telescope search | consult history / minibuffer history | `<Space>sR` |
 | Search keybindings | `SPC h b b` or `C-h B` | `<Space>sk` |
 | Search help | `SPC h f`, `SPC h v`, `SPC h d h` | `<Space>sh` |
+
+On Omarchy, `<Space><Space>`, `<Space>ff`, `<Space>sg`, `<Space>sp`, and
+`<Space>sw` open FFF; the other search bindings above use Telescope.
+The Telescope controls below do not apply to FFF.
 
 ## Telescope Basics
 
