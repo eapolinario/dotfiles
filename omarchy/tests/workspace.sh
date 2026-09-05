@@ -207,4 +207,4 @@ run_case 'move failure stops further dispatches' 1 'Unable to move window 0x101 
   "$(expected_dispatches 2 2 0x101)"
 
 printf 'Passed %s workspace regression cases.\n' "$case_count"
-nvim --headless -u NONE -i NONE -n -l "$test_dir/bindings.lua"
+nvim --headless -u NONE -i NONE -n -l "$test_dir/fixtures/bindings.lua"

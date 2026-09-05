@@ -1,4 +1,4 @@
-local test_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h")
+local test_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h")
 local getenv = os.getenv
 assert(getenv("SWAP_TEST_STATE"), "Run through omarchy/tests/workspace.sh with isolated fixtures")
 local home = assert(getenv("HOME"))

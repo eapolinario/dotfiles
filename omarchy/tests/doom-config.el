@@ -1,10 +1,10 @@
 ;;; doom-config.el --- Shared Doom lifecycle tests -*- lexical-binding: t; -*-
 
-;; Use doom-config.sh to isolate HOME when running locally.
+;; Use fixtures/run-doom.sh to isolate HOME when running locally.
 
 (require 'ert)
 (require 'org)
-(load (expand-file-name "doom-test-helper.el" (file-name-directory load-file-name)) nil t)
+(load (expand-file-name "fixtures/doom-test-helper.el" (file-name-directory load-file-name)) nil t)
 (load (expand-file-name "fixtures/org-download.el" doom-test-directory) nil t)
 (doom-test-register-after-blocks "+org.el" 'org-download)
 

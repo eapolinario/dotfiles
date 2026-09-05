@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-test_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+test_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$test_dir"
 
 command -v emacs >/dev/null || {

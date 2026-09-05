@@ -2,7 +2,8 @@
 
 (require 'cl-lib)
 
-(defconst doom-test-directory (file-name-directory (or load-file-name buffer-file-name))
+(defconst doom-test-directory
+  (expand-file-name "../" (file-name-directory (or load-file-name buffer-file-name)))
   "Directory containing the isolated Doom configuration tests.")
 
 (defconst doom-test-config-directory (expand-file-name "../../common/doom/" doom-test-directory)
