@@ -2,6 +2,10 @@
 
 Date: 2026-04-25
 
+Historical planning snapshot. Current Omarchy operations and regression commands
+are documented in `omarchy/README.md`; other platform entries have not been
+reassessed as part of the Linux installer work.
+
 ## How to use this file
 
 Status values:
@@ -50,13 +54,14 @@ When work starts or finishes, update the task entry directly.
     - tested NixOS channel / flake baseline
   - Notes:
 
-- [ ] Add an Omarchy dry-run check to CI
-  - Status: `todo`
+- [x] Add an Omarchy dry-run check to CI
+  - Status: `done`
   - Priority: high
   - Scope: `.github/workflows/`
   - Why: CI currently validates shell/secrets, but not installer behavior
-  - Validation target: `./omarchy/install.sh --dry-run`
-  - Notes:
+  - Validation target: `make check-omarchy`
+  - Notes: `.github/workflows/omarchy-ci.yml` runs isolated full-installer and
+    Neovim migration fixtures, including non-mutating dry-runs.
 
 ### Medium effort
 
@@ -109,10 +114,10 @@ When work starts or finishes, update the task entry directly.
 
 ### Larger structural improvements
 
-- [ ] Add Bats smoke tests for installers
+- [ ] Extend installer smoke coverage beyond Omarchy
   - Status: `todo`
   - Priority: medium
-  - Scope: future `test/` directory, shell scripts
+  - Scope: other platform installers; Omarchy coverage is implemented
   - Why: installers are important operational logic and change over time
   - Suggested test cases:
     - argument parsing
@@ -121,6 +126,9 @@ When work starts or finishes, update the task entry directly.
     - idempotent reruns
     - authinfo present vs absent
     - stow conflict handling
+  - Notes: Omarchy uses native Bash fixtures in `omarchy/tests/`, not a new
+    Bats dependency. These cover the listed cases plus rollback, XDG paths,
+    shared skills, legacy directory folding, and explicit service selection.
   - Notes:
 
 - [x] Add richer Nix flake checks

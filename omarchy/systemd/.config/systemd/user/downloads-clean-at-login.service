@@ -1,10 +1,10 @@
 [Unit]
-Description=Clean `~/Downloads/` at login
-After=default.target
+Description=Clean explicitly configured Downloads contents at login
+ConditionPathExists=%E/dotfiles/downloads-cleanup.conf
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemd-tmpfiles --user --clean
+ExecStart=/usr/bin/systemd-tmpfiles --user --clean "%E/dotfiles/downloads-cleanup.conf"
 
 [Install]
 WantedBy=default.target

@@ -1,5 +1,9 @@
 # Codebase Concerns
 
+Omarchy/shared-config entries have been refreshed for the component installer
+and regression suites. Other platform notes below are historical review
+observations, not a new assessment of macOS or NixOS.
+
 ## Core Sections (Required)
 
 ### 1) Top Risks (Prioritized)
@@ -8,7 +12,8 @@
 |----------|---------|----------|--------|------------------|
 | High | `readme.org` says locked/unkeyed installs will silently skip authinfo on macOS, but `macos/install.sh` exits if `gpg` or the configured key is missing | `readme.org`, `macos/install.sh`, `plans/repo-improvements-2026-04-25.md` | macOS installs can fail unexpectedly when the repo is locked or the key is unavailable | Align docs and installer behavior; choose one intended policy |
 | High | `nixos/deploy.sh` and `cd nixos && make deploy` are first-install workflows that can wipe a target disk | `AGENTS.md`, `nixos/deploy.sh`, `nixos/Makefile` | Accidental destructive deployment if invoked casually or with the wrong target | Keep strong operator confirmation and avoid using deploy paths for routine validation |
-| Medium | Validation is stronger for shell/Nix/secrets than for platform installers; no CI job currently runs Omarchy dry-run or macOS package checks | `.github/workflows/shellcheck.yml`, `.github/workflows/nixos-eval.yml`, `.github/workflows/gitleaks.yml`, `plans/repo-improvements-2026-04-25.md` | Installer regressions may land without automated detection | Add Omarchy dry-run CI and decide whether macOS validation should run in CI or remain local-only |
+| High | Opted-in Downloads cleanup permanently deletes contents, and service activation is outside file rollback | `omarchy/install.sh`, `omarchy/README.md` | Deleted downloads cannot be restored from configuration backups | Keep cleanup explicitly selected, review directory/retention, and inspect the activation plan |
+| Medium | Omarchy CI covers fixtures, not a live desktop or complete editor/plugin bootstrap | `.github/workflows/omarchy-ci.yml`, `omarchy/tests/`, `docs/codebase/TESTING.md` | Upstream compositor/plugin behavior can diverge from isolated expectations | Review upstream changes and perform deliberate live validation before deploying |
 | Medium | Several important files are large and multi-responsibility (`omarchy/install.sh`, `nixos/home/eduardo/default.nix`, `common/doom/config.el`) | `omarchy/install.sh`, `nixos/home/eduardo/default.nix`, `common/doom/config.el` | Small changes are harder to isolate and review safely | Split by responsibility when the next targeted refactor is needed |
 
 ### 2) Technical Debt
@@ -19,7 +24,7 @@ List the most important debt items only.
 |-----------|---------------|-------|-----------------|---------------|
 | Older imperative macOS installer | Planning notes explicitly call out `macos/install.sh` as older in style and less structured than `omarchy/install.sh` | `macos/install.sh`, `plans/repo-improvements-2026-04-25.md` | More install-time surprises, harder idempotence/dry-run work, and harder maintenance | Refactor toward functions, `require_cmd`, and dry-run support |
 | Shared/experimental config churn in NixOS + Hyprland paths | Planning notes and recent churn both point to experimentation in active NixOS/Hyprland files | `plans/repo-improvements-2026-04-25.md`, `nixos/hypr/hyprland.conf`, `nixos/home/eduardo/default.nix`, `nixos/hosts/fusion-vm/default.nix` | Shared paths become fragile and host-specific work leaks into common config | Introduce clearer host-specific overrides or experimental fragments |
-| No automated installer smoke tests | The plan file proposes Bats smoke tests because installers are important operational logic, and no test files are present today | `plans/repo-improvements-2026-04-25.md`, `AGENTS.md` | Regressions in argument parsing, dependency checks, or authinfo handling may go unnoticed | Add a focused installer smoke-test layer |
+| Installer transaction complexity | Backup, rollback, legacy folding and local-state preservation interact | `omarchy/install.sh`, `omarchy/tests/install.sh` | A new component can bypass a safety invariant if wired independently | Reuse the existing plan/preflight/apply path and extend isolated fixtures |
 
 ### 3) Security Concerns
 
@@ -51,7 +56,9 @@ List the most important debt items only.
 
 1. [ASK USER] Should macOS authinfo handling fail fast when the GPG key is missing, or should it match `readme.org` and skip authinfo gracefully with a warning?
 2. [ASK USER] Is `security.sudo.wheelNeedsPassword = false` an intentional long-term default for all NixOS hosts, or only acceptable for selected development/VM contexts?
-3. [ASK USER] Should Omarchy installer dry-run validation become mandatory in CI, as proposed in `plans/repo-improvements-2026-04-25.md`?
+
+The earlier Omarchy CI question is resolved: `make check-omarchy` runs through
+`.github/workflows/omarchy-ci.yml`, including full-install dry-run fixtures.
 
 ### 7) Evidence
 
@@ -68,6 +75,9 @@ List the most important debt items only.
 - `nixos/hypr/hyprland.conf`
 - `common/doom/config.el`
 - `.github/workflows/shellcheck.yml`
+- `.github/workflows/omarchy-ci.yml`
+- `omarchy/tests/install.sh`
+- `omarchy/README.md`
 - `.github/workflows/gitleaks.yml`
 - `.github/workflows/nixos-eval.yml`
 - `plans/repo-improvements-2026-04-25.md`

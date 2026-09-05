@@ -1,0 +1,48 @@
+name: Omarchy CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "omarchy/**"
+      - "common/**"
+      - "Makefile"
+      - ".github/workflows/omarchy-ci.yml"
+  pull_request:
+    paths:
+      - "omarchy/**"
+      - "common/**"
+      - "Makefile"
+      - ".github/workflows/omarchy-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    env:
+      NVIM_VERSION: v0.12.5
+      SHFMT_VERSION: v3.14.0
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Install regression tools
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends stow shellcheck emacs-nox jq
+          tools="$RUNNER_TEMP/dotfiles-tools"
+          mkdir -p "$tools"
+          gh release download "$NVIM_VERSION" --repo neovim/neovim \
+            --pattern nvim-linux-x86_64.tar.gz --dir "$tools"
+          gh release download "$SHFMT_VERSION" --repo mvdan/sh \
+            --pattern "shfmt_${SHFMT_VERSION}_linux_amd64" --dir "$tools"
+          tar -xzf "$tools/nvim-linux-x86_64.tar.gz" -C "$tools"
+          mv "$tools/shfmt_${SHFMT_VERSION}_linux_amd64" "$tools/shfmt"
+          chmod +x "$tools/shfmt"
+          printf '%s\n' "$tools" "$tools/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+      - name: Run isolated Linux and shared-config regressions
+        run: make check-omarchy

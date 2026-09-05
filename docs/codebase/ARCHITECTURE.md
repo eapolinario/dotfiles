@@ -23,20 +23,26 @@ Evidence-backed flow:
 2. For Omarchy/macOS, the shell installer resolves repo-relative package directories and applies them with `stow` into `$HOME` or `$XDG_CONFIG_HOME` (`omarchy/install.sh`, `macos/install.sh`).
 3. For NixOS, `nixos/flake.nix` derives `nixosConfigurations` from host metadata, then composes host modules, Home Manager, overlays, and shared modules.
 4. User-level NixOS config further links live files from this repo using Home Manager out-of-store symlinks (`nixos/home/eduardo/default.nix`).
-5. Platform-specific post-apply actions then run: Omarchy enables user services, macOS runs `brew bundle` and starts the yabai service, and NixOS CI runs flake checks / host evaluation / host builds (`omarchy/install.sh`, `macos/install.sh`, `.github/workflows/nixos-eval.yml`).
+5. Platform-specific post-apply actions then run: Omarchy activates only explicitly selected services with `--enable-services`; other platform entrypoints have their own bootstrap/build behavior (`omarchy/install.sh`, `macos/install.sh`, `.github/workflows/nixos-eval.yml`).
+
+Omarchy's file path is: select components -> discover files/skills -> preflight
+all targets -> print plan -> back up replacements -> Stow/link/write -> confirm
+planned links. Failures during file application trigger rollback; service
+activation is a separate, explicitly requested phase. Doctor and dry-run never
+enter the application phase. See `omarchy/README.md`.
 
 ### 3) Layer/Module Responsibilities
 
 | Layer or module | Owns | Must not own | Evidence |
 |-----------------|------|--------------|----------|
 | Root orchestration (`Makefile`, `readme.org`) | Human-facing entrypoints and repo overview | Platform-specific implementation details | `Makefile`, `readme.org` |
-| `omarchy/install.sh` | Linux installer flow, stow operations, user service enablement | macOS package management or NixOS host evaluation | `omarchy/install.sh` |
+| `omarchy/install.sh` | Component selection, read-only diagnostics/plans, XDG-correct Stow, backups/rollback, explicit service activation | Package installation, implicit cleanup, macOS management, NixOS evaluation | `omarchy/install.sh`, `omarchy/README.md` |
 | `macos/install.sh` | macOS stow flow, Homebrew application, service/bootstrap setup | NixOS host composition | `macos/install.sh` |
 | `nixos/flake.nix` | Host metadata, flake inputs, outputs, and host/check derivation | macOS or Omarchy imperative install steps | `nixos/flake.nix` |
 | `nixos/hosts/*` | Host-specific machine settings such as boot, virtualization, display manager, and host name | Shared defaults that belong in `nixos/modules/common` | `nixos/hosts/fusion-vm/default.nix` |
 | `nixos/modules/common` | Shared system defaults for NixOS hosts | Per-host tweaks | `nixos/modules/common/default.nix` |
 | `nixos/home/eduardo` | User environment, package set, desktop/user programs, and repo-backed symlinks | System bootloader or disk layout | `nixos/home/eduardo/default.nix` |
-| `common/doom` and `common/authinfo` | Shared editor config and encrypted credentials | Platform-only logic | `common/doom/config.el`, `common/authinfo/README.md` |
+| `common/` | Shared Doom/Neovim config, agent configuration and skills, encrypted credentials | Platform-only installation logic | `common/nvim/README.md`, `common/doom/config.el`, `common/authinfo/README.md`, `CONTEXT.md` |
 
 ### 4) Reused Patterns
 

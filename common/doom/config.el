@@ -137,11 +137,7 @@
     :key (auth-source-pick-first-password :host "api.deepseek.com"))
   (gptel-make-gemini "Gemini"
     :stream t
-    :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com"))
-
-  ;; On Arch the claude-acp executable is called claude-code-acp for some reason, so we need to override the default command.
-  ;; TODO: figure out why this is the case and if there's a better solution than hardcoding this.
-  (setq agent-shell-anthropic-claude-acp-command '("claude-code-acp")))
+    :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com")))
 
 (after! gptel-magit
   (setq gptel-magit-model 'gpt-5-mini
@@ -218,6 +214,10 @@
 		(evil-emacs-state)))))
 
 (after! agent-shell
+  ;; Prefer Arch's adapter name only when it is installed.
+  (let ((claude-acp (executable-find "claude-code-acp")))
+    (when claude-acp
+      (setq agent-shell-anthropic-claude-acp-command (list claude-acp))))
   (setq agent-shell-enable-logging t)
   (setq agent-shell-enable-debug t)
   (setq agent-shell-enable-traces t)

@@ -1,57 +1,64 @@
-# Testing Patterns
+# Testing patterns
 
-## Core Sections (Required)
+## Linux and shared-configuration entrypoints
 
-### 1) Test Stack and Commands
+From the repository root:
 
-- Primary test framework: [TODO] No dedicated test framework configuration was identified in the files reviewed
-- Assertion/mocking tools: [TODO]
-- Commands:
-
-```bash
-bash -n path/to/script.sh
-shellcheck path/to/script.sh
-shfmt -d path/to/script.sh
-./omarchy/install.sh --dry-run
-cd macos && brew bundle check
-cd nixos && make check
-make gitleaks
+```sh
+make check-omarchy   # syntax, ShellCheck, shfmt, unit definitions, regression suites
+make test-omarchy    # standalone Bash, headless Neovim Lua, and Emacs ERT suites
+make gitleaks        # history scan against the reviewed baseline
 ```
 
-### 2) Test Layout
+`SHFMT`, `NVIM`, and `EMACS` can be overridden to use existing binaries in
+nonstandard locations. No additional test framework is required. The Bash
+suites use explicit assertions, Lua suites use Neovim's built-in APIs, and
+Emacs supplies ERT.
 
-- Test file placement pattern: No dedicated `test/`, `tests/`, `__tests__/`, `spec/`, or `*.bats` files were found in the repository tree reviewed
-- Naming convention: [TODO] No repo-wide automated test filename pattern is present
-- Setup files and where they run: CI setup currently lives in `.github/workflows/`; local validation guidance lives in `AGENTS.md` and the `Makefile` / `nixos/Makefile`
+Other platform entrypoints remain documented in `AGENTS.md`; these Linux suites
+do not replace a macOS bootstrap or NixOS host evaluation.
 
-### 3) Test Scope Matrix
+## Layout and coverage
 
-| Scope | Covered? | Typical target | Notes |
-|-------|----------|----------------|-------|
-| Unit | No | [TODO] | No unit test files or unit test runner config were found |
-| Integration | No | [TODO] | Repo uses validation commands instead of integration test suites; examples include `brew bundle check`, `nix flake check`, host evaluation, and installer dry-runs |
-| E2E | No | [TODO] | No end-to-end or smoke-test framework was found |
+| Area | Scope |
+|------|-------|
+| `omarchy/tests/install.sh` | Full-install dry-run snapshots, custom XDG paths, components, shared-skill discovery, local state, locked/unlocked fixture credentials, service opt-ins, private cleanup rules, canonical path guards, legacy directory folding, file rollback, diagnostics |
+| `omarchy/tests/nvim-install.sh` | Seeded Omarchy support, legacy file links, generated theme/lock exclusions, directory conflicts, backups, repeated installation |
+| `omarchy/tests/nvim-config.lua` | Omarchy, NixOS, macOS and generic Linux branches; picker ownership, directory searches, extras and blame settings |
+| Workspace suites in `omarchy/tests/` | Window-set swapping, invalid/cancelled input, dispatch errors and XDG-aware binding paths without a real desktop session |
+| Doom ERT suite in `omarchy/tests/` | Per-buffer download paths and agent-shell configuration lifecycle without bootstrapping Doom or contacting providers |
 
-### 4) Mocking and Isolation Strategy
+Standalone suites live directly under `omarchy/tests/` and are discovered by
+the Makefile by extension. Supporting fixtures belong in subdirectories.
+`.github/workflows/omarchy-ci.yml` runs the same umbrella target for Linux/shared
+changes. `.github/workflows/shellcheck.yml` retains repository-wide shell linting.
 
-- Main mocking approach: [TODO] No mocking layer or fixture setup was identified
-- Isolation guarantees: Validation is mostly command-based and platform-scoped rather than mock-based
-- Common failure mode in tests: [TODO] No test suite is present; likely failure surfaces are installer regressions, Nix evaluation issues, and secret-handling mismatches
+## Isolation
 
-### 5) Coverage and Quality Signals
+Bash installer tests copy configuration into temporary repositories and redirect
+`HOME` and `XDG_CONFIG_HOME`. They create synthetic authinfo fixtures rather than
+copying real credentials. Service and desktop commands are mocked; Stow itself
+is real. Cleanup rule parsing uses a nonmatching `--prefix`, never a live cleanup
+directory. Temporary fixture trees are removed on exit.
 
-- Coverage tool + threshold: [TODO]
-- Current reported coverage: [TODO]
-- Known gaps/flaky areas: No automated installer smoke tests are present, Omarchy dry-run is not in CI yet, and the planning file explicitly proposes future Bats smoke tests and a CI Omarchy dry-run check
+Neovim runs with `--headless -u NONE -i NONE`: normal configuration and plugin
+bootstrap are not loaded. ERT runs in batch mode without personal init files.
+Do not replace these fixtures with a live installer invocation in CI.
 
-### 6) Evidence
+## Limitations
 
-- `AGENTS.md`
+There is no numeric coverage threshold. These suites cover configuration
+contracts and command interactions, not a running Hyprland compositor, a
+complete Doom/LazyVim plugin installation, provider authentication, or real
+service startup/network provisioning. Service activation and destructive
+cleanup remain explicit operator actions.
+
+## Evidence
+
 - `Makefile`
-- `nixos/Makefile`
+- `omarchy/tests/`
+- `omarchy/install.sh`
+- `.github/workflows/omarchy-ci.yml`
 - `.github/workflows/shellcheck.yml`
 - `.github/workflows/gitleaks.yml`
-- `.github/workflows/nixos-eval.yml`
-- `omarchy/install.sh`
-- `macos/Brewfile`
-- `plans/repo-improvements-2026-04-25.md`
+- `omarchy/README.md`

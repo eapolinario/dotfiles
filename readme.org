@@ -22,7 +22,8 @@ Targets Omarchy 4 ("quattro"), which ships as a system package under
 =/usr/share/omarchy= and configures Hyprland in Lua. Omarchy's defaults load
 first and these files override them afterwards.
 
-- =install.sh= — stows all packages below and enables user systemd services
+- =install.sh= — preflights selected components, backs up replaced files, and
+  stows individual files; service activation requires =--enable-services=
 - =ghostty/= — terminal config; colors follow the active Omarchy theme
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
 - Neovim uses =common/nvim/=, stowed as individual files with =--no-folding=.
@@ -31,7 +32,8 @@ first and these files override them afterwards.
   search keys; Telescope supplies the shared Doom-style directory searches.
   The installer backs up replaced files and migrates the former =omarchy/nvim/=
   symlinks. See [[file:common/nvim/README.md][the shared Neovim configuration]].
-- =systemd/= — user services (downloads cleanup, grasp browser extension relay)
+- =systemd/= — Grasp relay unit plus explicitly opt-in Downloads cleanup;
+  neither service is automatically enabled by the default installation
 
 Deliberately untracked, because Omarchy rewrites them in place and would
 replace a stowed symlink with a regular file:
@@ -98,6 +100,9 @@ Shared configs used on both omarchy and macOS (and referenced from NixOS).
   =session-store.db=) and hand-made skill symlinks
 - =claude/= — Claude Code =settings.json=, hooks, and the same skill symlinks;
   also stowed with =--no-folding=
+- =pi/= — pi agent settings, prompts, and extensions. On Omarchy, selected
+  Claude, Copilot, and pi components discover all shared skills at installation
+  time rather than depending on the older tracked skill aliases
 
 * Installation
 
@@ -109,8 +114,22 @@ make install-omarchy
 ./omarchy/install.sh
 #+end_src
 
-Requires =stow= and =systemctl=. Pass =--dry-run= to preview changes without
-touching the filesystem.
+Requires Bash, GNU Stow, coreutils, and findutils. Pass =--dry-run= to preview
+changes without touching the filesystem, or =--doctor= to report runtime
+prerequisites without installing anything. Use =--only doom,copilot= (for
+example) to limit the selected components. Missing/locked authinfo is skipped
+with a warning; =--require-secrets= makes it a preflight failure.
+
+The default installation does not enable or start services. Downloads cleanup
+requires explicit selection (=--only downloads-cleanup= or
+=--with-downloads-cleanup=); it permanently deletes eligible contents and
+defaults to seven-day retention. Starting services from the installer requires
+=--enable-services=. The former zero-age global cleanup rule is now a harmless
+compatibility placeholder.
+
+See [[file:omarchy/README.md][the Omarchy operations guide]] for destinations, prerequisites, activation,
+backups, rollback, and recovery. Run =make check-omarchy= for the isolated
+Linux/shared-configuration regression suites.
 
 To install or migrate only Neovim, without changing services or other dotfiles:
 
@@ -145,6 +164,10 @@ cd nixos && make switch
 =common/authinfo/.authinfo= is encrypted with [[https://github.com/AGWA/git-crypt][git-crypt]]. Running the installers
 on a machine without the key will silently skip authinfo stowing (macOS) or
 produce a broken symlink (NixOS) until the repo is unlocked.
+
+On Omarchy, the installer detects a locked authinfo file, warns, and leaves
+existing credentials untouched. It never decrypts the repository or prints
+credential contents.
 
 For detailed instructions on decrypting the =.authinfo= file, including
 installation steps, GPG key requirements, and security considerations for

@@ -5,7 +5,14 @@
 -- manager, editor, Obsidian, Docker, Spotify, ChatGPT, Grok, YouTube, X) is
 -- deliberately absent -- the defaults now cover it.
 
-local home = os.getenv("HOME")
+local config_home = os.getenv("XDG_CONFIG_HOME")
+if not config_home or config_home == "" then
+  config_home = os.getenv("HOME") .. "/.config"
+end
+
+local function shell_quote(path)
+  return "'" .. path:gsub("'", "'\\''") .. "'"
+end
 
 -- Close the active window with SUPER + Q instead of Omarchy's SUPER + W.
 hl.unbind("SUPER + W")
@@ -32,7 +39,8 @@ o.bind("SUPER + SHIFT + SLASH", "Passwords", { launch = "bitwarden-desktop" })
 
 -- Was: Google Maps (https://maps.google.com/)
 hl.unbind("SUPER + SHIFT + S")
-o.bind("SUPER + SHIFT + S", "Swap workspace", home .. "/.config/hypr/scripts/swap-workspace.sh")
+-- o.bind executes command strings through a shell; quote the entire XDG path.
+o.bind("SUPER + SHIFT + S", "Swap workspace", shell_quote(config_home .. "/hypr/scripts/swap-workspace.sh"))
 
 -- Omarchy 4 moved btop to SUPER + CTRL + T; keep it reachable here too.
 o.bind("SUPER + SHIFT + T", "Activity", { tui = "btop" })
