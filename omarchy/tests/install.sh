@@ -76,6 +76,9 @@ export PATH="$TEST_DIR/bin:$PATH"
 new_home fresh
 source_before="$(snapshot "$fixture")"
 succeeds --help
+succeeds --only authinfo
+grep -q 'No files were selected for installation' "$TEST_DIR/install.log"
+[[ ! -e "$HOME" ]] || fail 'skipped authinfo install created HOME'
 succeeds --dry-run
 [[ ! -e "$HOME" && ! -e "$SYSTEMCTL_MARKER" ]] || fail 'fresh full dry-run had side effects'
 [[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'dry-run changed source'

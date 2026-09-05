@@ -646,6 +646,10 @@ main() {
     printf 'Dry run complete; no files or service state changed.\n'
     return
   fi
+  if ((${#plan_targets[@]} == 0)); then
+    printf 'No files were selected for installation; see any warnings above.\n'
+    return
+  fi
   apply_plan
 }
 
