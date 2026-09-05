@@ -22,6 +22,5 @@ export TMPDIR="$test_dir/$state_dir"
 mkdir -p -- "$HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
 
 emacs --batch -Q \
-  -l "$test_dir/org-download-test.el" \
-  -l "$test_dir/agent-shell-test.el" \
+  -l "$test_dir/doom-config.el" \
   -f ert-run-tests-batch-and-exit

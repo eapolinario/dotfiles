@@ -1,9 +1,12 @@
-;;; test-helper.el --- Isolated Doom configuration tests -*- lexical-binding: t; -*-
+;;; doom-test-helper.el --- Isolated Doom test support -*- lexical-binding: t; -*-
 
 (require 'cl-lib)
 
 (defconst doom-test-directory (file-name-directory (or load-file-name buffer-file-name))
   "Directory containing the isolated Doom configuration tests.")
+
+(defconst doom-test-config-directory (expand-file-name "../../common/doom/" doom-test-directory)
+  "Directory containing the shared Doom configuration under test.")
 
 (defvar doom-test-directory-count 0
   "Counter for test-owned directories within the checkout.")
@@ -14,7 +17,7 @@ Use Emacs's real package-load lifecycle, leaving unrelated configuration,
 including providers and secret lookups, unevaluated."
   (let ((found nil))
     (with-temp-buffer
-      (insert-file-contents (expand-file-name file (expand-file-name ".." doom-test-directory)))
+      (insert-file-contents (expand-file-name file doom-test-config-directory))
       (emacs-lisp-mode)
       (check-parens)
       (goto-char (point-min))
