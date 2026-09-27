@@ -34,6 +34,8 @@ first and these files override them afterwards.
   symlinks. See [[file:common/nvim/README.md][the shared Neovim configuration]].
 - =systemd/= — Grasp relay unit plus explicitly opt-in Downloads cleanup;
   neither service is automatically enabled by the default installation
+- =chromium-extensions.md= — reference list of Web Store extensions to
+  reinstall; not stowed or applied by the installer
 
 Deliberately untracked, because Omarchy rewrites them in place and would
 replace a stowed symlink with a regular file:
