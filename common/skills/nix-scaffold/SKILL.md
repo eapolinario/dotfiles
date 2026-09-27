@@ -21,6 +21,8 @@ Generates a complete project scaffold for Eduardo's standard setup:
 
 Supported languages: **Rust**, **Go**, **Python**, **OCaml**, **Haskell**.
 
+If the user requests multiple supported languages, generate a combined dev shell and a multi-language Justfile while keeping `packages.default` as a minimal stub where a full cross-language package derivation is not practical.
+
 ---
 
 ## Step 1 — Determine the language
