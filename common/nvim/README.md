@@ -22,6 +22,11 @@ debugging, Overseer and Zig. Inline Git blame is enabled with a 300ms delay;
 `<leader>uB` toggles it. Sidekick persists sessions with zellij when available,
 otherwise tmux.
 
+In a Sidekick CLI terminal, Shift+Enter inserts a prompt newline. The
+buffer-local Sidekick keys handle both native Shift+Enter and Ghostty's
+Alt+Enter encoding, forwarding Shift+Enter to the CLI; other terminal buffers
+keep their existing bindings.
+
 ## Search bindings
 
 Telescope provides the Doom-style directory searches (`<leader>.`,

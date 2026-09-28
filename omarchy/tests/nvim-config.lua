@@ -169,6 +169,44 @@ equal(false, blame.signcolumn)
 
 local extras = vim.json.decode(table.concat(vim.fn.readfile(config .. "lazyvim.json"), "\n")).extras
 equal(21, #extras)
+local sidekick = load_config("lua/plugins/sidekick.lua")[1].opts.cli
+local keys = sidekick.win.keys
+equal("<S-CR>", keys.shift_enter[1])
+equal("<M-CR>", keys.ghostty_shift_enter[1])
+local shift_enter = "\27[13;2u"
+local tmux_command
+local original_system = vim.system
+vim.system = function(cmd)
+  tmux_command = cmd
+  return {
+    wait = function()
+      return { code = 0 }
+    end,
+  }
+end
+local tmux = {
+  backend = "tmux",
+  pane_id = function()
+    return "%0"
+  end,
+}
+keys.ghostty_shift_enter[2]({ parent = tmux })
+vim.system = original_system
+equal({ "tmux", "send-keys", "-l", "-t", "%0", shift_enter }, tmux_command)
+local sent
+local original_chan_send = vim.api.nvim_chan_send
+vim.api.nvim_chan_send = function(job, text)
+  sent = { job, text }
+end
+keys.shift_enter[2]({
+  job = 42,
+  is_running = function()
+    return true
+  end,
+})
+vim.api.nvim_chan_send = original_chan_send
+equal({ 42, shift_enter }, sent)
+
 local seen = {}
 for _, extra in ipairs(extras) do
   assert(not seen[extra], "duplicate extra: " .. extra)
