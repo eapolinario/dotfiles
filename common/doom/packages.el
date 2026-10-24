@@ -65,6 +65,10 @@
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 
+(package! ai-code
+  :recipe (:host github :repo "tninja/ai-code-interface.el"
+           :files (:defaults "snippets" ("prompt" "prompt/*.md"))))
+
 ;; git-link :heart:
 (package! git-link)
 

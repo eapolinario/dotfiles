@@ -143,6 +143,15 @@
   (setq gptel-magit-model 'gpt-5-mini
         gptel-magit-stream t))
 
+(use-package! ai-code
+  :commands ai-code-menu
+  :init
+  (map! :leader :desc "AI Code menu" "o a" #'ai-code-menu)
+  :config
+  (setq ai-code-backends-infra-terminal-backend 'vterm
+        ai-code-github-copilot-cli-program-switches '("--model" "gpt-6.1-sol"))
+  (ai-code-set-backend 'github-copilot-cli))
+
 ;; Let me write longer commit messages
 (after! git-commit
   (setq git-commit-summary-max-length 120))
