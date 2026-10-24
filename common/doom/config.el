@@ -148,8 +148,8 @@
   :init
   (map! :leader :desc "AI Code menu" "o a" #'ai-code-menu)
   :config
-  (setq ai-code-backends-infra-terminal-backend 'vterm
-        ai-code-github-copilot-cli-program-switches '("--model" "gpt-6.1-sol"))
+  ;; Leave the vterm default customizable so Eat can also be selected.
+  (setq ai-code-github-copilot-cli-program-switches '("--model" "gpt-6.1-sol"))
   (ai-code-set-backend 'github-copilot-cli))
 
 ;; Let me write longer commit messages
