@@ -158,11 +158,14 @@ any directory proferred by `consult-dir'."
       "C-;"   #'embark-dwim
       "C-h B" #'embark-bindings)
 
-;; eat terminal: SPC o e launches it in the current window,
-;; SPC o E pops it open in another window.
+;; Keep vterm on SPC o t/T; Doom otherwise gives those bindings to Ghostel.
 (map! :leader
       :prefix ("o" . "open")
       :desc "Eat terminal"               "e" #'eat
-      :desc "Eat terminal (other window)" "E" #'eat-other-window)
+      :desc "Eat terminal (other window)" "E" #'eat-other-window
+      :desc "Toggle Ghostel popup"        "g" #'+ghostel/toggle
+      :desc "Open Ghostel here"           "G" #'+ghostel/here
+      :desc "Toggle vterm popup"          "t" #'+vterm/toggle
+      :desc "Open vterm here"             "T" #'+vterm/here)
 
 ;;; +bindings.el ends here
