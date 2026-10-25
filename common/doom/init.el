@@ -83,6 +83,7 @@
        ;;eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
        ;;term              ; basic terminal emulator for Emacs
+       (ghostel +everywhere)           ; libghostty terminal with Evil integration
        vterm             ; the best terminal emulation in Emacs
 
        :checkers
@@ -181,7 +182,7 @@
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
        (yaml +lsp +tree-sitter) ; JSON, but readable
-       ;; (zig +lsp +tree-sitter)               ; C, but simpler
+       (zig +lsp +tree-sitter)               ; C, but simpler
 
        :email
        ;;(mu4e +org +gmail)

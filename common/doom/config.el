@@ -140,7 +140,7 @@
     :key (auth-source-pick-first-password :host "generativelanguage.googleapis.com")))
 
 (after! gptel-magit
-  (setq gptel-magit-model 'gpt-5-mini
+  (setq gptel-magit-model 'gpt-5.6-luna
         gptel-magit-stream t))
 
 (use-package! ai-code

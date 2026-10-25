@@ -158,11 +158,16 @@ any directory proferred by `consult-dir'."
       "C-;"   #'embark-dwim
       "C-h B" #'embark-bindings)
 
-;; eat terminal: SPC o e launches it in the current window,
-;; SPC o E pops it open in another window.
+;; Use Ghostel for the default terminal keys; keep vterm available on SPC o v/V.
 (map! :leader
       :prefix ("o" . "open")
       :desc "Eat terminal"               "e" #'eat
-      :desc "Eat terminal (other window)" "E" #'eat-other-window)
+      :desc "Eat terminal (other window)" "E" #'eat-other-window
+      :desc "Toggle Ghostel popup"        "g" #'+ghostel/toggle
+      :desc "Open Ghostel here"           "G" #'+ghostel/here
+      :desc "Toggle Ghostel popup"        "t" #'+ghostel/toggle
+      :desc "Open Ghostel here"           "T" #'+ghostel/here
+      :desc "Toggle vterm popup"          "v" #'+vterm/toggle
+      :desc "Open vterm here"             "V" #'+vterm/here)
 
 ;;; +bindings.el ends here
