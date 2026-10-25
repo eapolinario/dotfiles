@@ -3,7 +3,7 @@
 *.log
 tmp/
 
-doom/custom.el
+common/doom/custom.el
 common/nvim/lazy-lock.json
 
 # Agent-shell session transcripts: local terminal-paste dumps with potentially
