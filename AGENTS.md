@@ -1,7 +1,5 @@
 Agent guide for this repository (`dotfiles`; no build step).
 
-`AGENTS.md` is the canonical guide; `CLAUDE.md` imports it.
-
 Keep changes small, focused, and repo-specific. Prefer the documented install/check commands over inventing new workflows.
 
 ## Repo layout
