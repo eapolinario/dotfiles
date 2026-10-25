@@ -158,14 +158,16 @@ any directory proferred by `consult-dir'."
       "C-;"   #'embark-dwim
       "C-h B" #'embark-bindings)
 
-;; Keep vterm on SPC o t/T; Doom otherwise gives those bindings to Ghostel.
+;; Use Ghostel for the default terminal keys; keep vterm available on SPC o v/V.
 (map! :leader
       :prefix ("o" . "open")
       :desc "Eat terminal"               "e" #'eat
       :desc "Eat terminal (other window)" "E" #'eat-other-window
       :desc "Toggle Ghostel popup"        "g" #'+ghostel/toggle
       :desc "Open Ghostel here"           "G" #'+ghostel/here
-      :desc "Toggle vterm popup"          "t" #'+vterm/toggle
-      :desc "Open vterm here"             "T" #'+vterm/here)
+      :desc "Toggle Ghostel popup"        "t" #'+ghostel/toggle
+      :desc "Open Ghostel here"           "T" #'+ghostel/here
+      :desc "Toggle vterm popup"          "v" #'+vterm/toggle
+      :desc "Open vterm here"             "V" #'+vterm/here)
 
 ;;; +bindings.el ends here
