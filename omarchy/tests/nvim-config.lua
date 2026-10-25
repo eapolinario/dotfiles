@@ -168,7 +168,7 @@ equal(300, blame.current_line_blame_opts.delay)
 equal(false, blame.signcolumn)
 
 local extras = vim.json.decode(table.concat(vim.fn.readfile(config .. "lazyvim.json"), "\n")).extras
-equal(21, #extras)
+equal(22, #extras)
 local sidekick = load_config("lua/plugins/sidekick.lua")[1].opts.cli
 local keys = sidekick.win.keys
 equal("<S-CR>", keys.shift_enter[1])
@@ -212,7 +212,14 @@ for _, extra in ipairs(extras) do
   assert(not seen[extra], "duplicate extra: " .. extra)
   seen[extra] = true
 end
-for _, extra in ipairs({ "editor.overseer", "editor.telescope", "dap.core", "lang.go", "lang.zig" }) do
+for _, extra in ipairs({
+  "editor.overseer",
+  "editor.telescope",
+  "dap.core",
+  "lang.go",
+  "lang.haskell",
+  "lang.zig",
+}) do
   equal(true, seen["lazyvim.plugins.extras." .. extra])
 end
 
