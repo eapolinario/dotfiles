@@ -164,7 +164,22 @@
 
 ;; Enable ast-grep
 (use-package! ast-grep
-  :ensure t)
+  :commands (ast-grep-search
+             ast-grep-project
+             ast-grep-directory
+             ast-grep-rewrite-project)
+  :init
+  (map! :leader
+        (:prefix ("s a" . "ast-grep")
+         :desc "Search project" "p" #'ast-grep-project
+         :desc "Search directory" "d" #'ast-grep-directory
+         :desc "Search here" "s" #'ast-grep-search
+         :desc "Rewrite project" "r" #'ast-grep-rewrite-project))
+  :config
+  (setq ast-grep-search-backend 'consult
+        ast-grep-executable "ast-grep"
+        ast-grep-async-min-input 3
+        ast-grep-use-nerd-icons t))
 
 ;; TODO: give yankpad a try
 ;; yankpad
