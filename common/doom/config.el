@@ -150,6 +150,15 @@
   :config
   (setq ai-code-backends-infra-terminal-backend 'ghostel)
   (setq ai-code-pi-program-switches '("--provider" "github-copilot" "--model" "gpt-6.1-sol"))
+  ;; Give ai-code menus the full bottom width without changing other Transients.
+  (dolist (prefix '(ai-code-menu-default
+                    ai-code-menu-2-columns
+                    ai-code-insert-menu))
+    (oset (get prefix 'transient--prefix) display-action
+          '(display-buffer-in-side-window
+            (side . bottom)
+            (dedicated . t)
+            (inhibit-same-window . t))))
   (ai-code-set-backend 'pi))
 ;; (setq ai-code-github-copilot-cli-program-switches '("--model" "gpt-6.1-sol"))
 ;; (ai-code-set-backend 'github-copilot-cli))
