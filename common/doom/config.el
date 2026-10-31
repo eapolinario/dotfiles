@@ -154,6 +154,10 @@
 ;; (setq ai-code-github-copilot-cli-program-switches '("--model" "gpt-6.1-sol"))
 ;; (ai-code-set-backend 'github-copilot-cli))
 
+(after! evil-ghostel
+  ;; Let Escape enter evil normal state
+  (setq evil-ghostel-escape 'evil))
+
 ;; Let me write longer commit messages
 (after! git-commit
   (setq git-commit-summary-max-length 120))
