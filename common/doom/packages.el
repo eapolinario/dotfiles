@@ -100,6 +100,10 @@
 ;; Highlight hex color codes
 (package! rainbow-mode)
 
+;; Azure Bicep support (not published in MELPA/ELPA)
+(package! bicep-mode
+  :recipe (:host github :repo "christiaan-janssen/bicep-mode"))
+
 ;; Justfile support
 (package! just-mode)
 (package! justl)

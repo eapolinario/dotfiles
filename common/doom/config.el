@@ -208,6 +208,20 @@
 ;;                      ("i" . yankpad-insert)
 ;;                      ("s" . yankpad-search)))
 
+;; Azure Bicep support
+(use-package! bicep-mode
+  :mode "\\.bicep\\'"
+  :hook (bicep-mode . lsp!))
+
+;; Use the Bicep language server on PATH instead of the package's hard-coded DLL.
+(after! bicep-mode
+  (after! lsp-mode
+    (lsp-register-client
+     (make-lsp-client
+      :new-connection (lsp-stdio-connection '("Bicep.LangServer"))
+      :activation-fn (lsp-activate-on "bicep")
+      :server-id 'bicep))))
+
 ;; Justfile support
 (use-package! just-mode
   :mode (("\\.[Jj]ustfile\\'" . just-mode)
