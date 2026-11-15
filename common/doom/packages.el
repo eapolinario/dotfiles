@@ -97,6 +97,13 @@
 ;; alabaster theme as explained in https://tonsky.me/blog/syntax-highlighting/
 (package! doom-alabaster-theme :recipe (:host github :repo "eapolinario/doom-alabaster-dark-theme"))
 
+;; Preview Mermaid code blocks in Markdown (requires mmdc on PATH).
+;; Pin before --width/--height were added; Mermaid CLI 12 removed those flags.
+;; Exclude upstream's package.el metadata, which shadows Emacs's package library.
+(package! markdown-mermaid
+  :recipe (:files ("markdown-mermaid.el"))
+  :pin "3c2d911d995370f522cacc241d404995604c4cb8")
+
 ;; Highlight hex color codes
 (package! rainbow-mode)
 

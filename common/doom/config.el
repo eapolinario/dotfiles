@@ -222,6 +222,18 @@
       :activation-fn (lsp-activate-on "bicep")
       :server-id 'bicep))))
 
+;; Preview the Mermaid block at point in a separate Emacs image buffer.
+;; Requires mmdc from @mermaid-js/mermaid-cli on PATH.
+(use-package! markdown-mermaid
+  :commands markdown-mermaid-preview
+  :init
+  (after! markdown-mode
+    (map! :map markdown-mode-map
+          :desc "Preview Mermaid block" "C-c m" #'markdown-mermaid-preview))
+  (after! markdown-ts-mode
+    (map! :map markdown-ts-mode-map
+          :desc "Preview Mermaid block" "C-c m" #'markdown-mermaid-preview)))
+
 ;; Justfile support
 (use-package! just-mode
   :mode (("\\.[Jj]ustfile\\'" . just-mode)
