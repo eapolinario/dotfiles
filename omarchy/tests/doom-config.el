@@ -124,6 +124,26 @@
         (doom-test-register-after-blocks "+org.el" 'org-download)
         (should (equal org-download-image-dir value))))))
 
+(ert-deftest doom-markdown-mermaid-excludes-shadowing-package-metadata ()
+  "Install only the preview library, not upstream's conflicting package.el."
+  (with-temp-buffer
+    (insert-file-contents (expand-file-name "packages.el" doom-test-config-directory))
+    (emacs-lisp-mode)
+    (check-parens)
+    (goto-char (point-min))
+    (let (declaration)
+      (condition-case nil
+          (while t
+            (let ((form (read (current-buffer))))
+              (when (and (listp form)
+                         (eq (car form) 'package!)
+                         (eq (cadr form) 'markdown-mermaid))
+                (setq declaration form))))
+        (end-of-file nil))
+      (should declaration)
+      (should (equal (plist-get (plist-get (cddr declaration) :recipe) :files)
+                     '("markdown-mermaid.el"))))))
+
 (defvar agent-shell-anthropic-claude-acp-command nil)
 (defvar native-comp-enable-subr-trampolines)
 
