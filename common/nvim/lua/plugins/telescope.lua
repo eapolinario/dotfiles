@@ -98,6 +98,9 @@ return {
   },
   {
     "folke/snacks.nvim",
+    opts = {
+      image = { enabled = true },
+    },
     keys = {
       -- Telescope must own this key even before it lazy-loads.
       { "<leader>.", false },
