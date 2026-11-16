@@ -60,6 +60,12 @@ Omarchy manifest update. Unrelated local skills, logs, session databases, and
 other runtime state are left alone. Tracked settings files are backed up and
 replaced, not JSON-merged.
 
+Pi settings are Omarchy-specific: `omarchy/pi/.pi/agent/settings.json` is linked
+at `~/.pi/agent/settings.json`, instead of the shared settings in `common/pi/`.
+Shared Pi prompts, extensions, and discovered skills are still installed by
+`--only pi`; credentials, sessions, and other runtime state stay local. Existing
+links to the former shared settings file are backed up and migrated.
+
 Missing/locked authinfo is skipped with a warning, without replacing existing
 credentials. Use `--require-secrets` to make that a preflight failure:
 

@@ -52,7 +52,8 @@ new_home() {
 fixture="$TEST_DIR/repo"
 mkdir -p "$fixture/omarchy" "$fixture/common/authinfo" "$TEST_DIR/bin"
 cp "$REPO_DIR/omarchy/install.sh" "$fixture/omarchy/"
-cp -R "$REPO_DIR/omarchy/hypr" "$REPO_DIR/omarchy/ghostty" "$REPO_DIR/omarchy/systemd" "$fixture/omarchy/"
+cp -R "$REPO_DIR/omarchy/hypr" "$REPO_DIR/omarchy/ghostty" "$REPO_DIR/omarchy/systemd" \
+  "$REPO_DIR/omarchy/pi" "$fixture/omarchy/"
 for component in doom nvim copilot claude pi skills; do
   cp -R "$REPO_DIR/common/$component" "$fixture/common/"
 done
@@ -115,6 +116,8 @@ done
 [[ ! -e "$XDG_CONFIG_HOME/user-tmpfiles.d/empty-downloads.conf" ]] || fail 'installed a global cleanup rule'
 [[ ! -e "$XDG_CONFIG_HOME/dotfiles/downloads-cleanup.conf" ]] || fail 'default install enabled cleanup'
 [[ ! -e "$XDG_CONFIG_HOME/doom/tests" ]] || fail 'installed Doom tests'
+[[ "$(realpath "$HOME/.pi/agent/settings.json")" == "$fixture/omarchy/pi/.pi/agent/settings.json" ]] ||
+  fail 'Pi settings did not use the Omarchy configuration'
 grep -q 'original Doom config' "$XDG_CONFIG_HOME"/doom.backup.*/config.el
 grep -q 'local Copilot state' "$HOME/.copilot/session-store.db"
 grep -q 'existing credentials fixture' "$HOME/.authinfo"
@@ -140,6 +143,51 @@ succeeds --only copilot,claude,pi
 for agent_dir in "$HOME/.copilot" "$HOME/.claude" "$HOME/.pi/agent"; do
   [[ -L "$agent_dir/skills/later-skill" ]] || fail 'new shared skill was not discovered'
 done
+
+# Pi settings use the platform override without changing local state or shared sources.
+new_home pi-settings
+mkdir -p "$HOME/.pi/agent/sessions"
+printf '{"theme":"local-fixture"}\n' >"$HOME/.pi/agent/settings.json"
+printf '{"fixture":true}\n' >"$HOME/.pi/agent/auth.json"
+printf 'local session fixture\n' >"$HOME/.pi/agent/sessions/local"
+source_before="$(snapshot "$fixture")"
+before="$(snapshot "$HOME")"
+succeeds --only pi --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Pi settings dry-run changed HOME'
+succeeds --only pi
+[[ "$(realpath "$HOME/.pi/agent/settings.json")" == "$fixture/omarchy/pi/.pi/agent/settings.json" ]] ||
+  fail 'Pi-only install did not use the Omarchy settings'
+grep -q 'local-fixture' "$HOME"/.pi/agent.backup.*/settings.json
+grep -q '"fixture":true' "$HOME/.pi/agent/auth.json"
+grep -q 'local session fixture' "$HOME/.pi/agent/sessions/local"
+before="$(snapshot "$HOME")"
+succeeds --only pi
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Pi-only install was not idempotent'
+[[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'Pi install changed source'
+
+# Migrate only the known legacy settings link; preserve it if Stow fails.
+new_home pi-legacy
+mkdir -p "$HOME/.pi/agent"
+ln -s "$fixture/common/pi/.pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
+before="$(snapshot "$HOME")"
+succeeds --only pi --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'legacy Pi settings preview changed HOME'
+before="$(snapshot "$HOME/.pi/agent")"
+export MOCK_FAIL_PACKAGE=agent
+fails 'Installation failed; restoring' --only pi
+unset MOCK_FAIL_PACKAGE
+[[ "$(snapshot "$HOME/.pi/agent")" == "$before" ]] || fail 'rollback did not restore legacy Pi settings'
+succeeds --only pi
+[[ "$(realpath "$HOME/.pi/agent/settings.json")" == "$fixture/omarchy/pi/.pi/agent/settings.json" ]] ||
+  fail 'legacy Pi settings link was not migrated'
+[[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'Pi migration changed source'
+
+new_home pi-unrelated
+mkdir -p "$HOME/.pi/agent"
+ln -s "$TEST_DIR/unrelated.json" "$HOME/.pi/agent/settings.json"
+before="$(snapshot "$HOME")"
+fails 'Refusing to replace unrelated symlink' --only pi
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'foreign Pi settings conflict changed HOME'
 
 # Explicit secret installation is independent of services and does not print contents.
 printf 'machine example.invalid login fixture password not-a-real-credential\n' >"$fixture/common/authinfo/.authinfo"

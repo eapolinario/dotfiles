@@ -307,7 +307,9 @@ add_package() {
 
 add_agent() {
   local component="$1" target="$2" parent="$3" package="$4" skill_file name
-  add_package "$component" "$parent" "$package" "$target" '(^|/)skills(/|$)'
+  local ignore='(^|/)skills(/|$)'
+  [[ -z "${5:-}" ]] || ignore+="|$5"
+  add_package "$component" "$parent" "$package" "$target" "$ignore"
   [[ -d "$COMMON_DIR/skills" ]] || fail "Shared skill directory not found: $COMMON_DIR/skills."
   for skill_file in "$COMMON_DIR"/skills/*/SKILL.md; do
     [[ -f "$skill_file" ]] || continue
@@ -347,7 +349,11 @@ build_plan() {
         ;;
       copilot) add_agent copilot "$HOME/.copilot" "$COMMON_DIR/copilot" .copilot ;;
       claude) add_agent claude "$HOME/.claude" "$COMMON_DIR/claude" .claude ;;
-      pi) add_agent pi "$HOME/.pi/agent" "$COMMON_DIR/pi/.pi" agent ;;
+      pi)
+        # Keep shared prompts/extensions, but use Omarchy-specific settings.
+        add_agent pi "$HOME/.pi/agent" "$COMMON_DIR/pi/.pi" agent '^settings\.json$'
+        add_package pi "$SCRIPT_DIR/pi/.pi" agent "$HOME/.pi/agent"
+        ;;
       grasp)
         add_package grasp "$SCRIPT_DIR/systemd/.config/systemd" user "$config_home/systemd/user" \
           '^downloads-clean-at-login\.service$'
@@ -415,6 +421,10 @@ preflight() {
         plan_states[$i]=keep
       elif [[ "$component" == nvim &&
         "$resolved" == "$SCRIPT_DIR/nvim/.config/nvim/${plan_relatives[$i]}" ]]; then
+        plan_states[$i]=replace
+      elif [[ "$component" == pi && "${plan_relatives[$i]}" == settings.json &&
+        "$resolved" == "$COMMON_DIR/pi/.pi/agent/settings.json" ]]; then
+        # Migrate the former shared settings link to the Omarchy override.
         plan_states[$i]=replace
       else
         [[ "$component" != nvim ]] || fail "Refusing to replace unrelated Neovim symlink $target -> $resolved."
