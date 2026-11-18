@@ -49,6 +49,20 @@ git-crypt status
 This reports which paths are covered by git-crypt's encryption filters; an
 "encrypted" label is not, by itself, proof that the working copy is still locked.
 
+### Scanning committed history
+
+Run `make gitleaks` from the repository root to inspect committed content across
+all refs. It disables Git text conversion (`--no-textconv`), so git-crypt's local
+diff driver cannot turn encrypted blobs into decrypted scanner input. The same
+history options apply to the separately reviewed baseline-regeneration target.
+
+An unlocked working copy or locally decrypted diff is not evidence that plaintext
+was committed. Check raw Git blobs and the raw-history scan before classifying a
+finding as an exposure; do not add exceptions just to hide text-conversion false
+positives. A directory scan (`gitleaks dir`) examines working files instead and is
+not a substitute for checking committed encryption. Treat scanner reports as
+sensitive, and do not commit reports containing credential values.
+
 ### Omarchy installer policy
 
 The Omarchy installer checks only the fixed git-crypt header, without printing

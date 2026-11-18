@@ -5,6 +5,8 @@ BASELINE := gitleaks.baseline
 
 # Executable; override if you have gitleaks elsewhere, e.g. `make GITLEAKS=/path/to/gitleaks gitleaks`
 GITLEAKS ?= gitleaks
+# Scan committed content, not git-crypt's locally decrypted textconv output.
+GITLEAKS_HISTORY_ARGS := git . --log-opts='--all --full-history --no-textconv'
 
 SHFMT ?= shfmt
 NVIM ?= nvim
@@ -18,10 +20,10 @@ OMARCHY_SHELL_FILES := omarchy/install.sh $(wildcard omarchy/hypr/.config/hypr/s
 # Scan the repository for new secrets. Fails (non-zero exit status) if any leak
 # that is *not* in $(BASELINE) is detected.
 gitleaks:
-	$(GITLEAKS) detect --source . --baseline-path $(BASELINE) --config .gitleaks.toml --redact
+	$(GITLEAKS) $(GITLEAKS_HISTORY_ARGS) --baseline-path $(BASELINE) --config .gitleaks.toml --redact
 
 gitleaks-baseline-regen:
-	$(GITLEAKS) detect --source . --config .gitleaks.toml --report-format json --report-path $(BASELINE)
+	$(GITLEAKS) $(GITLEAKS_HISTORY_ARGS) --config .gitleaks.toml --report-format json --report-path $(BASELINE)
 
 install-omarchy:
 	./omarchy/install.sh
