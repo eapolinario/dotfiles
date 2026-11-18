@@ -3,6 +3,11 @@
 This compares the Doom Emacs bindings in `common/doom` with the LazyVim-based
 Neovim setup in `common/nvim`, including its Omarchy installation.
 
+The repo-defined mappings below come from `common/nvim/lazyvim.json`,
+`common/nvim/lua/plugins/*.lua`, and the LazyVim extras enabled by that file.
+Use `<Space>sk` for the complete live keymap list, since upstream LazyVim
+bindings can change independently of this cheatsheet.
+
 Assumptions:
 
 - Doom leader: `SPC`
@@ -67,6 +72,8 @@ The Telescope controls below do not apply to FFF.
 | Next workspace/tab | `SPC TAB ]` | `<Space><Tab>]` |
 | Previous workspace/tab | `SPC TAB [` | `<Space><Tab>[` |
 | Close workspace/tab | `SPC TAB d` | `<Space><Tab>d` |
+| Toggle scratch buffer | No direct default | `<Space>bs` |
+| Select scratch buffer | No direct default | `<Space>S` |
 
 ## Git
 
@@ -77,6 +84,7 @@ The Telescope controls below do not apply to FFF.
 | Git stash | Magit stash from status | `<Space>gS` |
 | Git blame current line | Magit blame / Doom git bindings | `<Space>gb` |
 | Git current file history | Magit file log | `<Space>gf` |
+| Toggle inline Git blame | No direct default | `<Space>uB` |
 | Copy remote URL for commit | `Y` in Magit log custom | No direct default |
 | Create Git link | `C-c v &` custom | No direct default |
 
@@ -97,6 +105,8 @@ The Telescope controls below do not apply to FFF.
 | Format buffer | `SPC c f` or format-on-save | `<Space>cf` |
 | LSP info | Doom LSP menu | `<Space>cl` |
 | Split comma-separated list | `SPC c S` custom in prog buffers | No direct default |
+| Debug nearest Go test | No direct default | `<Space>dT` |
+| Debug last Go test | No direct default | `<Space>dL` |
 
 ## Terminals and Commands
 
@@ -107,12 +117,14 @@ The Telescope controls below do not apply to FFF.
 | Open terminal at project root | `SPC o e` custom Eat terminal | `<C-/>` or `<Space>ft` |
 | Open terminal in current directory | `SPC o E` custom other-window terminal | `<Space>fT` |
 | Escape insert mode | `fd` custom Evil escape | `<Esc>` |
+| Insert newline in a Sidekick/AI terminal | No direct default | `<S-CR>` or `<M-CR>` |
 
 ## Sidekick AI CLI
 
 Sidekick runs AI CLI tools such as Claude, Codex, Copilot, and Gemini in a
 Neovim terminal pane. This repo enables Sidekick through LazyVim and stores
 sessions with zellij when available.
+Copilot's native scroll behavior is enabled in this terminal.
 
 | Task | Neovim / LazyVim |
 |------|------------------|
