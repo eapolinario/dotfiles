@@ -14,28 +14,22 @@
 ;; Since elisp doesn't have namespaces, we need to prefix our functions with a unique prefix, usually people use their
 ;; initials or a short name. In this case, I am using "ea" for Eduardo Apolinario.
 (defun ea/split-comma-separated-list ()
-  "Split comma-separated list into multiple lines."
+  "Split the next parenthesized comma-separated list into indented lines."
   (interactive "*")
   (save-excursion
-    (let* ((indent (+ (current-indentation) 2)) ; Adjust according to your requirement
+    (let* ((indent (current-indentation))
+           (item-indent (make-string (+ indent 2) ? ))
            (list-start (progn (search-forward "(") (point)))
            (list-end (progn (search-forward ")") (1- (point))))
-           (items (split-string (buffer-substring list-start list-end) "," t " ")))
+           (items (split-string (buffer-substring list-start list-end) "," t " "))
+           (replacement (concat (mapconcat (lambda (item)
+                                             (format "\n%s%s," item-indent item))
+                                           items "")
+                                "\n" (make-string indent ? ))))
+      ;; Replace only the captured interior, leaving both delimiters untouched.
       (delete-region list-start list-end)
       (goto-char list-start)
-      ;; Insert each item on a new line with correct indentation and comma
-      (dolist (item items)
-        (insert (format "\n%s%s," (make-string indent ? ) item)))
-      (newline)
-      ;; Move closing parenthesis to  a new line with correct indentation
-      (forward-char)
-      (delete-char 1)
-      (backward-char 2)
-      (when (not (looking-at ","))
-        (forward-char)
-        (insert ","))
-      (delete-char 1)
-      (insert (format "\n%s)" (make-string (current-indentation) ? ))))))
+      (insert replacement))))
 
 ;; Cribbed from jethro's emacs config
 (defun ea/org-archive-done-tasks ()
