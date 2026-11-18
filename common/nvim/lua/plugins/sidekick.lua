@@ -21,6 +21,11 @@ return {
     "folke/sidekick.nvim",
     opts = {
       cli = {
+        tools = {
+          copilot = {
+            native_scroll = true,
+          },
+        },
         win = {
           keys = {
             shift_enter = { "<S-CR>", send_shift_enter, desc = "Insert newline in AI CLI" },
