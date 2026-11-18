@@ -2,5 +2,11 @@
   "lastChangelogVersion": "1.5.2",
   "theme": "dark",
   "defaultThinkingLevel": "max",
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "packages": [
+    "npm:pi-subagents"
+  ],
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.89.0"
+  }
 }
