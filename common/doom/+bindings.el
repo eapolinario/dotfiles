@@ -41,7 +41,12 @@
 (defun ea/org-archive-done-tasks ()
   "Archive all done tasks."
   (interactive)
-  (org-map-entries 'org-archive-subtree "/DONE|CANCELLED" 'file))
+  (org-map-entries
+   (lambda ()
+     ;; Archiving can move point; resume at the deleted heading's former position.
+     (save-excursion (org-archive-subtree))
+     (setq org-map-continue-from (point)))
+   "/DONE|CANCELLED" 'file))
 
 ;; Navigate to next/previous sibling in org mode, hiding the previous one
 (defun ea/org-forward-sibling-and-hide-previous ()
