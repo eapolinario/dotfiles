@@ -12,7 +12,7 @@ EMACS ?= emacs
 OMARCHY_SHELL_TESTS := $(wildcard omarchy/tests/*.sh)
 OMARCHY_LUA_TESTS := $(wildcard omarchy/tests/*.lua)
 OMARCHY_ELISP_TESTS := $(wildcard omarchy/tests/*.el)
-OMARCHY_SHELL_FILES := omarchy/install.sh $(wildcard omarchy/hypr/.config/hypr/scripts/*.sh omarchy/tests/fixtures/*.sh) $(OMARCHY_SHELL_TESTS) common/claude/.claude/hooks/caveman-statusline.sh
+OMARCHY_SHELL_FILES := omarchy/install.sh $(wildcard omarchy/hypr/.config/hypr/scripts/*.sh omarchy/tests/fixtures/*.sh) $(OMARCHY_SHELL_TESTS)
 
 .PHONY: gitleaks install-omarchy install-macos gitleaks-baseline-regen brewfile-update help check-omarchy lint-omarchy test-omarchy
 # Scan the repository for new secrets. Fails (non-zero exit status) if any leak
