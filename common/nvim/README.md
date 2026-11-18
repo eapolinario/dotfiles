@@ -17,7 +17,7 @@ directory (`$OMARCHY_PATH`, defaulting to `~/.local/share/omarchy`). Merely havi
 | macOS | Homebrew `gopls`, Mason for other servers; Nix servers disabled | Nordic; Snacks animations off |
 | Other Linux | Mason/default LazyVim management | Nordic; Snacks animations off |
 
-The shared `lazyvim.json` enables 21 extras, including Telescope, Sidekick, Go
+The shared `lazyvim.json` enables 22 extras, including Telescope, Sidekick, Go
 debugging, Overseer and Zig. Inline Git blame is enabled with a 300ms delay;
 `<leader>uB` toggles it. Sidekick persists sessions with zellij when available,
 otherwise tmux.
