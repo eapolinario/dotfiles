@@ -14,9 +14,9 @@ local function shell_quote(path)
   return "'" .. path:gsub("'", "'\\''") .. "'"
 end
 
--- Close the active window with SUPER + Q instead of Omarchy's SUPER + W.
+-- Keep SUPER + W disabled and replace the close binding already on SUPER + Q.
 hl.unbind("SUPER + W")
-hl.bind("SUPER + Q", hl.dsp.window.close(), { description = "Close active window" })
+o.rebind("SUPER + Q", "Close active window", hl.dsp.window.close())
 
 -- Omarchy 4 binds these to preinstalled apps and web apps, so each one has to
 -- be released before it can be reused.
@@ -42,8 +42,8 @@ hl.unbind("SUPER + SHIFT + S")
 -- o.bind executes command strings through a shell; quote the entire XDG path.
 o.bind("SUPER + SHIFT + S", "Swap workspace", shell_quote(config_home .. "/hypr/scripts/swap-workspace.sh"))
 
--- Omarchy 4 moved btop to SUPER + CTRL + T; keep it reachable here too.
-o.bind("SUPER + SHIFT + T", "Activity", { tui = "btop" })
+-- Replace the Activity binding already supplied by Omarchy's defaults.
+o.rebind("SUPER + SHIFT + T", "Activity", { tui = "btop" })
 
 -- Dictation keys from before Alt + Space and Right Alt became the defaults.
 -- Remove these lines to give the keys back to applications.
