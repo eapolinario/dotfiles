@@ -5,6 +5,11 @@ name: Claude Code Review
 # Manual runs are still possible via the Actions tab (workflow_dispatch).
 on:
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number to review in this repository'
+        required: true
+        type: string
   # pull_request:
   #   types: [opened, synchronize, ready_for_review, reopened]
   #   # Optional: Only run on specific file changes
@@ -30,6 +35,19 @@ jobs:
       id-token: write
 
     steps:
+      - name: Validate PR number
+        id: review-target
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]; then
+            printf '%s\n' '::error::PR number must be a positive integer.' >&2
+            exit 1
+          fi
+          printf 'review_target=%s/pull/%s\n' "$GITHUB_REPOSITORY" "$PR_NUMBER" >>"$GITHUB_OUTPUT"
+
       - name: Checkout repository
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
         with:
@@ -42,7 +60,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          prompt: '/code-review:code-review ${{ steps.review-target.outputs.review_target }}'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
