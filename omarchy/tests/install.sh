@@ -130,6 +130,17 @@ for agent_dir in "$HOME/.copilot" "$HOME/.claude" "$HOME/.pi/agent"; do
       fail "missing shared skill: $name"
   done
 done
+# Claude no longer enables the plugin; Pi uses the independently shared skill.
+if grep -qi 'caveman' "$HOME/.claude/settings.json"; then
+  fail 'Claude settings still reference Caveman'
+fi
+[[ ! -e "$HOME/.claude/hooks/caveman-statusline.sh" &&
+  ! -L "$HOME/.claude/hooks/caveman-statusline.sh" ]] || fail 'installed the removed Caveman wrapper'
+[[ -r "$HOME/.pi/agent/skills/caveman/SKILL.md" ]] || fail 'Pi shared Caveman skill is missing'
+if grep -qF 'plugins/marketplaces/caveman' "$HOME/.pi/agent/prompts/caveman.md" \
+  "$fixture/common/pi/.pi/agent/settings.json"; then
+  fail 'Pi still depends on the removed Claude marketplace'
+fi
 before="$(snapshot "$HOME")"
 succeeds
 succeeds --dry-run

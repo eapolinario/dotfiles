@@ -11,8 +11,7 @@
   "theme": "dark",
   "hideThinkingBlock": false,
   "skills": [
-    "~/.claude/skills",
-    "~/.claude/plugins/marketplaces/caveman/skills"
+    "~/.claude/skills"
   ],
   "packages": [
     "git:github.com/dbachelder/pi-btw"
