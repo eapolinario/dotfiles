@@ -7,7 +7,7 @@ From the repository root:
 ```sh
 make check-omarchy   # syntax, ShellCheck, shfmt, unit definitions, regression suites
 make test-omarchy    # standalone Bash, headless Neovim Lua, and Emacs ERT suites
-make gitleaks        # history scan against the reviewed baseline
+make gitleaks        # raw committed history across all refs; textconv disabled
 ```
 
 `SHFMT`, `NVIM`, and `EMACS` can be overridden to use existing binaries in
@@ -24,6 +24,7 @@ do not replace a macOS bootstrap or NixOS host evaluation.
 |------|-------|
 | `omarchy/tests/install.sh` | Full-install dry-run snapshots, custom XDG paths, components, shared-skill discovery, local state, locked/unlocked fixture credentials, service opt-ins, private cleanup rules, canonical path guards, legacy directory folding, file rollback, diagnostics |
 | `omarchy/tests/nvim-install.sh` | Seeded Omarchy support, legacy file links, generated theme/lock exclusions, directory conflicts, backups, repeated installation |
+| `omarchy/tests/gitleaks-history.sh` | Both history targets bypass decrypted textconv output; real Git fixture with a mock scanner, no credentials or Gitleaks dependency |
 | `omarchy/tests/nvim-config.lua` | Omarchy, NixOS, macOS and generic Linux branches; picker ownership, directory searches, extras and blame settings |
 | Workspace suites in `omarchy/tests/` | Window-set swapping, invalid/cancelled input, dispatch errors and XDG-aware binding paths without a real desktop session |
 | Doom ERT suite in `omarchy/tests/` | Per-buffer download paths and agent-shell configuration lifecycle without bootstrapping Doom or contacting providers |
@@ -40,6 +41,12 @@ Bash installer tests copy configuration into temporary repositories and redirect
 copying real credentials. Service and desktop commands are mocked; Stow itself
 is real. Cleanup rule parsing uses a nonmatching `--prefix`, never a live cleanup
 directory. Temporary fixture trees are removed on exit.
+
+The history-scan regression creates a private Git repository with a synthetic
+binary blob and a textconv driver emitting a harmless marker. A mock scanner
+observes real Git patch output to verify that both history targets disable
+text conversion. It never unlocks authinfo, uses actual credentials, or
+regenerates the repository's real baseline.
 
 Neovim runs with `--headless -u NONE -i NONE`: normal configuration and plugin
 bootstrap are not loaded. ERT runs in batch mode without personal init files.
