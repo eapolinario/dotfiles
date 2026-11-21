@@ -96,6 +96,24 @@ on first use. The layout contains session addresses and is **not** stowed or che
 in. Existing unrelated layouts of the same name are left untouched. Opening the grid
 resizes terminal views to their tiles; it does not create, move or close sessions.
 
+**herdr-nvim** ([upstream](https://github.com/ChmaraX/herdr-nvim/tree/main/herdr-app))
+is installed separately from a reviewed, SHA-256-verified release bundle. Its
+`herdr-nvim` and `herdr-nvim-header` mods and binary/Lua runtime stay local, not
+stowed. **Alt+E** toggles Files and the tab's persistent Neovim, **Alt+O** picks a
+file touched by an agent, and **Alt+Shift+E** focuses the tree. These shortcuts avoid
+upstream's Super-key conflicts with Hyprland; existing split keys are unchanged.
+The mod runs local programs and reads project files and agent session logs.
+
+Installing on the shipped `main` layout creates and switches to `main-copy`;
+`main` and Panopticon remain unchanged. Use `Ctrl+Shift+L` to switch layouts.
+Validate both mods with `herdr-app check <app-home>/mods/herdr-nvim` and
+`herdr-app check <app-home>/mods/herdr-nvim-header`.
+
+The v1.3.1 release installer atomically replaces `keys.json` when adding bindings.
+Before running that installer, change its bundled `herdr-app/keys.json` to the
+three Alt bindings above and add them to this repo's keys first, so its merge is
+a no-op and preserves the live Stow symlink. Review key handling again on upgrades.
+
 Leave `HERDR_APP_HOME` unset when using the standard installed directory; it
 selects a different app config home and running window.
 
