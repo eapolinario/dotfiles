@@ -67,6 +67,9 @@ Shared Pi prompts, extensions, and discovered skills are still installed by
 `--only pi`; credentials, sessions, and other runtime state stay local. Existing
 links to the former shared settings file are backed up and migrated.
 
+See the [Herdr keybinding cheat sheet](herdr/cheatsheet.md) for the configured
+shortcuts, memory patterns, and known Ghostty conflicts.
+
 Herdr's config is stored at `omarchy/herdr/.config/herdr/config.toml` and linked
 as an individual file. Its config directory stays real; logs, sockets, session
 snapshots, and other runtime state stay local. The installer does not reload or
