@@ -35,6 +35,7 @@ lint-omarchy:
 	shellcheck -S warning --format=gcc $(OMARCHY_SHELL_FILES)
 	"$(SHFMT)" -i 2 -ci -d $(OMARCHY_SHELL_FILES)
 	systemd-analyze --user verify --man=no omarchy/systemd/.config/systemd/user/*.service
+	systemd-analyze verify --man=no omarchy/systemd/system/*.service
 
 test-omarchy:
 	@set -e; for file in $(OMARCHY_SHELL_TESTS); do NVIM="$(NVIM)" bash "$$file"; done

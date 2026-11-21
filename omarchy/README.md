@@ -144,6 +144,52 @@ Grasp writes `~/org/capture.org`. Its first launch through `uvx` may download th
 backend; the installer and doctor never do. Install/configure the
 [browser extension](https://github.com/karlicoss/grasp) separately.
 
+### Gazelle battery charge limit (system service, opt-in)
+
+`systemd/system/battery-charge-limit.service` is specific to the System76 Gazelle
+`gaze16-3050` running package-backed Omarchy. It stops charging at **70%** and resumes
+below **60%**. This is a **system** service because the charge-control sysfs files
+require root; it must not be installed as a user service.
+
+The ordinary installer and `make install-omarchy` neither install nor activate this
+unit. Its conditions require `/usr/bin/omarchy`, `BAT0`, and exact DMI matches for
+vendor `System76` and product version `gaze16-3050`. Other models skip the service
+before loading the driver or writing charge limits.
+
+Apply explicitly on this Gazelle, from a terminal at the repository root:
+
+```sh
+rtk systemd-analyze verify --man=no omarchy/systemd/system/battery-charge-limit.service
+rtk sudo install --backup=numbered -m 0644 \
+  omarchy/systemd/system/battery-charge-limit.service \
+  /etc/systemd/system/battery-charge-limit.service
+rtk sudo systemctl daemon-reload
+rtk sudo systemctl enable battery-charge-limit.service
+rtk sudo systemctl restart battery-charge-limit.service
+rtk head -n 1 /sys/class/power_supply/BAT0/charge_control_{start,end}_threshold
+```
+
+The last command should show `60` and `70`. The root-owned copy is deliberately
+not a symlink to a user-writable checkout. After editing the tracked unit, repeat
+the copy, daemon-reload, and restart commands; `install --backup=numbered` preserves
+any previous unit in a numbered backup beside it.
+
+This Gazelle's May 2024 firmware can lose custom thresholds after shutdown and
+unplugging, so the service reapplies them at boot. See
+[System76's battery-threshold documentation](https://system76.com/support/laptop-battery-thresholds/).
+Setting a cap does not forcibly discharge a battery already above it.
+
+To disable the boot service and restore the original 90/100 thresholds, set the
+stop threshold first so it remains above the start threshold:
+
+```sh
+rtk sudo systemctl disable --now battery-charge-limit.service
+rtk printf '100\n' | rtk sudo tee /sys/class/power_supply/BAT0/charge_control_end_threshold
+rtk printf '90\n' | rtk sudo tee /sys/class/power_supply/BAT0/charge_control_start_threshold
+```
+
+Stopping or disabling the oneshot service alone does not reset firmware thresholds.
+
 ### Downloads cleanup is destructive
 
 **Cleanup permanently deletes contents; it does not move them to Trash.**

@@ -115,6 +115,9 @@ for file in doom/config.el hypr/bindings.lua ghostty/config herdr-app/keys.json 
 done
 [[ ! -e "$XDG_CONFIG_HOME/systemd/user/downloads-clean-at-login.service" ]] ||
   fail 'default install selected cleanup service'
+[[ ! -e "$XDG_CONFIG_HOME/systemd/user/battery-charge-limit.service" &&
+  ! -e "$XDG_CONFIG_HOME/systemd/system/battery-charge-limit.service" ]] ||
+  fail 'default install selected the opt-in system battery service'
 [[ ! -e "$XDG_CONFIG_HOME/user-tmpfiles.d/empty-downloads.conf" ]] || fail 'installed a global cleanup rule'
 [[ ! -e "$XDG_CONFIG_HOME/dotfiles/downloads-cleanup.conf" ]] || fail 'default install enabled cleanup'
 [[ ! -e "$XDG_CONFIG_HOME/doom/tests" ]] || fail 'installed Doom tests'

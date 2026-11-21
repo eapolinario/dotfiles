@@ -1,0 +1,20 @@
+[Unit]
+Description=Set Gazelle gaze16-3050 battery charge thresholds to 60-70 percent
+After=systemd-modules-load.service
+# This root-owned unit is opt-in and specific to the package-backed Omarchy system.
+ConditionPathExists=/usr/bin/omarchy
+ConditionPathExists=/sys/class/power_supply/BAT0
+
+[Service]
+Type=oneshot
+# A mismatch skips the service before loading the driver or writing charge limits.
+ExecCondition=/usr/bin/grep -Fxq -- System76 /sys/class/dmi/id/sys_vendor
+ExecCondition=/usr/bin/grep -Fxq -- gaze16-3050 /sys/class/dmi/id/product_version
+ExecStartPre=/usr/bin/modprobe system76_acpi
+# Lower the start threshold first so it remains below the new stop threshold.
+ExecStart=/usr/bin/bash -euc 'printf "60\\n" > /sys/class/power_supply/BAT0/charge_control_start_threshold'
+ExecStart=/usr/bin/bash -euc 'printf "70\\n" > /sys/class/power_supply/BAT0/charge_control_end_threshold'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
