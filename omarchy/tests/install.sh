@@ -52,8 +52,8 @@ new_home() {
 fixture="$TEST_DIR/repo"
 mkdir -p "$fixture/omarchy" "$fixture/common/authinfo" "$TEST_DIR/bin"
 cp "$REPO_DIR/omarchy/install.sh" "$fixture/omarchy/"
-cp -R "$REPO_DIR/omarchy/hypr" "$REPO_DIR/omarchy/ghostty" "$REPO_DIR/omarchy/systemd" \
-  "$REPO_DIR/omarchy/pi" "$fixture/omarchy/"
+cp -R "$REPO_DIR/omarchy/hypr" "$REPO_DIR/omarchy/ghostty" "$REPO_DIR/omarchy/herdr" \
+  "$REPO_DIR/omarchy/systemd" "$REPO_DIR/omarchy/pi" "$fixture/omarchy/"
 for component in doom nvim copilot claude pi skills; do
   cp -R "$REPO_DIR/common/$component" "$fixture/common/"
 done
@@ -108,7 +108,7 @@ rm -- "$HOME/.claude/settings.json"
 succeeds
 [[ ! -e "$SYSTEMCTL_MARKER" ]] || fail 'default install called systemctl'
 [[ ! -e "$HOME/.config" ]] || fail 'custom XDG install wrote to ~/.config'
-for file in doom/config.el hypr/bindings.lua ghostty/config nvim/init.lua systemd/user/grasp.service; do
+for file in doom/config.el hypr/bindings.lua ghostty/config herdr/config.toml nvim/init.lua systemd/user/grasp.service; do
   [[ -L "$XDG_CONFIG_HOME/$file" ]] || fail "missing XDG link: $file"
 done
 [[ ! -e "$XDG_CONFIG_HOME/systemd/user/downloads-clean-at-login.service" ]] ||
@@ -146,6 +146,50 @@ succeeds
 succeeds --dry-run
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'repeat full install was not idempotent'
 [[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'install changed source'
+
+# Herdr links only its config, backs up existing settings, and preserves runtime state.
+new_home herdr
+herdr_dir="$XDG_CONFIG_HOME/herdr"
+mkdir -p "$herdr_dir/session-snapshots"
+printf 'onboarding = true\n' >"$herdr_dir/config.toml"
+printf 'local Herdr session\n' >"$herdr_dir/session.json"
+printf 'local Herdr snapshot\n' >"$herdr_dir/session-snapshots/local"
+printf 'local Herdr log\n' >"$herdr_dir/herdr.log"
+: >"$herdr_dir/herdr.sock"
+: >"$herdr_dir/.plugins.lock"
+source_before="$(snapshot "$fixture")"
+before="$(snapshot "$HOME")"
+succeeds --only herdr --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Herdr dry-run changed HOME'
+before="$(snapshot "$herdr_dir")"
+export MOCK_FAIL_PACKAGE=herdr
+fails 'Installation failed; restoring' --only herdr
+unset MOCK_FAIL_PACKAGE
+[[ "$(snapshot "$herdr_dir")" == "$before" ]] || fail 'Herdr rollback did not restore config and state'
+succeeds --only herdr
+[[ ! -L "$herdr_dir" ]] || fail 'folded Herdr runtime directory'
+[[ "$(realpath "$herdr_dir/config.toml")" == "$fixture/omarchy/herdr/.config/herdr/config.toml" ]] ||
+  fail 'Herdr-only install did not link the tracked config'
+grep -q 'onboarding = true' "$XDG_CONFIG_HOME"/herdr.backup.*/config.toml
+grep -q 'local Herdr session' "$herdr_dir/session.json"
+grep -q 'local Herdr snapshot' "$herdr_dir/session-snapshots/local"
+grep -q 'local Herdr log' "$herdr_dir/herdr.log"
+for file in session.json session-snapshots herdr.log herdr.sock .plugins.lock; do
+  [[ -e "$herdr_dir/$file" && ! -L "$herdr_dir/$file" ]] || fail "changed Herdr runtime path: $file"
+done
+[[ ! -e "$HOME/.config" && ! -e "$SYSTEMCTL_MARKER" ]] || fail 'Herdr install ignored XDG or called systemctl'
+before="$(snapshot "$HOME")"
+succeeds --only herdr
+succeeds --only herdr --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Herdr-only install was not idempotent'
+[[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'Herdr install changed source'
+
+new_home herdr-unrelated
+mkdir -p "$XDG_CONFIG_HOME/herdr"
+ln -s "$TEST_DIR/unrelated.toml" "$XDG_CONFIG_HOME/herdr/config.toml"
+before="$(snapshot "$HOME")"
+fails 'Refusing to replace unrelated symlink' --only herdr
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'foreign Herdr config conflict changed HOME'
 
 # New skills are discovered without editing static aliases or a second manifest.
 mkdir -p "$fixture/common/skills/later-skill"
@@ -310,10 +354,12 @@ for cmd in dirname realpath uname; do
   ln -s "$(command -v "$cmd")" "$TEST_DIR/doctor-bin/$cmd"
 done
 ln -s "$REAL_STOW" "$TEST_DIR/doctor-bin/stow"
-if PATH="$TEST_DIR/doctor-bin" /usr/bin/bash "$installer" --only ghostty --doctor >"$TEST_DIR/doctor.log" 2>&1; then
-  fail 'doctor did not fail for a missing required runtime'
-fi
-grep -q '\[MISSING\] ghostty' "$TEST_DIR/doctor.log"
+for component in ghostty herdr; do
+  if PATH="$TEST_DIR/doctor-bin" /usr/bin/bash "$installer" --only "$component" --doctor >"$TEST_DIR/doctor.log" 2>&1; then
+    fail "doctor did not fail for missing $component"
+  fi
+  grep -q "\\[MISSING\\] $component" "$TEST_DIR/doctor.log"
+done
 [[ ! -e "$HOME" && ! -e "$SYSTEMCTL_MARKER" ]] || fail 'doctor mutated the environment'
 
 printf 'Omarchy installer tests passed\n'

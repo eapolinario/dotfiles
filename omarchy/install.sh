@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMMON_DIR="$(realpath "$SCRIPT_DIR/../common")"
 readonly SCRIPT_DIR COMMON_DIR
-readonly -a DEFAULT_COMPONENTS=(doom authinfo hypr ghostty nvim copilot claude pi grasp)
+readonly -a DEFAULT_COMPONENTS=(doom authinfo hypr ghostty herdr nvim copilot claude pi grasp)
 # Apply these exclusions to both the file plan and Stow, including local runtime files.
 readonly STOW_IGNORE='(^|/)(README[^/]*|LICENSE[^/]*|COPYING|tests|\.git|\.gitignore|\.stow-local-ignore|\.DS_Store)(/|$)|~$'
 
@@ -43,7 +43,7 @@ usage() {
     '      --require-secrets         Fail rather than skip missing/locked authinfo' \
     '  -h, --help                    Show this help' \
     '' \
-    'Default components: doom,authinfo,hypr,ghostty,nvim,copilot,claude,pi,grasp' \
+    'Default components: doom,authinfo,hypr,ghostty,herdr,nvim,copilot,claude,pi,grasp' \
     'Optional component: downloads-cleanup' \
     'Services are NOT enabled or started by default. Cleanup is never selected implicitly.'
 }
@@ -137,7 +137,7 @@ parse_args() {
   local -A seen=()
   for component in "${components[@]}"; do
     case "$component" in
-      doom | authinfo | hypr | ghostty | nvim | copilot | claude | pi | grasp | downloads-cleanup) ;;
+      doom | authinfo | hypr | ghostty | herdr | nvim | copilot | claude | pi | grasp | downloads-cleanup) ;;
       *) fail "Unknown component: $component (see --help)." ;;
     esac
     [[ -z "${seen[$component]:-}" ]] || fail "Duplicate component: $component."
@@ -212,6 +212,7 @@ run_doctor() {
         doctor_cmd zenity 'workspace destination prompt'
         ;;
       ghostty) doctor_cmd ghostty 'terminal' ;;
+      herdr) doctor_cmd herdr 'terminal workspace manager (not installed by this script)' ;;
       nvim)
         doctor_cmd nvim 'shared LazyVim configuration'
         doctor_cmd git 'plugin bootstrap'
@@ -343,6 +344,7 @@ build_plan() {
         done
         ;;
       ghostty) add_package ghostty "$SCRIPT_DIR/ghostty/.config" ghostty "$config_home/ghostty" ;;
+      herdr) add_package herdr "$SCRIPT_DIR/herdr/.config" herdr "$config_home/herdr" ;;
       nvim)
         check_nvim_support
         add_package nvim "$COMMON_DIR" nvim "$config_home/nvim" '^lazy-lock\.json$|^lua/plugins/theme\.lua$'

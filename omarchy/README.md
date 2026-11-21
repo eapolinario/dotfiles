@@ -19,8 +19,8 @@ nonzero exit status; it checks availability, not network access or provider
 authentication. A dry-run preflights the selected source/target paths and prints
 the planned Stow commands. It does not conceal errors with `|| true`.
 
-Default components are `doom`, `authinfo`, `hypr`, `ghostty`, `nvim`, `copilot`,
-`claude`, `pi`, and `grasp`. Select a subset with a comma-separated list:
+Default components are `doom`, `authinfo`, `hypr`, `ghostty`, `herdr`, `nvim`,
+`copilot`, `claude`, `pi`, and `grasp`. Select a subset with a comma-separated list:
 
 ```sh
 ./omarchy/install.sh --only doom,copilot --dry-run
@@ -42,6 +42,7 @@ The installer requires Bash, GNU Stow, GNU coreutils, and findutils.
 | Doom | Emacs and a separately bootstrapped Doom; `doom sync` after module/package changes | `$XDG_CONFIG_HOME/doom` |
 | Hyprland | Omarchy Lua defaults; `hyprctl`, `jq`, `zenity` for workspace swapping | `$XDG_CONFIG_HOME/hypr` |
 | Ghostty | Ghostty and the configured Nerd Font; Omarchy theme file is optional | `$XDG_CONFIG_HOME/ghostty` |
+| Herdr | Herdr CLI, installed separately | `$XDG_CONFIG_HOME/herdr/config.toml` |
 | Neovim | Neovim/LazyVim; Omarchy's seeded clipboard support when on Omarchy | `$XDG_CONFIG_HOME/nvim` |
 | Agents | Their respective CLI; Claude's configured command hook also needs `rtk` | `~/.copilot`, `~/.claude`, `~/.pi/agent` |
 | Authinfo | An unlocked repository to install credentials | `~/.authinfo` |
@@ -65,6 +66,22 @@ at `~/.pi/agent/settings.json`, instead of the shared settings in `common/pi/`.
 Shared Pi prompts, extensions, and discovered skills are still installed by
 `--only pi`; credentials, sessions, and other runtime state stay local. Existing
 links to the former shared settings file are backed up and migrated.
+
+Herdr's config is stored at `omarchy/herdr/.config/herdr/config.toml` and linked
+as an individual file. Its config directory stays real; logs, sockets, session
+snapshots, and other runtime state stay local. The installer does not reload or
+restart Herdr. To install it and validate the config:
+
+```sh
+./omarchy/install.sh --only herdr --dry-run
+./omarchy/install.sh --only herdr
+herdr config check
+# If a Herdr server is running, reload after editing the tracked config:
+herdr server reload-config
+```
+
+Leave `HERDR_CONFIG_PATH` unset when using the standard installed path; Herdr
+uses that environment variable to override `$XDG_CONFIG_HOME/herdr/config.toml`.
 
 Missing/locked authinfo is skipped with a warning, without replacing existing
 credentials. Use `--require-secrets` to make that a preflight failure:

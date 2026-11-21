@@ -1,0 +1,4 @@
+# Only configuration belongs here; logs, sockets, and session state stay local.
+/*
+!/.gitignore
+!/config.toml
