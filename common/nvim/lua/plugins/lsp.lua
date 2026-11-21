@@ -1,5 +1,18 @@
 local platform = require("config.platform")
 
+if platform.omarchy then
+  return {
+    {
+      "neovim/nvim-lspconfig",
+      opts = {
+        codelens = { enabled = true },
+        -- haskell-tools attaches when the project provides HLS on PATH.
+        servers = { hls = { mason = false } },
+      },
+    },
+  }
+end
+
 if platform.macos then
   return {
     {

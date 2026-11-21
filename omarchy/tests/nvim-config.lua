@@ -51,16 +51,53 @@ for _, name in ipairs({ "omarchy", "nixos", "macos", "linux" }) do
   elseif platform.macos then
     equal(false, lsp[1].opts.servers.gopls.mason)
     equal(false, lsp[1].opts.servers.nixd.enabled)
+  elseif platform.omarchy then
+    equal({ hls = { mason = false } }, lsp[1].opts.servers)
+    equal(1, #lsp)
   else
     equal(nil, lsp[1].opts.servers)
     equal(1, #lsp)
   end
 
   local mason = load_config("lua/plugins/mason.lua")
-  if platform.nixos then
-    local opts = { ensure_installed = { "delve", "stylua" } }
+  if platform.omarchy then
+    equal(2, #mason)
+    equal("mason-org/mason.nvim", mason[1][1])
+    local opts = { ensure_installed = { "haskell-debug-adapter", "delve", "stylua" } }
     mason[1].opts(nil, opts)
-    equal({ "stylua" }, opts.ensure_installed)
+    equal({ "delve", "stylua" }, opts.ensure_installed)
+    opts = {}
+    mason[1].opts(nil, opts)
+    equal({}, opts.ensure_installed)
+
+    local dap = mason[2]
+    equal("jay-babu/mason-nvim-dap.nvim", dap[1])
+    equal(true, dap.optional)
+    for _, case in ipairs({
+      { before = true, after = { exclude = { "haskell" } } },
+      { before = { exclude = { "python" } }, after = { exclude = { "python", "haskell" } } },
+      { before = { exclude = { "haskell" } }, after = { exclude = { "haskell" } } },
+      { before = false, after = false },
+      {}, -- An unset automatic_installation must remain unset.
+    }) do
+      opts = {
+        ensure_installed = { "haskell", "delve" },
+        automatic_installation = vim.deepcopy(case.before),
+      }
+      dap.opts(nil, opts)
+      dap.opts(nil, opts)
+      equal({ "delve" }, opts.ensure_installed)
+      equal(case.after, opts.automatic_installation)
+    end
+    opts = {}
+    dap.opts(nil, opts)
+    equal({}, opts.ensure_installed)
+    equal(nil, opts.automatic_installation)
+  elseif platform.nixos then
+    equal(1, #mason)
+    local opts = { ensure_installed = { "delve", "haskell-debug-adapter", "stylua" } }
+    mason[1].opts(nil, opts)
+    equal({ "haskell-debug-adapter", "stylua" }, opts.ensure_installed)
   else
     equal({}, mason)
   end

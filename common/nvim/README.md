@@ -22,6 +22,13 @@ debugging, Overseer and Zig. Inline Git blame is enabled with a 300ms delay;
 `<leader>uB` toggles it. Sidekick persists sessions with zellij when available,
 otherwise tmux.
 
+On Omarchy, HLS and the Haskell debugger are project-managed.
+`lua/plugins/lsp.lua` disables Mason installation for HLS; `haskell-tools.nvim`
+attaches only when HLS is available on `PATH`, for example inside a project
+devshell. `lua/plugins/mason.lua` removes `haskell-debug-adapter` from Mason's
+installation list and excludes the `haskell` adapter from `mason-nvim-dap`
+installation. The Haskell extra stays enabled.
+
 In a Sidekick CLI terminal, Shift+Enter inserts a prompt newline. The
 buffer-local Sidekick keys handle both native Shift+Enter and Ghostty's
 Alt+Enter encoding, forwarding Shift+Enter to the CLI; other terminal buffers
