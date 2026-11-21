@@ -25,8 +25,8 @@ first and these files override them afterwards.
 - =install.sh= — preflights selected components, backs up replaced files, and
   stows individual files; service activation requires =--enable-services=
 - =ghostty/= — terminal config; colors follow the active Omarchy theme
-- =herdr/= — terminal workspace manager config; tmux-style keys and terminal palette,
-  with logs, sockets, and session state left local
+- =herdr-app/= — desktop workspace manager keys and preferences; installed by default,
+  with generated UI files and runtime state left local
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
 - Neovim uses =common/nvim/=, stowed as individual files with =--no-folding=.
   Omarchy's generated theme, local lockfile, transparency and clipboard support

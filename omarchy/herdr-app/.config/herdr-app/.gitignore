@@ -1,0 +1,11 @@
+# Only personal configuration belongs here; generated UI and runtime state stay local.
+/*
+!/.gitignore
+!/keys.json
+!/settings.json
+!/mods/
+/mods/*
+!/mods/panopticon/
+/mods/panopticon/*
+!/mods/panopticon/main.js
+!/mods/panopticon/mod.json
