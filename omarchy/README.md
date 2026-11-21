@@ -105,7 +105,8 @@ upstream's Super-key conflicts with Hyprland; existing split keys are unchanged.
 The mod runs local programs and reads project files and agent session logs.
 
 Installing on the shipped `main` layout creates and switches to `main-copy`;
-`main` and Panopticon remain unchanged. Use `Ctrl+Shift+L` to switch layouts.
+`main` and Panopticon remain unchanged. Generic layout cycling is intentionally
+unbound; `Ctrl+Shift+G` remains the Panopticon toggle.
 Validate both mods with `herdr-app check <app-home>/mods/herdr-nvim` and
 `herdr-app check <app-home>/mods/herdr-nvim-header`.
 
