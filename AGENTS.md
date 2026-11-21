@@ -118,6 +118,11 @@ Keep changes small, focused, and repo-specific. Prefer the documented install/ch
 - Mention the validation commands you ran.
 - Run `make gitleaks` before pushing changes that touch secrets-related areas.
 
+## Repo-local skills
+- For user-requested commits, follow `.agents/skills/dotfiles-commit/SKILL.md`.
+  It captures this repository's commit conventions and validation workflow.
+  Creating or editing a skill does not authorize committing or pushing changes.
+
 # RTK (Rust Token Killer) - Token-Optimized Commands
 
 ## Golden Rule
