@@ -8,6 +8,8 @@ readonly SCRIPT_DIR COMMON_DIR
 readonly -a DEFAULT_COMPONENTS=(doom authinfo hypr ghostty herdr-app nvim copilot claude pi grasp)
 # Apply these exclusions to both the file plan and Stow, including local runtime files.
 readonly STOW_IGNORE='(^|/)(README[^/]*|LICENSE[^/]*|COPYING|tests|\.git|\.gitignore|\.stow-local-ignore|\.DS_Store)(/|$)|~$'
+readonly PANOPTICON_REF='v0.2.0'
+readonly PANOPTICON_RELEASE_URL="https://raw.githubusercontent.com/eapolinario/herdr-panopticon/$PANOPTICON_REF/install.sh"
 
 dry_run=false
 doctor=false
@@ -21,6 +23,7 @@ selection=
 config_home=
 transaction_active=false
 links_started=false
+panopticon_release=false
 declare -a components=() services=()
 declare -a package_dirs=() package_names=() package_targets=() package_ignores=()
 declare -a plan_kinds=() plan_sources=() plan_targets=() plan_components=() plan_relatives=()
@@ -212,7 +215,11 @@ run_doctor() {
         doctor_cmd zenity 'workspace destination prompt'
         ;;
       ghostty) doctor_cmd ghostty 'terminal' ;;
-      herdr-app) doctor_cmd herdr-app 'desktop workspace manager (not installed by this script)' ;;
+      herdr-app)
+        doctor_cmd herdr-app 'desktop workspace manager (not installed by this script)'
+        doctor_cmd curl 'network installer for pinned Panopticon v0.2.0'
+        printf '[INFO] Panopticon uses the official v0.2.0 release installer; no source copy is stowed.\n'
+        ;;
       nvim)
         doctor_cmd nvim 'shared LazyVim configuration'
         doctor_cmd git 'plugin bootstrap'
@@ -270,6 +277,34 @@ validate_cleanup() {
   done
   [[ ! -e "$downloads_dir" || -d "$downloads_dir" ]] ||
     fail "Cleanup path is not a directory: $downloads_dir."
+}
+
+panopticon_marker_is_managed() {
+  local marker="$1/.herdr-panopticon"
+  [[ -f "$marker" && ! -L "$marker" ]] || return 1
+  local owner
+  IFS= read -r owner <"$marker" || return 1
+  [[ "$owner" == 'herdr-panopticon installer' ]]
+}
+
+panopticon_is_legacy_stow_install() {
+  local destination="$1" source_root="$2" resolved
+  [[ -e "$destination" || -L "$destination" ]] || return 1
+  panopticon_marker_is_managed "$destination" && return 1
+  [[ ! -f "$destination/.herdr-panopticon" || -L "$destination/.herdr-panopticon" ]] || return 1
+  if [[ -L "$destination" ]]; then
+    resolved="$(realpath -m -- "$destination")"
+    [[ "$resolved" == "$source_root" || "$resolved" == "$source_root/"* ]] || return 1
+  elif [[ -d "$destination" ]]; then
+    local file
+    for file in main.js mod.json; do
+      [[ -L "$destination/$file" ]] || return 1
+      resolved="$(realpath -m -- "$destination/$file")"
+      [[ "$resolved" == "$source_root/$file" ]] || return 1
+    done
+  else
+    return 1
+  fi
 }
 
 plan_entry() {
@@ -345,9 +380,16 @@ build_plan() {
         ;;
       ghostty) add_package ghostty "$SCRIPT_DIR/ghostty/.config" ghostty "$config_home/ghostty" ;;
       herdr-app)
-        # Keep runtime layouts (including Panopticon's terminal IDs) and generated editor files local.
+        # Keep runtime layouts, generated editor files, and Panopticon itself local.
+        # Panopticon is installed explicitly below from pinned release v0.2.0.
         add_package herdr-app "$SCRIPT_DIR/herdr-app/.config" herdr-app "$config_home/herdr-app" \
-          '^layouts(/|$)|(^|/)(jsconfig\.json|[^/]*\.d\.ts)$'
+          '^layouts(/|$)|^mods/panopticon(/|$)|(^|/)(jsconfig\.json|[^/]*\.d\.ts)$'
+        panopticon_release=true
+        local panopticon_destination="$config_home/herdr-app/mods/panopticon"
+        local panopticon_source_root="$SCRIPT_DIR/herdr-app/.config/herdr-app/mods/panopticon"
+        if panopticon_is_legacy_stow_install "$panopticon_destination" "$panopticon_source_root"; then
+          plan_entry panopticon-migrate '' "$panopticon_destination" herdr-app mods/panopticon
+        fi
         ;;
       nvim)
         check_nvim_support
@@ -386,6 +428,15 @@ preflight() {
   local i target parent source source_parent component resolved fold_target fold_source
   for i in "${!plan_targets[@]}"; do
     target="${plan_targets[$i]}"
+    if [[ "${plan_kinds[$i]}" == panopticon-migrate ]]; then
+      if panopticon_is_legacy_stow_install "$target" \
+        "$SCRIPT_DIR/herdr-app/.config/herdr-app/mods/panopticon"; then
+        plan_states[$i]=replace
+      else
+        plan_states[$i]=keep
+      fi
+      continue
+    fi
     component="${plan_components[$i]}"
     parent="${target%/*}"
     source_parent="$(dirname "${plan_sources[$i]}")"
@@ -450,6 +501,10 @@ preflight() {
       plan_states[$i]=create
     fi
   done
+  if [[ "$panopticon_release" == true && "$dry_run" == false ]]; then
+    require_cmd curl
+    require_cmd herdr-app
+  fi
   if [[ "$enable_services" == true ]]; then
     require_cmd systemctl
     systemctl --user show-environment >/dev/null 2>&1 ||
@@ -484,6 +539,12 @@ print_plan() {
     printf ' %q' "${stow_args[@]}"
     printf '\n'
   done
+  if [[ "$panopticon_release" == true ]]; then
+    printf '[PLAN] Panopticon release %s: %s --app-home %q --ref %s\n' \
+      "$PANOPTICON_REF" 'curl release installer into a temporary file, then sh' \
+      "${config_home}/herdr-app" "$PANOPTICON_REF"
+    printf '[PLAN] Release URL: %s\n' "$PANOPTICON_RELEASE_URL"
+  fi
   if [[ "$enable_services" == true ]]; then
     printf '[PLAN] systemctl --user daemon-reload\n'
     printf '[PLAN] systemctl --user enable --now %s\n' "${services[@]}"
@@ -525,6 +586,17 @@ rollback() {
       [[ "$links_started" == true ]] || break
       [[ "${plan_states[$i]}" != keep ]] || continue
       target="${plan_targets[$i]}"
+      if [[ "${plan_kinds[$i]}" == panopticon-migrate ]]; then
+        if [[ -e "$target" || -L "$target" ]]; then
+          if panopticon_marker_is_managed "$target"; then
+            rm -rf -- "$target" || failed=true
+          else
+            printf 'Preserving Panopticon path changed during rollback: %s\n' "$target" >&2
+            failed=true
+          fi
+        fi
+        continue
+      fi
       if [[ -L "$target" && ("${plan_kinds[$i]}" == link || "${plan_kinds[$i]}" == skill) ]]; then
         source="$(realpath -m -- "${plan_sources[$i]}")"
         if [[ "$(realpath -m -- "$target")" == "$source" ]]; then
@@ -568,6 +640,28 @@ rollback() {
   exit "$status"
 }
 
+apply_panopticon_release() {
+  local installer temporary destination file
+  require_cmd curl
+  require_cmd herdr-app
+  installer="$(mktemp "${TMPDIR:-/tmp}/dotfiles-panopticon-installer.XXXXXXXX")"
+  temporary_files+=("$installer")
+  if ! curl -fsSL --connect-timeout 15 --max-time 60 \
+    -o "$installer" "$PANOPTICON_RELEASE_URL"; then
+    fail "Could not download the Panopticon $PANOPTICON_REF release installer."
+  fi
+  if ! sh "$installer" --app-home "$config_home/herdr-app" --ref "$PANOPTICON_REF"; then
+    fail "Could not install Panopticon $PANOPTICON_REF; existing managed state was left alone by the release installer."
+  fi
+  destination="$config_home/herdr-app/mods/panopticon"
+  panopticon_marker_is_managed "$destination" ||
+    fail "Panopticon $PANOPTICON_REF did not install an owned mod directory."
+  for file in main.js mod.json; do
+    [[ -f "$destination/$file" && ! -L "$destination/$file" ]] ||
+      fail "Panopticon $PANOPTICON_REF is missing $file."
+  done
+}
+
 apply_plan() {
   local i target temporary source
   local -a stow_args=()
@@ -609,6 +703,9 @@ apply_plan() {
         ;;
     esac
   done
+  if [[ "$panopticon_release" == true ]]; then
+    apply_panopticon_release
+  fi
   # Detect Stow ignore overrides or incomplete application instead of reporting success.
   for i in "${!plan_targets[@]}"; do
     case "${plan_kinds[$i]}" in
@@ -663,7 +760,11 @@ main() {
     return
   fi
   if ((${#plan_targets[@]} == 0)); then
-    printf 'No files were selected for installation; see any warnings above.\n'
+    if [[ "$panopticon_release" == true ]]; then
+      apply_plan
+    else
+      printf 'No files were selected for installation; see any warnings above.\n'
+    fi
     return
   fi
   apply_plan

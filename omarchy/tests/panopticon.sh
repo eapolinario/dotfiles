@@ -8,7 +8,11 @@ if ! command -v herdr-app >/dev/null; then
 fi
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-source_dir="$repo_dir/omarchy/herdr-app/.config/herdr-app/mods/panopticon"
+source_dir="${XDG_CONFIG_HOME:-$HOME/.config}/herdr-app/mods/panopticon"
+if [[ ! -f "$source_dir/main.js" || ! -f "$source_dir/mod.json" ]]; then
+  printf 'Skipping Panopticon render checks (v0.2.0 mod is not installed locally).\n'
+  exit 0
+fi
 test_dir="$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-panopticon.XXXXXXXX")"
 trap 'rm -r -- "$test_dir"' EXIT
 export HERDR_APP_HOME="$test_dir/home"
