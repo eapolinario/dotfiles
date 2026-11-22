@@ -99,7 +99,7 @@ while (($#)); do
   esac
 done
 printf '%s\n%s\n' "$app_home" "$ref" >>"${PANOPTICON_TEST_RELEASE_LOG:?}"
-[[ "$ref" == v0.4.0 ]]
+[[ "$ref" == v0.4.1 ]]
 if [[ "${PANOPTICON_TEST_RELEASE_FAIL:-0}" == 1 ]]; then exit 22; fi
 if [[ -e "$app_home/mods/panopticon" || -L "$app_home/mods/panopticon" ]]; then
   if [[ ! -f "$app_home/mods/panopticon/.herdr-panopticon" || \
@@ -198,7 +198,7 @@ succeeds --dry-run
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'repeat full install was not idempotent'
 [[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'install changed source'
 
-# The desktop app links personal config; Panopticon comes only from pinned release v0.4.0.
+# The desktop app links personal config; Panopticon comes only from pinned release v0.4.1.
 new_home herdr-app
 app_dir="$XDG_CONFIG_HOME/herdr-app"
 mkdir -p "$app_dir/data" "$app_dir/layouts" "$app_dir/mods/local" "$app_dir/mods/panopticon"
@@ -246,9 +246,9 @@ done
 grep -q 'herdr-panopticon installer' "$app_dir/mods/panopticon/.herdr-panopticon"
 [[ ! -e "$app_dir/mods/panopticon/jsconfig.json" && ! -e "$app_dir/mods/panopticon/gpui-kit.d.ts" ]] ||
   fail 'installed generated Panopticon editor support'
-grep -F -q 'https://raw.githubusercontent.com/eapolinario/herdr-panopticon/v0.4.0/install.sh' \
+grep -F -q 'https://raw.githubusercontent.com/eapolinario/herdr-panopticon/v0.4.1/install.sh' \
   "$PANOPTICON_TEST_CURL_LOG"
-grep -q -F 'v0.4.0' "$PANOPTICON_TEST_RELEASE_LOG"
+grep -q -F 'v0.4.1' "$PANOPTICON_TEST_RELEASE_LOG"
 grep -q -F "$app_dir" "$PANOPTICON_TEST_RELEASE_LOG"
 [[ ! -L "$app_dir/layouts/panopticon.json" ]] || fail 'stowed a runtime grid of terminal addresses'
 grep -qx 'local grid' "$app_dir/layouts/panopticon.json"
@@ -278,7 +278,7 @@ export PANOPTICON_TEST_RELEASE_FAIL=1
 mkdir -p "$TEST_DIR/panopticon-failure-tmp"
 export TMPDIR="$TEST_DIR/panopticon-failure-tmp"
 before="$(snapshot "$HOME")"
-fails 'Could not install Panopticon v0.4.0' --only herdr-app
+fails 'Could not install Panopticon v0.4.1' --only herdr-app
 unset PANOPTICON_TEST_RELEASE_FAIL TMPDIR
 [[ -z "$(find "$TEST_DIR/panopticon-failure-tmp" -name 'dotfiles-panopticon-installer.*' -print -quit)" ]] ||
   fail 'failed Panopticon install left its temporary installer behind'
@@ -327,7 +327,7 @@ mkdir -p "$XDG_CONFIG_HOME/herdr-app/mods/panopticon"
 printf '// local manual Panopticon\n' >"$XDG_CONFIG_HOME/herdr-app/mods/panopticon/main.js"
 printf '{"title":"Local","place":"none"}\n' >"$XDG_CONFIG_HOME/herdr-app/mods/panopticon/mod.json"
 before="$(snapshot "$HOME")"
-fails 'Could not install Panopticon v0.4.0' --only herdr-app
+fails 'Could not install Panopticon v0.4.1' --only herdr-app
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'unmanaged Panopticon install changed local files'
 grep -q 'local manual Panopticon' "$XDG_CONFIG_HOME/herdr-app/mods/panopticon/main.js"
 

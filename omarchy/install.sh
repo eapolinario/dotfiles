@@ -8,7 +8,7 @@ readonly SCRIPT_DIR COMMON_DIR
 readonly -a DEFAULT_COMPONENTS=(doom authinfo hypr ghostty herdr-app nvim copilot claude pi grasp)
 # Apply these exclusions to both the file plan and Stow, including local runtime files.
 readonly STOW_IGNORE='(^|/)(README[^/]*|LICENSE[^/]*|COPYING|tests|\.git|\.gitignore|\.stow-local-ignore|\.DS_Store)(/|$)|~$'
-readonly PANOPTICON_REF='v0.4.0'
+readonly PANOPTICON_REF='v0.4.1'
 readonly PANOPTICON_RELEASE_URL="https://raw.githubusercontent.com/eapolinario/herdr-panopticon/$PANOPTICON_REF/install.sh"
 
 dry_run=false
@@ -217,8 +217,8 @@ run_doctor() {
       ghostty) doctor_cmd ghostty 'terminal' ;;
       herdr-app)
         doctor_cmd herdr-app 'desktop workspace manager (not installed by this script)'
-        doctor_cmd curl 'network installer for pinned Panopticon v0.4.0'
-        printf '[INFO] Panopticon uses the official v0.4.0 release installer; no source copy is stowed.\n'
+        doctor_cmd curl 'network installer for pinned Panopticon v0.4.1'
+        printf '[INFO] Panopticon uses the official v0.4.1 release installer; no source copy is stowed.\n'
         ;;
       nvim)
         doctor_cmd nvim 'shared LazyVim configuration'
@@ -301,7 +301,7 @@ panopticon_marker_is_managed() {
   [[ "$owner" == 'herdr-panopticon installer' ]]
 }
 
-# TODO(v0.4.0): Remove this one-time migration for pre-v0.2.0 Stow links.
+# TODO(v0.4.1): Remove this one-time migration for pre-v0.2.0 Stow links.
 panopticon_is_legacy_stow_install() {
   local destination="$1" source_root="$2" resolved
   [[ -e "$destination" || -L "$destination" ]] || return 1
@@ -396,7 +396,7 @@ build_plan() {
       ghostty) add_package ghostty "$SCRIPT_DIR/ghostty/.config" ghostty "$config_home/ghostty" ;;
       herdr-app)
         # Keep runtime layouts, generated editor files, and Panopticon itself local.
-        # Panopticon is installed explicitly below from pinned release v0.4.0.
+        # Panopticon is installed explicitly below from pinned release v0.4.1.
         add_package herdr-app "$SCRIPT_DIR/herdr-app/.config" herdr-app "$config_home/herdr-app" \
           '^layouts(/|$)|^mods/panopticon(/|$)|(^|/)(jsconfig\.json|[^/]*\.d\.ts)$'
         panopticon_release=true

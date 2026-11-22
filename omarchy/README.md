@@ -75,7 +75,7 @@ the app directory stays real. Shipped layouts/mods, generated manuals/types,
 telemetry, sockets, and session/window state remain local.
 
 Panopticon is not vendored or Stowed. Selecting the `herdr-app` component downloads
-and runs the project's official installer with `--ref v0.4.0` and
+and runs the project's official installer with `--ref v0.4.1` and
 `--app-home <your-XDG-herdr-home>`. The pinned installer creates an
 installer-managed `mods/panopticon/` directory containing only `main.js`, `mod.json`,
 and the ownership marker. It preflights the resolved destination parent chain,

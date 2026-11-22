@@ -27,7 +27,7 @@ first and these files override them afterwards.
 - =ghostty/= — terminal config; colors follow the active Omarchy theme
 - =herdr-app/= — desktop workspace manager keys and preferences; installed by default,
   with generated UI files and runtime state left local. Panopticon is downloaded by
-  the installer at the pinned =v0.4.0= release, not Stowed as source
+  the installer at the pinned =v0.4.1= release, not Stowed as source
 - =hypr/= — Hyprland Lua overrides: =bindings.lua=, =input.lua=, =looknfeel.lua=, scripts
 - Neovim uses =common/nvim/=, stowed as individual files with =--no-folding=.
   Omarchy's generated theme, local lockfile, transparency and clipboard support
