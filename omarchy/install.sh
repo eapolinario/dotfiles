@@ -501,6 +501,13 @@ preflight() {
         "$resolved" == "$COMMON_DIR/pi/.pi/agent/settings.json" ]]; then
         # Migrate the former shared settings link to the Omarchy override.
         plan_states[$i]=replace
+      elif [[ "${plan_kinds[$i]}" == skill &&
+        -d "$resolved" && -f "$resolved/SKILL.md" &&
+        -f "${plan_sources[$i]}/SKILL.md" ]] &&
+        cmp -s -- "$resolved/SKILL.md" "${plan_sources[$i]}/SKILL.md"; then
+        # Skillshare can wrap repo-managed skills with a same-content symlink.
+        # Migrate that wrapper to the installer-owned source instead of treating it as foreign.
+        plan_states[$i]=replace
       else
         [[ "$component" != nvim ]] || fail "Refusing to replace unrelated Neovim symlink $target -> $resolved."
         fail "Refusing to replace unrelated symlink $target -> $resolved."
@@ -713,14 +720,15 @@ apply_plan() {
     "${stow_args[@]}"
   done
   for i in "${!plan_targets[@]}"; do
-    [[ "${plan_states[$i]}" != keep ]] || continue
     target="${plan_targets[$i]}"
     case "${plan_kinds[$i]}" in
       skill)
+        [[ "${plan_states[$i]}" != keep ]] || continue
         make_dir "$(dirname "$target")"
         ln -s -- "$(realpath --relative-to="$(dirname "$target")" "${plan_sources[$i]}")" "$target"
         ;;
       write)
+        [[ "${plan_states[$i]}" != keep ]] || continue
         make_dir "$(dirname "$target")"
         temporary="$(mktemp "$target.tmp.XXXXXXXX")"
         temporary_files+=("$temporary")

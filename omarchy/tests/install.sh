@@ -377,6 +377,19 @@ succeeds --only pi
   fail 'legacy Pi settings link was not migrated'
 [[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'Pi migration changed source'
 
+# Migrate same-content skills installed through Skillshare wrappers.
+new_home pi-skillshare
+mkdir -p "$HOME/.pi/agent/skills" "$TEST_DIR/skillshare/skills"
+cp -R "$fixture/common/skills/acquire-codebase-knowledge" "$TEST_DIR/skillshare/skills/"
+ln -s "$TEST_DIR/skillshare/skills/acquire-codebase-knowledge" \
+  "$HOME/.pi/agent/skills/acquire-codebase-knowledge"
+before="$(snapshot "$HOME")"
+succeeds --only pi --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Skillshare migration dry-run changed HOME'
+succeeds --only pi
+[[ "$(realpath "$HOME/.pi/agent/skills/acquire-codebase-knowledge")" == "$fixture/common/skills/acquire-codebase-knowledge" ]] ||
+  fail 'Skillshare skill wrapper was not migrated'
+
 new_home pi-unrelated
 mkdir -p "$HOME/.pi/agent"
 ln -s "$TEST_DIR/unrelated.json" "$HOME/.pi/agent/settings.json"
