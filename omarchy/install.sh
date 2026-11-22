@@ -657,6 +657,7 @@ rollback() {
 
 apply_panopticon_release() {
   local installer destination file i
+  validate_panopticon_destination
   local -a cleaned_temporary_files=()
   require_cmd curl
   require_cmd herdr-app
