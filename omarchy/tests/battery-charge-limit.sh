@@ -51,6 +51,8 @@ grep -Fxq 'ConditionPathExists=/usr/bin/omarchy' "$UNIT_FILE" ||
   fail 'battery service must require package-backed Omarchy'
 grep -Fxq 'ConditionPathExists=/sys/class/power_supply/BAT0' "$UNIT_FILE" ||
   fail 'battery service must require BAT0'
+grep -Fxq 'ExecStartPre=/usr/bin/env modprobe system76_acpi' "$UNIT_FILE" ||
+  fail 'battery service must load system76_acpi portably'
 
 set_model System76 gaze16-3050
 run_conditions || fail 'battery service rejected the configured Gazelle'

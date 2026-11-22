@@ -42,7 +42,7 @@ The installer requires Bash, GNU Stow, GNU coreutils, and findutils.
 | Doom | Emacs and a separately bootstrapped Doom; `doom sync` after module/package changes | `$XDG_CONFIG_HOME/doom` |
 | Hyprland | Omarchy Lua defaults; `hyprctl`, `jq`, `zenity` for workspace swapping | `$XDG_CONFIG_HOME/hypr` |
 | Ghostty | Ghostty and the configured Nerd Font; Omarchy theme file is optional | `$XDG_CONFIG_HOME/ghostty` |
-| Herdr app | Herdr desktop app and herdr-core (`hc`), installed separately | `$XDG_CONFIG_HOME/herdr-app/`: `keys.json`, `settings.json`, `mods/panopticon/` |
+| Herdr app | Herdr desktop app and herdr-core (`hc`), plus `curl` for the pinned Panopticon release installer | `$XDG_CONFIG_HOME/herdr-app/`: `keys.json`, `settings.json`; Panopticon installed by its release installer |
 | Neovim | Neovim/LazyVim; Omarchy's seeded clipboard support when on Omarchy | `$XDG_CONFIG_HOME/nvim` |
 | Agents | Their respective CLI; Claude's configured command hook also needs `rtk` | `~/.copilot`, `~/.claude`, `~/.pi/agent` |
 | Authinfo | An unlocked repository to install credentials | `~/.authinfo` |
@@ -69,11 +69,19 @@ links to the former shared settings file are backed up and migrated.
 
 ## Herdr desktop app
 
-The desktop app's `keys.json`, `settings.json`, and the personal Panopticon mod
-live in `omarchy/herdr-app/.config/herdr-app/`. Files are linked individually;
-the app and mod directories stay real.
-Shipped layouts/mods, generated manuals/types, telemetry, sockets, and
-session/window state remain local. The installer does not reload or restart the app.
+The desktop app's `keys.json` and `settings.json` live in
+`omarchy/herdr-app/.config/herdr-app/`. Those files are linked individually;
+the app directory stays real. Shipped layouts/mods, generated manuals/types,
+telemetry, sockets, and session/window state remain local.
+
+Panopticon is not vendored or Stowed. Selecting the `herdr-app` component downloads
+and runs the project's official installer with `--ref v0.2.0` and
+`--app-home <your-XDG-herdr-home>`. The pinned installer creates an
+installer-managed `mods/panopticon/` directory containing only `main.js`, `mod.json`,
+and the ownership marker. It preflights the resolved destination parent chain,
+migrates legacy repository-owned Stow installs transactionally, and verifies planned
+Stow links before changing the mod. An existing manual or symlinked Panopticon
+directory is left alone and reported by the release installer as unmanaged. The installer does not reload or restart the app.
 
 ```sh
 ./omarchy/install.sh --only herdr-app --dry-run
@@ -83,6 +91,14 @@ herdr-app check "${XDG_CONFIG_HOME:-$HOME/.config}/herdr-app/mods/panopticon"
 herdr-app do mod.open --name panopticon
 herdr-app status
 ```
+
+A dry-run lists the pinned Panopticon release and URL but does not download or
+change the app home. Applying it requires `curl` and `herdr-app` on `PATH` and uses
+network access; keys and existing runtime layouts are not edited by the upstream
+installer. The downloaded installer script is removed after success and failed
+transaction rollback. The normal dotfiles installer may also run the release update again
+when `herdr-app` is selected, while the release installer itself updates only an
+installer-managed copy.
 
 **Panopticon** (`Ctrl+Shift+G`) switches the whole Herdr window to a grid of live
 agent terminals from **all spaces**. It is a layout, not a space or tab. Idle agents
