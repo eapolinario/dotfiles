@@ -206,6 +206,25 @@ rtk printf '90\n' | rtk sudo tee /sys/class/power_supply/BAT0/charge_control_sta
 
 Stopping or disabling the oneshot service alone does not reset firmware thresholds.
 
+### Tailscale daemon (system service, opt-in)
+
+The `tailscale` package provides the Arch package-backed `tailscaled.service`.
+This repository only supplies a systemd drop-in that waits for network connectivity
+and restarts a failed daemon after five seconds. It does not replace the package unit
+or alter Tailscale state/socket/port settings.
+
+The ordinary installer and `make install-omarchy` neither install the package nor
+activate the service. Apply explicitly from a terminal at the repository root:
+
+```sh
+rtk sudo pacman -S --needed tailscale
+rtk sudo install -D -m 0644 \
+  omarchy/systemd/system/tailscaled.service.d/10-omarchy.conf \
+  /etc/systemd/system/tailscaled.service.d/10-omarchy.conf
+rtk sudo systemctl daemon-reload
+rtk sudo systemctl enable --now tailscaled.service
+```
+
 ### Downloads cleanup is destructive
 
 **Cleanup permanently deletes contents; it does not move them to Trash.**
