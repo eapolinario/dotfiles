@@ -10,7 +10,7 @@ fi
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source_dir="${XDG_CONFIG_HOME:-$HOME/.config}/herdr-app/mods/panopticon"
 if [[ ! -f "$source_dir/main.js" || ! -f "$source_dir/mod.json" ]]; then
-  printf 'Skipping Panopticon render checks (v0.4.1 mod is not installed locally).\n'
+  printf 'Skipping Panopticon render checks (v0.5.0 mod is not installed locally).\n'
   exit 0
 fi
 test_dir="$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-panopticon.XXXXXXXX")"

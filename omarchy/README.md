@@ -75,7 +75,7 @@ the app directory stays real. Shipped layouts/mods, generated manuals/types,
 telemetry, sockets, and session/window state remain local.
 
 Panopticon is not vendored or Stowed. Selecting the `herdr-app` component downloads
-and runs the project's official installer with `--ref v0.4.1` and
+and runs the project's official installer with `--ref v0.5.0` and
 `--app-home <your-XDG-herdr-home>`. The pinned installer creates an
 installer-managed `mods/panopticon/` directory containing only `main.js`, `mod.json`,
 and the ownership marker. It preflights the resolved destination parent chain,
@@ -106,6 +106,8 @@ and live agent helpers are included; ordinary shells are not. Click inside a til
 work in that terminal, or click its caption to go to the original pane (Peek for a
 helper without a pane). `Ctrl+Shift+G` again or **Back** restores the previous layout.
 `Esc` is still available to terminal programs; `Ctrl+Shift+K` remains the tab picker.
+Captions follow the default view's automatic title rules and show each terminal's
+harness icon, including helpers, with the same theme-aware rendering as regular panes.
 
 Panopticon creates its own `layouts/panopticon.json` in Herdr's local runtime directory
 on first use. The layout contains session addresses and is **not** stowed or checked
