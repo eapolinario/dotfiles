@@ -83,7 +83,11 @@ printf '%s\n' '#!/usr/bin/env bash' 'set -euo pipefail' \
 printf '%s\n' '#!/usr/bin/env bash' 'set -euo pipefail' \
   'if [[ "${1:-}" == check ]]; then exit 0; fi' 'exit 0' >"$TEST_DIR/bin/herdr-app"
 cat >"$TEST_DIR/panopticon-release-installer.sh" <<'SH'
-#!/usr/bin/env bash
+#!/bin/sh
+if [ -z "${PANOPTICON_FIXTURE_BASH_REEXEC:-}" ]; then
+  export PANOPTICON_FIXTURE_BASH_REEXEC=1
+  exec bash "$0" "$@"
+fi
 set -euo pipefail
 app_home=
 ref=
@@ -260,16 +264,55 @@ done
 [[ ! -e "$app_dir/.gitignore" ]] || fail 'installed the Herdr app Git ignore file'
 [[ ! -e "$HOME/.config" && ! -e "$SYSTEMCTL_MARKER" ]] || fail 'Herdr app ignored XDG or called systemctl'
 before="$(snapshot "$HOME")"
+mkdir -p "$TEST_DIR/panopticon-tmp"
+export TMPDIR="$TEST_DIR/panopticon-tmp"
 succeeds --only herdr-app
+[[ -z "$(find "$TMPDIR" -name 'dotfiles-panopticon-installer.*' -print -quit)" ]] ||
+  fail 'successful Panopticon install left its temporary installer behind'
 succeeds --only herdr-app --dry-run
+unset TMPDIR
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Herdr app install was not idempotent'
 [[ "$(snapshot "$fixture")" == "$source_before" ]] || fail 'Herdr app install changed source'
 
 export PANOPTICON_TEST_RELEASE_FAIL=1
+mkdir -p "$TEST_DIR/panopticon-failure-tmp"
+export TMPDIR="$TEST_DIR/panopticon-failure-tmp"
 before="$(snapshot "$HOME")"
 fails 'Could not install Panopticon v0.2.0' --only herdr-app
-unset PANOPTICON_TEST_RELEASE_FAIL
+unset PANOPTICON_TEST_RELEASE_FAIL TMPDIR
+[[ -z "$(find "$TEST_DIR/panopticon-failure-tmp" -name 'dotfiles-panopticon-installer.*' -print -quit)" ]] ||
+  fail 'failed Panopticon install left its temporary installer behind'
 [[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Panopticon release failure was not transactional'
+
+new_home panopticon-stow-verification
+mkdir -p "$XDG_CONFIG_HOME/herdr-app"
+: >"$PANOPTICON_TEST_CURL_LOG"
+: >"$PANOPTICON_TEST_RELEASE_LOG"
+before="$(snapshot "$HOME")"
+export MOCK_SKIP_STOW=1
+fails 'Stow did not install' --only herdr-app
+unset MOCK_SKIP_STOW
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Panopticon Stow verification failure changed HOME'
+[[ ! -s "$PANOPTICON_TEST_CURL_LOG" && ! -s "$PANOPTICON_TEST_RELEASE_LOG" ]] ||
+  fail 'Panopticon release ran after incomplete Stow application'
+
+new_home panopticon-symlink-mods
+mkdir -p "$XDG_CONFIG_HOME/herdr-app" "$TEST_DIR/panopticon-outside"
+ln -s "$TEST_DIR/panopticon-outside" "$XDG_CONFIG_HOME/herdr-app/mods"
+before="$(snapshot "$HOME")"
+fails 'Refusing Panopticon destination outside' --only herdr-app --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Panopticon mods symlink dry-run changed HOME'
+fails 'Refusing Panopticon destination outside' --only herdr-app
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Panopticon mods symlink install changed HOME'
+
+new_home panopticon-symlink-directory
+mkdir -p "$XDG_CONFIG_HOME/herdr-app/mods" "$TEST_DIR/panopticon-outside"
+ln -s "$TEST_DIR/panopticon-outside" "$XDG_CONFIG_HOME/herdr-app/mods/panopticon"
+before="$(snapshot "$HOME")"
+fails 'Refusing Panopticon destination outside' --only herdr-app --dry-run
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Panopticon directory symlink dry-run changed HOME'
+fails 'Refusing Panopticon destination outside' --only herdr-app
+[[ "$(snapshot "$HOME")" == "$before" ]] || fail 'Panopticon directory symlink install changed HOME'
 
 new_home herdr-app-unrelated
 mkdir -p "$XDG_CONFIG_HOME/herdr-app"

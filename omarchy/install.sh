@@ -279,6 +279,20 @@ validate_cleanup() {
     fail "Cleanup path is not a directory: $downloads_dir."
 }
 
+validate_panopticon_destination() {
+  local app_home="$config_home/herdr-app"
+  local destination="$app_home/mods/panopticon"
+  local resolved_app_home resolved_destination
+  resolved_app_home="$(realpath -m -- "$app_home")" ||
+    fail 'Could not resolve the Herdr app home for Panopticon.'
+  resolved_destination="$(realpath -m -- "$destination")" ||
+    fail 'Could not resolve the Panopticon release destination.'
+  [[ "$resolved_destination" == "$resolved_app_home/mods/panopticon" ]] ||
+    fail "Refusing Panopticon destination outside the Herdr app home: $resolved_destination"
+  [[ ! "$resolved_destination" =~ [[:cntrl:]] ]] ||
+    fail 'Refusing a Panopticon destination containing control characters.'
+}
+
 panopticon_marker_is_managed() {
   local marker="$1/.herdr-panopticon"
   [[ -f "$marker" && ! -L "$marker" ]] || return 1
@@ -426,6 +440,9 @@ build_plan() {
 
 preflight() {
   local i target parent source source_parent component resolved fold_target fold_source
+  if [[ "$panopticon_release" == true ]]; then
+    validate_panopticon_destination
+  fi
   for i in "${!plan_targets[@]}"; do
     target="${plan_targets[$i]}"
     if [[ "${plan_kinds[$i]}" == panopticon-migrate ]]; then
@@ -587,13 +604,11 @@ rollback() {
       [[ "${plan_states[$i]}" != keep ]] || continue
       target="${plan_targets[$i]}"
       if [[ "${plan_kinds[$i]}" == panopticon-migrate ]]; then
+        # backup_entry moved the legacy directory aside before Stow/apply.
+        # Remove only a newly installed replacement; the backup is restored in
+        # the existing plan-backup pass below.
         if [[ -e "$target" || -L "$target" ]]; then
-          if panopticon_marker_is_managed "$target"; then
-            rm -rf -- "$target" || failed=true
-          else
-            printf 'Preserving Panopticon path changed during rollback: %s\n' "$target" >&2
-            failed=true
-          fi
+          rm -rf -- "$target" || failed=true
         fi
         continue
       fi
@@ -641,7 +656,8 @@ rollback() {
 }
 
 apply_panopticon_release() {
-  local installer temporary destination file
+  local installer destination file i
+  local -a cleaned_temporary_files=()
   require_cmd curl
   require_cmd herdr-app
   installer="$(mktemp "${TMPDIR:-/tmp}/dotfiles-panopticon-installer.XXXXXXXX")"
@@ -653,6 +669,14 @@ apply_panopticon_release() {
   if ! sh "$installer" --app-home "$config_home/herdr-app" --ref "$PANOPTICON_REF"; then
     fail "Could not install Panopticon $PANOPTICON_REF; existing managed state was left alone by the release installer."
   fi
+  if ! rm -f -- "$installer"; then
+    fail "Could not remove the temporary Panopticon $PANOPTICON_REF installer."
+  fi
+  for i in "${!temporary_files[@]}"; do
+    [[ "${temporary_files[$i]}" != "$installer" ]] || continue
+    cleaned_temporary_files+=("${temporary_files[$i]}")
+  done
+  temporary_files=("${cleaned_temporary_files[@]}")
   destination="$config_home/herdr-app/mods/panopticon"
   panopticon_marker_is_managed "$destination" ||
     fail "Panopticon $PANOPTICON_REF did not install an owned mod directory."
@@ -703,10 +727,9 @@ apply_plan() {
         ;;
     esac
   done
-  if [[ "$panopticon_release" == true ]]; then
-    apply_panopticon_release
-  fi
-  # Detect Stow ignore overrides or incomplete application instead of reporting success.
+  # Detect Stow ignore overrides or incomplete application before changing the
+  # installer-managed Panopticon directory. This keeps Stow verification failures
+  # from leaving a partially updated mod behind.
   for i in "${!plan_targets[@]}"; do
     case "${plan_kinds[$i]}" in
       link | skill)
@@ -721,6 +744,9 @@ apply_plan() {
         ;;
     esac
   done
+  if [[ "$panopticon_release" == true ]]; then
+    apply_panopticon_release
+  fi
   transaction_active=false
   trap - EXIT INT TERM
   printf 'Selected configurations installed. Any replaced files were backed up with RESTORE.tsv.\n'

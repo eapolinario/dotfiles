@@ -78,9 +78,10 @@ Panopticon is not vendored or Stowed. Selecting the `herdr-app` component downlo
 and runs the project's official installer with `--ref v0.2.0` and
 `--app-home <your-XDG-herdr-home>`. The pinned installer creates an
 installer-managed `mods/panopticon/` directory containing only `main.js`, `mod.json`,
-and the ownership marker. A legacy repository-owned Stow install of Panopticon is
-migrated transactionally. An existing manual or symlinked Panopticon directory is
-left alone and reported by the release installer as unmanaged. The installer does not reload or restart the app.
+and the ownership marker. It preflights the resolved destination parent chain,
+migrates legacy repository-owned Stow installs transactionally, and verifies planned
+Stow links before changing the mod. An existing manual or symlinked Panopticon
+directory is left alone and reported by the release installer as unmanaged. The installer does not reload or restart the app.
 
 ```sh
 ./omarchy/install.sh --only herdr-app --dry-run
@@ -94,7 +95,8 @@ herdr-app status
 A dry-run lists the pinned Panopticon release and URL but does not download or
 change the app home. Applying it requires `curl` and `herdr-app` on `PATH` and uses
 network access; keys and existing runtime layouts are not edited by the upstream
-installer. The normal dotfiles installer may also run the release update again
+installer. The downloaded installer script is removed after success and failed
+transaction rollback. The normal dotfiles installer may also run the release update again
 when `herdr-app` is selected, while the release installer itself updates only an
 installer-managed copy.
 
