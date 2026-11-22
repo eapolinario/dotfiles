@@ -301,6 +301,7 @@ panopticon_marker_is_managed() {
   [[ "$owner" == 'herdr-panopticon installer' ]]
 }
 
+# TODO(v0.3.0): Remove this one-time migration for pre-v0.2.0 Stow links.
 panopticon_is_legacy_stow_install() {
   local destination="$1" source_root="$2" resolved
   [[ -e "$destination" || -L "$destination" ]] || return 1
