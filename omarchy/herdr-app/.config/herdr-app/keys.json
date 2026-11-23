@@ -35,6 +35,8 @@
     "ctrl-7": "tab.select:7",
     "ctrl-8": "tab.select:8",
     "ctrl-9": "tab.select:9",
+    "ctrl-alt-f": "mod.open:files-enhanced",
+    "ctrl-alt-g": "mod.open:git-enhanced",
     "ctrl-pagedown": "tab.next",
     "ctrl-pageup": "tab.prev",
     "ctrl-tab": "tab.next",

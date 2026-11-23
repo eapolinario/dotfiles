@@ -133,6 +133,23 @@ Before running that installer, change its bundled `herdr-app/keys.json` to the
 three Alt bindings above and add them to this repo's keys first, so its merge is
 a no-op and preserves the live Stow symlink. Review key handling again on upgrades.
 
+**Herdr Enhanced** ([upstream](https://github.com/chaofanma/herdr-enhanced/tree/master/herdr-enhanced))
+is installed separately from reviewed commit `a2c24605f62d`. Its
+`layouts/herdr-enhanced.{json,svg}` and the `files-enhanced`, `git-enhanced`, and
+`tabs-enhanced` mod folders stay local, not stowed. The layout adds enhanced Files,
+Changes, and History pages; **Ctrl+Alt+F** and **Ctrl+Alt+G** toggle the Files and
+Git windows on Linux without changing the existing Neovim or Panopticon keys.
+Herdr's existing panel preference still controls the tab-bar buttons; disabling
+Changes also hides History. The window shortcuts work regardless.
+
+The panels run shell/Git programs and read project files locally or on SSH machines.
+Git Enhanced records agent-turn snapshots in `refs/git-enhanced/`; automatic fetching
+is off by default. Its commit-message pen sends diffs to the selected AI provider.
+Validate all three mods with `herdr-app check <app-home>/mods/<name>`, then select
+with `herdr-app do layout.switch '{"name":"herdr-enhanced"}'`. Existing layouts
+stay unchanged; `herdr-app do layout.switch '{"name":"main"}'` returns to Herdr's
+standard layout (layout cycling remains unbound).
+
 Leave `HERDR_APP_HOME` unset when using the standard installed directory; it
 selects a different app config home and running window.
 
