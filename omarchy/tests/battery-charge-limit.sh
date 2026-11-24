@@ -73,7 +73,7 @@ mapfile -t charge_steps < <(grep '^ExecStart=' "$UNIT_FILE")
 [[ "${#charge_steps[@]}" == 2 ]] || fail 'expected two charge-threshold writes'
 [[ "${charge_steps[0]}" == *'printf "60\\n" > /sys/class/power_supply/BAT0/charge_control_start_threshold'* ]] ||
   fail 'battery service must set the start threshold to 60 first'
-[[ "${charge_steps[1]}" == *'printf "70\\n" > /sys/class/power_supply/BAT0/charge_control_end_threshold'* ]] ||
-  fail 'battery service must set the stop threshold to 70 second'
+[[ "${charge_steps[1]}" == *'printf "80\\n" > /sys/class/power_supply/BAT0/charge_control_end_threshold'* ]] ||
+  fail 'battery service must set the stop threshold to 80 second'
 
 printf 'Battery charge-limit regression checks passed.\n'

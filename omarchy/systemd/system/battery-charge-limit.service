@@ -1,5 +1,5 @@
 [Unit]
-Description=Set Gazelle gaze16-3050 battery charge thresholds to 60-70 percent
+Description=Set Gazelle gaze16-3050 battery charge thresholds to 60-80 percent
 After=systemd-modules-load.service
 # This root-owned unit is opt-in and specific to the package-backed Omarchy system.
 ConditionPathExists=/usr/bin/omarchy
@@ -13,7 +13,7 @@ ExecCondition=/usr/bin/grep -Fxq -- gaze16-3050 /sys/class/dmi/id/product_versio
 ExecStartPre=/usr/bin/env modprobe system76_acpi
 # Lower the start threshold first so it remains below the new stop threshold.
 ExecStart=/usr/bin/bash -euc 'printf "60\\n" > /sys/class/power_supply/BAT0/charge_control_start_threshold'
-ExecStart=/usr/bin/bash -euc 'printf "70\\n" > /sys/class/power_supply/BAT0/charge_control_end_threshold'
+ExecStart=/usr/bin/bash -euc 'printf "80\\n" > /sys/class/power_supply/BAT0/charge_control_end_threshold'
 RemainAfterExit=yes
 
 [Install]

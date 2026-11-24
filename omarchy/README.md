@@ -182,7 +182,7 @@ backend; the installer and doctor never do. Install/configure the
 ### Gazelle battery charge limit (system service, opt-in)
 
 `systemd/system/battery-charge-limit.service` is specific to the System76 Gazelle
-`gaze16-3050` running package-backed Omarchy. It stops charging at **70%** and resumes
+`gaze16-3050` running package-backed Omarchy. It stops charging at **80%** and resumes
 below **60%**. This is a **system** service because the charge-control sysfs files
 require root; it must not be installed as a user service.
 
@@ -204,7 +204,7 @@ rtk sudo systemctl restart battery-charge-limit.service
 rtk head -n 1 /sys/class/power_supply/BAT0/charge_control_{start,end}_threshold
 ```
 
-The last command should show `60` and `70`. The root-owned copy is deliberately
+The last command should show `60` and `80`. The root-owned copy is deliberately
 not a symlink to a user-writable checkout. After editing the tracked unit, repeat
 the copy, daemon-reload, and restart commands; `install --backup=numbered` preserves
 any previous unit in a numbered backup beside it.
